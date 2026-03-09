@@ -9,31 +9,31 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: 2 of 7 (Conversation Engine) — IN PROGRESS
-Plan: 4 of 5 complete in current phase
-Status: Executing phase plans
-Last activity: 2026-03-09 — Completed 02-04 (conversation API endpoints)
+Phase: 2 of 7 (Conversation Engine) — AWAITING VERIFICATION
+Plan: 5 of 5 complete in current phase (human-verify checkpoint pending)
+Status: Awaiting human verification of full conversation engine
+Last activity: 2026-03-09 — Completed 02-05 (conversation UI & design management)
 
-Progress: █▓░░░░░░░░ 17%
+Progress: █▓░░░░░░░░ 20%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 8 min
-- Total execution time: 0.98 hours
+- Total execution time: 1.05 hours
 
 **By Phase:**
 
 | Phase                  | Plans | Total  | Avg/Plan |
 | ---------------------- | ----- | ------ | -------- |
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
-| 2. Conversation Engine | 4/5   | 11 min | 2.8 min  |
+| 2. Conversation Engine | 5/5   | 15 min | 3 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 3m, 3m, 2m, 3m, 3m
+- Last 5 plans: 3m, 2m, 3m, 3m, 4m
 - Trend: Stable fast
 
 ## Accumulated Context
@@ -66,6 +66,10 @@ Recent decisions affecting current work:
 - SSE via StreamingResponse with POST (not WebSocket)
 - Session upsert on every request via get_session_id dependency
 - Ownership guard pattern for multi-tenant conversation access
+- HomeClient.tsx wrapper keeps page.tsx as server component
+- parseSSE async generator for POST-based SSE streaming
+- localStorage session UUID (no auth for V1)
+- Mobile sidebar as slide-out overlay drawer
 
 ### Deferred Issues
 
@@ -78,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Phase 2, Plan 4 complete — executing remaining plans
+Stopped at: Phase 2 all plans complete — awaiting human verification checkpoint
 Resume file: None
