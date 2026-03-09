@@ -17,7 +17,7 @@ None
 
 - [x] **Phase 1: Foundation** — Project scaffold, monorepo setup, dev tooling
 - [x] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
-- [ ] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
+- [x] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
 - [ ] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
 - [ ] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
 - [ ] **Phase 6: Conversational Iteration** — Natural language design modification and re-render loop
@@ -60,14 +60,13 @@ Plans:
 **Depends on**: Phase 1 (backend scaffold), Phase 2 (parameter schemas)
 **Research**: Likely (OCP Python bindings, parametric template architecture)
 **Research topics**: build123d/OCP Python API, parametric template design patterns, CSG boolean operations, STL export with mesh quality control, watertight validation
-**Plans**: 4 plans
+**Plans**: 3 plans
 
 Plans:
 
 - [x] 03-01: OCP engine setup — OpenCascade Python bindings, basic shape primitives, STL export pipeline
-- [x] 03-02: Template system — Parametric template architecture, parameter-to-geometry mapping
-- [ ] 03-03: Object templates — Mounting brackets, enclosures, organizers (initial V1 categories)
-- [ ] 03-04: Mesh validation — Watertight checks, manifold validation, dimensional accuracy verification
+- [x] 03-02: V1 object templates — Mounting bracket, enclosure, organizer templates with registry
+- [x] 03-03: Mesh validation & generate endpoint — trimesh validation, dimensional accuracy, POST /api/generate
 
 ### Phase 4: 3D Preview
 
@@ -131,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | --------------------------- | -------------- | ----------- | ---------- |
 | 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
 | 2. Conversation Engine      | 5/5            | Complete    | 2026-03-09 |
-| 3. Parametric Modeler       | 2/4            | In progress | -          |
+| 3. Parametric Modeler       | 3/3            | Complete    | 2026-03-09 |
 | 4. 3D Preview               | 0/3            | Not started | -          |
 | 5. Photo Upload             | 0/3            | Not started | -          |
 | 6. Conversational Iteration | 0/3            | Not started | -          |

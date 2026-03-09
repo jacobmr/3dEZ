@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 3 — Parametric Modeler
+**Current focus:** Phase 3 — Parametric Modeler (complete)
 
 ## Current Position
 
 Phase: 3 of 7 (Parametric Modeler)
-Plan: 2 of 4 in current phase
-Status: In progress
-Last activity: 2026-03-09 — Completed 03-02-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-03-09 — Completed 03-03-PLAN.md
 
-Progress: ██████░░░░ 29%
+Progress: ████████░░ 39%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 7 min
-- Total execution time: 1.2 hours
+- Total execution time: 1.3 hours
 
 **By Phase:**
 
@@ -30,12 +30,12 @@ Progress: ██████░░░░ 29%
 | ---------------------- | ----- | ------ | -------- |
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
-| 3. Parametric Modeler  | 2/4   | 12 min | 6 min    |
+| 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 3m, 3m, 4m, 9m, 3m
-- Trend: Template implementation faster than engine setup
+- Last 5 plans: 3m, 4m, 9m, 3m, 7m
+- Trend: Consistent ~6 min for modeler plans
 
 ## Accumulated Context
 
@@ -77,6 +77,9 @@ Recent decisions affecting current work:
 - create_engine() factory for auto-registering templates from TEMPLATE_REGISTRY
 - Fillet-last with try/except fallback for OCCT geometry failures
 - BuildPart + GridLocations for patterned hole placement
+- trimesh for mesh validation (lightweight, no GUI deps)
+- Validation-in-pipeline: validate_mesh() runs after every STL export
+- 503 guard on /api/generate when build123d unavailable (non-Docker)
 
 ### Deferred Issues
 
@@ -89,5 +92,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 03-02-PLAN.md
+Stopped at: Completed 03-03-PLAN.md — Phase 3 complete
 Resume file: None
