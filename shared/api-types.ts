@@ -5,6 +5,14 @@
  * Keep in sync with backend/src/app/models/api.py.
  */
 
+export type {
+  DesignCategory,
+  DesignParams,
+  MountingBracketParams,
+  EnclosureParams,
+  OrganizerParams,
+} from "./design-params";
+
 /** GET /api/health response */
 export interface HealthResponse {
   status: string;
@@ -18,9 +26,22 @@ export interface ConversationMessage {
   timestamp: string;
 }
 
-/** Parameters describing a 3D design */
-export interface DesignParameters {
-  category: string;
-  dimensions: Record<string, number>;
-  features: Record<string, unknown>;
+/** Lightweight conversation list item. */
+export interface ConversationSummary {
+  id: string;
+  title: string | null;
+  status: "active" | "completed";
+  category: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A persisted design linked to a conversation. */
+export interface SavedDesign {
+  id: string;
+  conversation_id: string;
+  parameters: import("./design-params").DesignParams;
+  category: import("./design-params").DesignCategory;
+  version: number;
+  created_at: string;
 }
