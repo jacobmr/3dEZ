@@ -1,12 +1,48 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { ChatMessage } from "@/hooks/useConversation";
 import StreamingMessage from "./StreamingMessage";
+import DimensionCard from "./DimensionCard";
 
 interface MessageListProps {
   messages: ChatMessage[];
   isStreaming: boolean;
+}
+
+function PhotoThumbnail({ photoId }: { photoId: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const toggle = useCallback(() => setExpanded((prev) => !prev), []);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={toggle}
+        className="mb-1 block cursor-pointer rounded-md overflow-hidden"
+      >
+        <img
+          src={`/api/photos/${photoId}`}
+          alt="Uploaded photo"
+          className="max-w-[200px] rounded-md object-cover"
+        />
+      </button>
+      {expanded && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={toggle}
+          role="dialog"
+        >
+          <img
+            src={`/api/photos/${photoId}`}
+            alt="Full size photo"
+            className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
+          />
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function MessageList({
@@ -44,6 +80,17 @@ export default function MessageList({
                   : "bg-zinc-800 text-zinc-100"
               }`}
             >
+              {/* Photo thumbnail for user messages */}
+              {isUser && msg.photoId && (
+                <PhotoThumbnail photoId={msg.photoId} />
+              )}
+
+              {/* Dimension inference card for assistant messages */}
+              {!isUser && msg.dimensionInference && (
+                <DimensionCard data={msg.dimensionInference} />
+              )}
+
+              {/* Message text content */}
               {isLastAssistant && !msg.content ? (
                 <StreamingMessage content="" hasDesign={false} />
               ) : (

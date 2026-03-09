@@ -9,10 +9,25 @@ import {
 } from "@/lib/api";
 import type { DesignParams } from "@shared/api-types";
 
+export interface DimensionInference {
+  reference_used: string;
+  estimated_dimensions: {
+    width_mm: number;
+    height_mm: number;
+    depth_mm?: number;
+  };
+  confidence: "high" | "medium" | "low";
+  notes: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  /** Photo ID attached to user message */
+  photoId?: string;
+  /** Dimension inference data from infer_dimensions tool */
+  dimensionInference?: DimensionInference;
 }
 
 export interface ConversationState {
@@ -76,6 +91,22 @@ export function useConversation() {
             break;
           }
 
+          case "dimension_inference": {
+            try {
+              const dimData = JSON.parse(event.data);
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId
+                    ? { ...m, dimensionInference: dimData }
+                    : m,
+                ),
+              );
+            } catch {
+              // Ignore malformed dimension data
+            }
+            break;
+          }
+
           case "clarification":
             setMessages((prev) =>
               prev.map((m) =>
@@ -120,7 +151,12 @@ export function useConversation() {
         // Add user message
         setMessages((prev) => [
           ...prev,
-          { id: nextId(), role: "user", content: text },
+          {
+            id: nextId(),
+            role: "user",
+            content: text,
+            ...(photoId && { photoId }),
+          },
         ]);
 
         // Stream assistant response

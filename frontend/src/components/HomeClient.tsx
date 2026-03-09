@@ -33,10 +33,13 @@ export default function HomeClient() {
 
   const handleSend = useCallback(
     async (text: string, photo?: File) => {
+      let photoId: string | undefined;
+
       // If photo is attached and we have a conversation, upload it first
       if (photo && conversationId) {
         try {
-          await uploadPhoto(conversationId, photo);
+          const result = await uploadPhoto(conversationId, photo);
+          photoId = result.id;
         } catch {
           // Photo upload failed — still send the text message
         }
@@ -45,7 +48,7 @@ export default function HomeClient() {
       if (currentDesign) {
         reviseDesign(text);
       } else {
-        sendMessage(text);
+        sendMessage(text, photoId);
       }
       // Refresh sidebar after a short delay to pick up new conversations
       setTimeout(() => setSidebarRefreshKey((k) => k + 1), 1500);
