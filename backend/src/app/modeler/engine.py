@@ -8,12 +8,16 @@ All dimensions are in millimeters.  Templates use build123d algebra mode.
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable
 
 from app.modeler.export import export_stl_bytes
+from app.modeler.validation import validate_mesh
 
 if TYPE_CHECKING:
     from build123d import Part
+
+logger = logging.getLogger(__name__)
 
 
 class ModelEngine:
@@ -54,8 +58,8 @@ class ModelEngine:
         Raises
         ------
         ValueError
-            If *category* is not registered or the export produces empty
-            output.
+            If *category* is not registered, the export produces empty
+            output, or mesh validation fails.
         """
         fn = self._templates.get(category)
         if fn is None:
@@ -71,6 +75,23 @@ class ModelEngine:
         if not stl_bytes:
             raise ValueError(
                 f"STL export for category {category!r} produced empty output"
+            )
+
+        # Mesh validation
+        result = validate_mesh(stl_bytes)
+
+        for warning in result.warnings:
+            logger.warning("Mesh validation [%s]: %s", category, warning)
+
+        if not result.is_valid:
+            failures = []
+            if not result.is_watertight:
+                failures.append("not watertight")
+            if result.volume <= 0:
+                failures.append(f"non-positive volume ({result.volume:.4f})")
+            raise ValueError(
+                f"Mesh validation failed for {category!r}: "
+                + ", ".join(failures)
             )
 
         return stl_bytes
