@@ -31,7 +31,7 @@ None
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Backend scaffold — Python project with FastAPI, OCP dependencies, Docker dev environment
+- [x] 01-01: Backend scaffold — Python project with FastAPI, OCP dependencies, Docker dev environment
 - [ ] 01-02: Frontend scaffold — React/Next.js app with Three.js, Tailwind, mobile-first layout
 - [ ] 01-03: Monorepo glue — Shared API types, dev scripts, CI pipeline, basic deployment config
 
@@ -113,7 +113,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Not started | - |
+| 1. Foundation | 1/3 | In progress | - |
 | 2. Conversation Engine | 0/4 | Not started | - |
 | 3. Parametric Modeler | 0/4 | Not started | - |
 | 4. 3D Preview | 0/3 | Not started | - |
