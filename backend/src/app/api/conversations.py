@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
+from collections.abc import AsyncGenerator
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,6 +38,10 @@ class StartConversationResponse(BaseModel):
     conversation_id: str
     title: str | None = None
     status: str
+
+
+class SendMessageRequest(BaseModel):
+    message: str
 
 
 # ---------------------------------------------------------------------------
@@ -113,3 +120,72 @@ async def delete_conversation(
     # Verify ownership first
     await _verify_conversation_ownership(conversation_id, session_id, service)
     await service.delete_conversation(conversation_id)
+
+
+# ---------------------------------------------------------------------------
+# SSE streaming helpers
+# ---------------------------------------------------------------------------
+
+async def _sse_stream(
+    events: AsyncGenerator[dict[str, Any], None],
+) -> AsyncGenerator[str, None]:
+    """Wrap service events as Server-Sent Events text frames.
+
+    Each event is formatted as:
+        event: {type}\n
+        data: {json}\n\n
+
+    A final ``done`` event is emitted after the source generator is exhausted.
+    """
+    async for event in events:
+        event_type = event.get("type", "message")
+        yield f"event: {event_type}\ndata: {json.dumps(event)}\n\n"
+    yield "event: done\ndata: {}\n\n"
+
+
+# ---------------------------------------------------------------------------
+# SSE streaming endpoints
+# ---------------------------------------------------------------------------
+
+@router.post("/{conversation_id}/message")
+async def send_message(
+    conversation_id: str,
+    body: SendMessageRequest,
+    session_id: str = Depends(get_session_id),
+    db: AsyncSession = Depends(get_db),
+) -> StreamingResponse:
+    """Send a message and stream the assistant response as SSE."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, session_id, service)
+
+    events = service.send_message(conversation_id, body.message)
+    return StreamingResponse(
+        _sse_stream(events),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
+    )
+
+
+@router.post("/{conversation_id}/revise")
+async def revise_design(
+    conversation_id: str,
+    body: SendMessageRequest,
+    session_id: str = Depends(get_session_id),
+    db: AsyncSession = Depends(get_db),
+) -> StreamingResponse:
+    """Revise an existing design and stream the response as SSE."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, session_id, service)
+
+    events = service.revise_design(conversation_id, body.message)
+    return StreamingResponse(
+        _sse_stream(events),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        },
+    )
