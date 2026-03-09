@@ -64,7 +64,7 @@ Plans:
 
 Plans:
 
-- [ ] 03-01: OCP engine setup — OpenCascade Python bindings, basic shape primitives, STL export pipeline
+- [x] 03-01: OCP engine setup — OpenCascade Python bindings, basic shape primitives, STL export pipeline
 - [ ] 03-02: Template system — Parametric template architecture, parameter-to-geometry mapping
 - [ ] 03-03: Object templates — Mounting brackets, enclosures, organizers (initial V1 categories)
 - [ ] 03-04: Mesh validation — Watertight checks, manifold validation, dimensional accuracy verification
@@ -131,7 +131,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | --------------------------- | -------------- | ----------- | ---------- |
 | 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
 | 2. Conversation Engine      | 5/5            | Complete    | 2026-03-09 |
-| 3. Parametric Modeler       | 0/4            | Not started | -          |
+| 3. Parametric Modeler       | 1/4            | In progress | -          |
 | 4. 3D Preview               | 0/3            | Not started | -          |
 | 5. Photo Upload             | 0/3            | Not started | -          |
 | 6. Conversational Iteration | 0/3            | Not started | -          |
