@@ -227,6 +227,75 @@ DESIGN_TOOLS: list[dict] = [
         },
     },
     {
+        "name": "analyze_photo",
+        "description": (
+            "Analyze a user's uploaded photo to extract physical context for "
+            "3D design. Call this when the user uploads a photo of where their "
+            "design will be used."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "environment": {
+                    "type": "string",
+                    "description": (
+                        "Type of environment (e.g., 'desk setup', 'workshop wall', "
+                        "'kitchen cabinet', 'garage shelf')"
+                    ),
+                },
+                "surface_material": {
+                    "type": "string",
+                    "description": (
+                        "Material of mounting/placement surface (e.g., 'drywall', "
+                        "'wood', 'metal', 'tile')"
+                    ),
+                },
+                "reference_objects": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": (
+                                    "Object name (e.g., 'US wall outlet', "
+                                    "'USB-A port', 'M4 screw')"
+                                ),
+                            },
+                            "known_dimension_mm": {
+                                "type": "number",
+                                "description": "Known real-world dimension in mm",
+                            },
+                            "dimension_type": {
+                                "type": "string",
+                                "enum": ["width", "height", "diameter"],
+                            },
+                        },
+                        "required": ["name", "known_dimension_mm", "dimension_type"],
+                    },
+                    "description": "Objects with known dimensions visible in the photo",
+                },
+                "nearby_objects": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "Other objects visible that provide context "
+                        "(e.g., 'monitor', 'keyboard', 'power strip')"
+                    ),
+                },
+                "suggested_constraints": {
+                    "type": "string",
+                    "description": (
+                        "Spatial constraints inferred from the photo "
+                        "(e.g., 'must fit between outlet and shelf edge, "
+                        "roughly 80mm gap')"
+                    ),
+                },
+            },
+            "required": ["environment", "reference_objects"],
+        },
+    },
+    {
         "name": "request_clarification",
         "description": (
             "Ask the user a clarifying question when a required design "

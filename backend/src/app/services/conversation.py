@@ -109,6 +109,20 @@ class ConversationService:
                         "tool_use_id": tool_id,
                         "content": json.dumps(result_event),
                     })
+                elif tool_name == "analyze_photo":
+                    photo_analysis_event = {
+                        "type": "photo_analysis",
+                        "environment": tool_input.get("environment", ""),
+                        "surface_material": tool_input.get("surface_material"),
+                        "reference_objects": tool_input.get("reference_objects", []),
+                        "nearby_objects": tool_input.get("nearby_objects", []),
+                        "suggested_constraints": tool_input.get("suggested_constraints"),
+                    }
+                    yield photo_analysis_event
+                    tool_results.append({
+                        "tool_use_id": tool_id,
+                        "content": json.dumps(photo_analysis_event),
+                    })
                 elif tool_name == "request_clarification":
                     clarification_event = {
                         "type": "clarification",
