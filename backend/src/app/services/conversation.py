@@ -123,6 +123,21 @@ class ConversationService:
                         "tool_use_id": tool_id,
                         "content": json.dumps(photo_analysis_event),
                     })
+                elif tool_name == "infer_dimensions":
+                    dimension_event = {
+                        "type": "dimension_inference",
+                        "reference_used": tool_input.get("reference_used", ""),
+                        "estimated_dimensions": tool_input.get(
+                            "estimated_dimensions", {}
+                        ),
+                        "confidence": tool_input.get("confidence", "low"),
+                        "notes": tool_input.get("notes", ""),
+                    }
+                    yield dimension_event
+                    tool_results.append({
+                        "tool_use_id": tool_id,
+                        "content": json.dumps(dimension_event),
+                    })
                 elif tool_name == "request_clarification":
                     clarification_event = {
                         "type": "clarification",

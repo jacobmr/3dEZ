@@ -296,6 +296,65 @@ DESIGN_TOOLS: list[dict] = [
         },
     },
     {
+        "name": "infer_dimensions",
+        "description": (
+            "After analyzing a photo, use identified reference objects to "
+            "estimate dimensions of the target area or object. Call this after "
+            "analyze_photo when you can estimate dimensions from reference objects."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "reference_used": {
+                    "type": "string",
+                    "description": (
+                        "Which reference object was used for calibration "
+                        "(e.g., 'US wall outlet - 70mm wide')"
+                    ),
+                },
+                "estimated_dimensions": {
+                    "type": "object",
+                    "properties": {
+                        "width_mm": {
+                            "type": "number",
+                            "description": "Estimated width in mm",
+                        },
+                        "height_mm": {
+                            "type": "number",
+                            "description": "Estimated height in mm",
+                        },
+                        "depth_mm": {
+                            "type": "number",
+                            "description": "Estimated depth in mm (if determinable)",
+                        },
+                    },
+                    "required": ["width_mm", "height_mm"],
+                },
+                "confidence": {
+                    "type": "string",
+                    "enum": ["high", "medium", "low"],
+                    "description": (
+                        "Confidence in estimate based on reference quality "
+                        "and distance"
+                    ),
+                },
+                "notes": {
+                    "type": "string",
+                    "description": (
+                        "Explanation of how dimensions were estimated, "
+                        "any caveats"
+                    ),
+                },
+            },
+            "required": [
+                "reference_used",
+                "estimated_dimensions",
+                "confidence",
+                "notes",
+            ],
+        },
+    },
+    {
         "name": "request_clarification",
         "description": (
             "Ask the user a clarifying question when a required design "

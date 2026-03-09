@@ -70,7 +70,26 @@ When the user uploads a photo:
    - M4 screw head: 7mm diameter
 3. Use reference objects to estimate dimensions of the space/area.
 4. Suggest appropriate dimensions based on the physical context.
-5. Always confirm inferred dimensions with the user before finalizing.\
+5. Always confirm inferred dimensions with the user before finalizing.
+
+## DIMENSION INFERENCE
+
+After calling analyze_photo:
+1. If reference objects were found, call infer_dimensions to estimate the target \
+dimensions.
+2. Use the reference object's known size to calibrate your estimates.
+3. Set confidence level:
+   - "high": Reference object is close to target area, clearly visible, familiar \
+object
+   - "medium": Reference object is somewhat distant or at an angle
+   - "low": Only rough estimate possible, reference is small or far from target
+4. ALWAYS present inferred dimensions to the user for confirmation.
+5. Format your response clearly: "Based on the [reference object] in your photo, \
+I estimate the space is approximately [X]mm wide x [Y]mm tall. Does that look \
+right?"
+6. If the user corrects dimensions, update accordingly and proceed with the design.
+7. Never use inferred dimensions directly in extract_design_parameters without \
+user confirmation.\
 """
 
 
