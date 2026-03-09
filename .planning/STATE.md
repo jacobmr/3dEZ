@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 ## Current Position
 
 Phase: 2 of 7 (Conversation Engine) — IN PROGRESS
-Plan: 1 of 5 complete in current phase
+Plan: 2 of 5 complete in current phase
 Status: Executing phase plans
-Last activity: 2026-03-09 — Completed 02-01 (Claude API client & data layer)
+Last activity: 2026-03-09 — Completed 02-02 (parameter schemas & tool definitions)
 
 Progress: █▓░░░░░░░░ 17%
 
@@ -20,20 +20,20 @@ Progress: █▓░░░░░░░░ 17%
 
 **Velocity:**
 
-- Total plans completed: 4
-- Average duration: 13 min
-- Total execution time: 0.85 hours
+- Total plans completed: 5
+- Average duration: 11 min
+- Total execution time: 0.88 hours
 
 **By Phase:**
 
 | Phase                  | Plans | Total  | Avg/Plan |
 | ---------------------- | ----- | ------ | -------- |
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
-| 2. Conversation Engine | 1/5   | 3 min  | 3 min    |
+| 2. Conversation Engine | 2/5   | 5 min  | 2.5 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 16m, 29m, 3m, 3m
+- Last 5 plans: 16m, 29m, 3m, 3m, 2m
 - Trend: Accelerating
 
 ## Accumulated Context
@@ -50,13 +50,16 @@ Recent decisions affecting current work:
 - Standalone output mode for future Docker production builds
 - API proxy rewrites in next.config.ts (frontend :3000 → backend :8000)
 - 40%/60% desktop split for conversation/preview panels
-- Shared types in shared/ dir with tsconfig path alias @shared/*
+- Shared types in shared/ dir with tsconfig path alias @shared/\*
 - Makefile over npm scripts for cross-service orchestration
 - Parallel CI jobs (backend + frontend) without Docker/OCP
 - pydantic-settings as separate dependency (required for Pydantic v2 Settings classes)
 - Lazy singleton pattern for AsyncAnthropic client (no global mutable state)
 - SQLite with aiosqlite for V1, migration path to PostgreSQL via DATABASE_URL config
 - UUID4 primary keys on all tables for distributed-safe IDs
+- Three V1 design categories: mounting_bracket, enclosure, organizer
+- Discriminated union on category field for type-safe parameter routing
+- Sensible 3D printing defaults (3mm bracket thickness, 2mm enclosure walls, M4 holes)
 
 ### Deferred Issues
 
@@ -69,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Phase 2, Plan 1 complete — executing remaining plans
+Stopped at: Phase 2, Plan 2 complete — executing remaining plans
 Resume file: None
