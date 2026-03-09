@@ -16,7 +16,7 @@ None
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Foundation** — Project scaffold, monorepo setup, dev tooling
-- [ ] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
+- [x] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
 - [ ] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
 - [ ] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
 - [ ] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase                       | Plans Complete | Status      | Completed  |
 | --------------------------- | -------------- | ----------- | ---------- |
 | 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
-| 2. Conversation Engine      | 5/5            | Verifying   | -          |
+| 2. Conversation Engine      | 5/5            | Complete    | 2026-03-09 |
 | 3. Parametric Modeler       | 0/4            | Not started | -          |
 | 4. 3D Preview               | 0/3            | Not started | -          |
 | 5. Photo Upload             | 0/3            | Not started | -          |
