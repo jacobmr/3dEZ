@@ -18,7 +18,8 @@ None
 - [x] **Phase 1: Foundation** — Project scaffold, monorepo setup, dev tooling
 - [x] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
 - [x] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
-- [ ] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
+- [x] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
+- [ ] **Phase 4.1: Server Deployment & CI/CD** — Hetzner server setup, Docker deployment, GitHub Actions pipeline (INSERTED)
 - [ ] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
 - [ ] **Phase 6: Conversational Iteration** — Natural language design modification and re-render loop
 - [ ] **Phase 7: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
@@ -79,7 +80,18 @@ Plans:
 
 - [x] 04-01: Three.js renderer — Load and display STL/glTF, orbit controls, lighting, mobile WebGL
 - [x] 04-02: Dimension overlays — Display key measurements on the 3D model, annotation system
-- [ ] 04-03: Preview integration — Connect modeler output to renderer, loading states, error display
+- [x] 04-03: Preview integration — Connect modeler output to renderer, loading states, error display (checkpoint deferred to post-deployment)
+
+### Phase 4.1: Server Deployment & CI/CD (INSERTED)
+
+**Goal**: Production deployment on Hetzner server with Docker, firewall, CI/CD pipeline via GitHub Actions
+**Depends on**: Phase 4 (need working app to deploy)
+**Research**: Unlikely (standard DevOps)
+**Plans**: TBD (to be planned)
+
+Plans:
+
+- [ ] 04.1-01: Server setup & deployment — Hetzner server hardening, Docker Compose production config, firewall, DNS, app deployment
 
 ### Phase 5: Photo Upload
 
@@ -124,14 +136,15 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7
 
-| Phase                       | Plans Complete | Status      | Completed  |
-| --------------------------- | -------------- | ----------- | ---------- |
-| 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
-| 2. Conversation Engine      | 5/5            | Complete    | 2026-03-09 |
-| 3. Parametric Modeler       | 3/3            | Complete    | 2026-03-09 |
-| 4. 3D Preview               | 2/3            | In progress | -          |
-| 5. Photo Upload             | 0/3            | Not started | -          |
-| 6. Conversational Iteration | 0/3            | Not started | -          |
-| 7. Integration & Polish     | 0/3            | Not started | -          |
+| Phase                            | Plans Complete | Status      | Completed  |
+| -------------------------------- | -------------- | ----------- | ---------- |
+| 1. Foundation                    | 3/3            | Complete    | 2026-03-09 |
+| 2. Conversation Engine           | 5/5            | Complete    | 2026-03-09 |
+| 3. Parametric Modeler            | 3/3            | Complete    | 2026-03-09 |
+| 4. 3D Preview                    | 3/3            | Complete    | 2026-03-09 |
+| 4.1 Server Deployment & CI/CD   | 0/1            | Not started | -          |
+| 5. Photo Upload                  | 0/3            | Not started | -          |
+| 6. Conversational Iteration      | 0/3            | Not started | -          |
+| 7. Integration & Polish          | 0/3            | Not started | -          |

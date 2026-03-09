@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 4 — 3D Preview (in progress)
+**Current focus:** Phase 4.1 — Server Deployment & CI/CD (next up)
 
 ## Current Position
 
-Phase: 4 of 7 (3D Preview)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-03-09 — Completed 04-02-PLAN.md
+Phase: 4.1 of 7 (Server Deployment & CI/CD)
+Plan: 0 of 1 in current phase
+Status: Ready to plan
+Last activity: 2026-03-09 — Completed 04-03-PLAN.md (checkpoint deferred to post-deployment)
 
-Progress: ██████████░ 48%
+Progress: ██████████░░ 52%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13
-- Average duration: 8 min
-- Total execution time: 1.85 hours
+- Total plans completed: 14
+- Average duration: 9 min
+- Total execution time: 2.82 hours
 
 **By Phase:**
 
@@ -31,12 +31,12 @@ Progress: ██████████░ 48%
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
-| 4. 3D Preview          | 2/3   | 33 min | 17 min   |
+| 4. 3D Preview          | 3/3   | 91 min | 30 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 9m, 3m, 7m, 30m, 3m
-- Trend: 04-02 fast (no checkpoints, clean autonomous execution)
+- Last 5 plans: 3m, 7m, 30m, 3m, 58m
+- Trend: 04-03 included pause for server setup discussion
 
 ## Accumulated Context
 
@@ -88,6 +88,10 @@ Recent decisions affecting current work:
 - Color-coded dimensions: yellow=width, cyan=height, orange=depth, green=thickness
 - onBoundsComputed callback for child→parent geometry data flow
 - 10% bounding box offset for dimension line positioning
+- Serialized params comparison for usePreview change detection
+- Stale response discard pattern in usePreview hook
+- 503 error shows Docker-specific message in PreviewPanel
+- Server: ez3d.salundo.com on Hetzner (SSH key: id_ed25519)
 
 ### Deferred Issues
 
@@ -100,5 +104,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 04-02-PLAN.md
+Stopped at: Completed 04-03-PLAN.md, Phase 4 complete, Phase 4.1 inserted for server deployment
 Resume file: None
+Note: 04-03 checkpoint (end-to-end verification) deferred until server deployed
