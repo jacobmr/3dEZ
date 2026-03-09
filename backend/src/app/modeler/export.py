@@ -6,7 +6,8 @@ All dimensions are in millimeters.
 
 from __future__ import annotations
 
-import io
+import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 
 def export_stl_bytes(
     part: Part,
-    tolerance: float = 0.01,
+    tolerance: float = 0.001,
     angular_tolerance: float = 0.1,
 ) -> bytes:
     """Export a build123d Part to STL bytes.
@@ -36,14 +37,19 @@ def export_stl_bytes(
     """
     from build123d import export_stl
 
-    buffer = io.BytesIO()
-    export_stl(
-        part,
-        file_name=buffer,
-        tolerance=tolerance,
-        angular_tolerance=angular_tolerance,
-    )
-    return buffer.getvalue()
+    with tempfile.NamedTemporaryFile(suffix=".stl", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+
+    try:
+        export_stl(
+            part,
+            file_path=str(tmp_path),
+            tolerance=tolerance,
+            angular_tolerance=angular_tolerance,
+        )
+        return tmp_path.read_bytes()
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 
 def validate_part(part: Part) -> bool:
