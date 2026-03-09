@@ -9,6 +9,9 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.sqlite import JSON
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+# Photo storage constants
+PHOTO_MAX_SIZE_BYTES = 5 * 1024 * 1024  # 5MB
+
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
@@ -69,6 +72,9 @@ class Conversation(Base):
     designs: Mapped[list[Design]] = relationship(
         back_populates="conversation", cascade="all, delete-orphan"
     )
+    photos: Mapped[list[Photo]] = relationship(
+        back_populates="conversation", cascade="all, delete-orphan"
+    )
 
 
 class Message(Base):
@@ -111,3 +117,31 @@ class Design(Base):
     )
 
     conversation: Mapped[Conversation] = relationship(back_populates="designs")
+
+
+class Photo(Base):
+    """Uploaded photo for vision analysis."""
+
+    __tablename__ = "photos"
+
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=_new_uuid
+    )
+    session_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("sessions.id", ondelete="CASCADE"), index=True
+    )
+    conversation_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("conversations.id", ondelete="CASCADE"),
+        index=True,
+    )
+    filename: Mapped[str] = mapped_column(String(255))
+    content_type: Mapped[str] = mapped_column(String(50), default="image/jpeg")
+    file_path: Mapped[str] = mapped_column(String(500))
+    file_size: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    session: Mapped[Session] = relationship()
+    conversation: Mapped[Conversation] = relationship(back_populates="photos")
