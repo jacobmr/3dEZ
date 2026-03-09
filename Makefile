@@ -1,4 +1,4 @@
-.PHONY: dev dev-down dev-logs backend-shell frontend-shell lint test build clean
+.PHONY: dev dev-down dev-logs backend-shell frontend-shell lint test build clean deploy deploy-down deploy-logs
 
 dev:
 	docker compose up -d
@@ -35,3 +35,12 @@ clean:
 	find . -type d -name .pytest_cache -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name .mypy_cache -exec rm -rf {} + 2>/dev/null || true
 	rm -rf frontend/.next
+
+deploy:
+	docker compose -f docker-compose.prod.yml up -d --build
+
+deploy-down:
+	docker compose -f docker-compose.prod.yml down
+
+deploy-logs:
+	docker compose -f docker-compose.prod.yml logs -f
