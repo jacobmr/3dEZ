@@ -20,7 +20,8 @@ affects: [02-05]
 
 tech-stack:
   added: []
-  patterns: [StreamingResponse SSE, session dependency, conversation ownership guard]
+  patterns:
+    [StreamingResponse SSE, session dependency, conversation ownership guard]
 
 key-files:
   created:
@@ -58,6 +59,7 @@ completed: 2026-03-09
 - **Files modified:** 4
 
 ## Accomplishments
+
 - Full conversation CRUD: create, list, get detail, delete
 - SSE streaming for message and revise flows with proper event formatting
 - Session dependency with UUID validation and auto-upsert
@@ -70,6 +72,7 @@ completed: 2026-03-09
 2. **Task 2: Add SSE streaming endpoints** - `5193202` (feat)
 
 ## Files Created/Modified
+
 - `backend/src/app/api/deps.py` - get_session_id dependency
 - `backend/src/app/api/conversations.py` - Conversation CRUD + SSE streaming
 - `backend/src/app/api/designs.py` - Designs list and detail
@@ -80,5 +83,6 @@ completed: 2026-03-09
 None.
 
 ---
-*Phase: 02-conversation-engine*
-*Completed: 2026-03-09*
+
+_Phase: 02-conversation-engine_
+_Completed: 2026-03-09_

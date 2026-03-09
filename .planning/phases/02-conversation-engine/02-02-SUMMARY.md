@@ -20,7 +20,8 @@ affects: [02-03, 02-04, 02-05]
 
 tech-stack:
   added: []
-  patterns: [discriminated union, Anthropic tool format, TypeScript/Pydantic parity]
+  patterns:
+    [discriminated union, Anthropic tool format, TypeScript/Pydantic parity]
 
 key-files:
   created:
@@ -58,6 +59,7 @@ completed: 2026-03-09
 - **Files modified:** 4
 
 ## Accomplishments
+
 - 3 design category models with sensible 3D printing defaults
 - 2 Claude tool definitions (extract_design_parameters, request_clarification)
 - TypeScript/Pydantic parity maintained in shared/ directory
@@ -69,6 +71,7 @@ completed: 2026-03-09
 2. **Task 2: Mirror TypeScript types in shared/** - `0d49d5e` (feat)
 
 ## Files Created/Modified
+
 - `backend/src/app/models/designs.py` - Pydantic v2 models with discriminated union
 - `backend/src/app/models/tools.py` - DESIGN_TOOLS list with Anthropic tool format
 - `shared/design-params.ts` - TypeScript interfaces mirroring Pydantic models
@@ -79,5 +82,6 @@ completed: 2026-03-09
 None.
 
 ---
-*Phase: 02-conversation-engine*
-*Completed: 2026-03-09*
+
+_Phase: 02-conversation-engine_
+_Completed: 2026-03-09_

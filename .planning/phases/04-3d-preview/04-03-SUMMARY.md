@@ -21,11 +21,21 @@ affects: [06-conversational-iteration, 07-integration-polish]
 # Tech tracking
 tech-stack:
   added: []
-  patterns: [usePreview hook with stale response discard, fade-in CSS animation for model transitions]
+  patterns:
+    [
+      usePreview hook with stale response discard,
+      fade-in CSS animation for model transitions,
+    ]
 
 key-files:
   created: [frontend/src/hooks/usePreview.ts]
-  modified: [frontend/src/lib/api.ts, frontend/src/components/HomeClient.tsx, frontend/src/components/preview/PreviewPanel.tsx, frontend/src/app/globals.css]
+  modified:
+    [
+      frontend/src/lib/api.ts,
+      frontend/src/components/HomeClient.tsx,
+      frontend/src/components/preview/PreviewPanel.tsx,
+      frontend/src/app/globals.css,
+    ]
 
 key-decisions:
   - "Serialized params comparison for change detection (avoids unnecessary regeneration)"
@@ -102,5 +112,6 @@ None.
 - Verification pending server deployment (Phase 4.1)
 
 ---
-*Phase: 04-3d-preview*
-*Completed: 2026-03-09*
+
+_Phase: 04-3d-preview_
+_Completed: 2026-03-09_

@@ -22,8 +22,7 @@ affects: [03-xx, 04-xx]
 
 tech-stack:
   added: []
-  patterns:
-    [parseSSE async generator, HomeClient wrapper, useConversation hook]
+  patterns: [parseSSE async generator, HomeClient wrapper, useConversation hook]
 
 key-files:
   created:

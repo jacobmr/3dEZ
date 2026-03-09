@@ -33,17 +33,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Development
 
-| Command | Description |
-|---|---|
-| `make dev` | Start all services |
-| `make dev-down` | Stop all services |
-| `make dev-logs` | Follow logs |
-| `make backend-shell` | Shell into backend container |
-| `make frontend-shell` | Shell into frontend container |
-| `make lint` | Run linters (ruff + eslint) |
-| `make test` | Run test suites |
-| `make build` | Build Docker images |
-| `make clean` | Remove containers, volumes, caches |
+| Command               | Description                        |
+| --------------------- | ---------------------------------- |
+| `make dev`            | Start all services                 |
+| `make dev-down`       | Stop all services                  |
+| `make dev-logs`       | Follow logs                        |
+| `make backend-shell`  | Shell into backend container       |
+| `make frontend-shell` | Shell into frontend container      |
+| `make lint`           | Run linters (ruff + eslint)        |
+| `make test`           | Run test suites                    |
+| `make build`          | Build Docker images                |
+| `make clean`          | Remove containers, volumes, caches |
 
 ## Architecture
 

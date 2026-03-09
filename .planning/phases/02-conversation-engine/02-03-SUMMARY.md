@@ -22,7 +22,12 @@ affects: [02-04, 02-05]
 
 tech-stack:
   added: []
-  patterns: [async generator events, tool result round-trip, discriminated union validation]
+  patterns:
+    [
+      async generator events,
+      tool result round-trip,
+      discriminated union validation,
+    ]
 
 key-files:
   created:
@@ -61,6 +66,7 @@ completed: 2026-03-09
 - **Files modified:** 4
 
 ## Accomplishments
+
 - Design wizard system prompt (~580 tokens) guiding WHAT→WHY→WHERE→specifics flow
 - ConversationService with 6 methods: start, send_message, revise, get, list, delete
 - Full tool use handling: extract_design_parameters validated via Pydantic, request_clarification forwarded
@@ -72,6 +78,7 @@ completed: 2026-03-09
 2. **Task 2: Build conversation orchestrator service** - `72afab3` (feat)
 
 ## Files Created/Modified
+
 - `backend/src/app/prompts/__init__.py` - New prompts package
 - `backend/src/app/prompts/design_wizard.py` - System prompt + get_system_prompt() helper
 - `backend/src/app/services/__init__.py` - New services package
@@ -82,5 +89,6 @@ completed: 2026-03-09
 None.
 
 ---
-*Phase: 02-conversation-engine*
-*Completed: 2026-03-09*
+
+_Phase: 02-conversation-engine_
+_Completed: 2026-03-09_

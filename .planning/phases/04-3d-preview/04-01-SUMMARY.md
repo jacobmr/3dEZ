@@ -14,12 +14,18 @@ provides:
   - StlMesh component for parsing/rendering ArrayBuffer STL
   - StlViewer scene with lighting and orbit controls
   - PreviewPanel container with loading/error/empty/data states
-affects: [04-02-dimension-overlays, 04-03-preview-integration, 06-conversational-iteration]
+affects:
+  [
+    04-02-dimension-overlays,
+    04-03-preview-integration,
+    06-conversational-iteration,
+  ]
 
 # Tech tracking
 tech-stack:
-  added: []  # three, @react-three/fiber, @react-three/drei already installed
-  patterns: [arraybuffer-stl-parsing, demand-frameloop, geometry-dispose-cleanup]
+  added: [] # three, @react-three/fiber, @react-three/drei already installed
+  patterns:
+    [arraybuffer-stl-parsing, demand-frameloop, geometry-dispose-cleanup]
 
 key-files:
   created:
@@ -58,6 +64,7 @@ completed: 2026-03-09
 - **Files modified:** 4
 
 ## Accomplishments
+
 - StlMesh component parses ArrayBuffer via STLLoader, auto-centers, computes normals, disposes on unmount
 - StlViewer composes mesh + ambient/directional lights + OrbitControls with damping + ContactShadows
 - PreviewPanel handles empty/loading/error/data states with Canvas frameloop="demand"
@@ -71,12 +78,14 @@ Each task was committed atomically:
 2. **Task 2: Create PreviewPanel and wire into HomeClient** - `d0475ef` (feat)
 
 ## Files Created/Modified
+
 - `frontend/src/components/preview/StlMesh.tsx` - Parses ArrayBuffer STL, centers geometry, renders with meshStandardMaterial
 - `frontend/src/components/preview/StlViewer.tsx` - Scene composition: mesh + lights + OrbitControls + ContactShadows
 - `frontend/src/components/preview/PreviewPanel.tsx` - Container with four states, Canvas with demand frameloop
 - `frontend/src/components/HomeClient.tsx` - Replaced inline preview placeholder with PreviewPanel
 
 ## Decisions Made
+
 - ArrayBuffer → STLLoader.parse() in useMemo (not useLoader, since backend uses POST not GET URL)
 - frameloop="demand" for mobile battery savings
 - Geometry dispose on unmount via useEffect cleanup to prevent WebGL memory leaks
@@ -86,13 +95,16 @@ Each task was committed atomically:
 None - plan executed exactly as written.
 
 ## Issues Encountered
+
 None
 
 ## Next Phase Readiness
+
 - STL renderer ready for dimension overlays (04-02)
 - PreviewPanel accepts stlBytes prop, ready for integration with generate endpoint (04-03)
 - No blockers
 
 ---
-*Phase: 04-3d-preview*
-*Completed: 2026-03-09*
+
+_Phase: 04-3d-preview_
+_Completed: 2026-03-09_

@@ -102,7 +102,7 @@ Recent decisions affecting current work:
 - Client-side canvas resize to 1568px max edge before upload (Claude Vision optimal)
 - Photo linked to conversation (not message) for cross-message reference
 - photo_ids JSON column on Message for multi-photo support per message
-- Async _build_api_messages with db session for on-demand base64 encoding
+- Async \_build_api_messages with db session for on-demand base64 encoding
 - photo_analysis SSE event type for streaming analyze_photo tool results
 
 ### Deferred Issues

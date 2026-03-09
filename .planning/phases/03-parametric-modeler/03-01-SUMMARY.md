@@ -20,7 +20,12 @@ affects: [03-02-template-system, 03-03-object-templates, 03-04-mesh-validation]
 # Tech tracking
 tech-stack:
   added: [build123d (Docker), libgl1 (Docker apt)]
-  patterns: [TYPE_CHECKING guard for OCP imports, tempfile-based STL export, template registry pattern]
+  patterns:
+    [
+      TYPE_CHECKING guard for OCP imports,
+      tempfile-based STL export,
+      template registry pattern,
+    ]
 
 key-files:
   created:
@@ -61,6 +66,7 @@ completed: 2026-03-09
 - **Files modified:** 6
 
 ## Accomplishments
+
 - Created modeler package with ModelEngine class, template registry, and generate() pipeline
 - Built STL export utility using tempfile (build123d requires file path, not BytesIO)
 - Defined TemplateProtocol for type-safe template functions
@@ -74,6 +80,7 @@ Each task was committed atomically:
 2. **Task 2: Verify STL export pipeline with test shape in Docker** - `0afa856` (fix)
 
 ## Files Created/Modified
+
 - `backend/src/app/modeler/__init__.py` — re-exports ModelEngine and generate_stl
 - `backend/src/app/modeler/engine.py` — ModelEngine with template registry and generate()
 - `backend/src/app/modeler/export.py` — export_stl_bytes() and validate_part()
@@ -82,6 +89,7 @@ Each task was committed atomically:
 - `backend/Dockerfile.dev` — added libgl1 for OCP's libGL.so.1 dependency
 
 ## Decisions Made
+
 - Used tempfile-based STL export because build123d's export_stl() requires a filesystem path, not a BytesIO buffer
 - Changed default tolerance to 0.001 (matching build123d default) instead of plan's 0.01
 - Added libgl1 to Dockerfile.dev apt packages for OpenGL dependency
@@ -91,6 +99,7 @@ Each task was committed atomically:
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Added libgl1 to Dockerfile.dev**
+
 - **Found during:** Task 2 (Docker verification)
 - **Issue:** build123d import failed with `ImportError: libGL.so.1: cannot open shared object file`
 - **Fix:** Added `libgl1` to apt-get install in Dockerfile.dev
@@ -99,6 +108,7 @@ Each task was committed atomically:
 - **Committed in:** 0afa856
 
 **2. [Rule 3 - Blocking] Changed STL export to use tempfile**
+
 - **Found during:** Task 2 (Docker verification)
 - **Issue:** build123d's `export_stl()` takes a file path string, not BytesIO — plan assumed BytesIO API
 - **Fix:** Changed to tempfile.NamedTemporaryFile with cleanup
@@ -112,13 +122,16 @@ Each task was committed atomically:
 **Impact on plan:** Both fixes necessary for pipeline to function. No scope creep.
 
 ## Issues Encountered
+
 None
 
 ## Next Phase Readiness
+
 - ModelEngine ready for template registration (03-02 template system)
 - STL export pipeline verified and working
 - TemplateProtocol defined for template implementations
 
 ---
-*Phase: 03-parametric-modeler*
-*Completed: 2026-03-09*
+
+_Phase: 03-parametric-modeler_
+_Completed: 2026-03-09_

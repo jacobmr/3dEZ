@@ -2,7 +2,16 @@
 phase: 05-photo-upload
 plan: "01"
 subsystem: api, ui
-tags: [photo-upload, multipart, canvas-compression, claude-vision, mobile-camera, fastapi, react]
+tags:
+  [
+    photo-upload,
+    multipart,
+    canvas-compression,
+    claude-vision,
+    mobile-camera,
+    fastapi,
+    react,
+  ]
 
 requires:
   - phase: 01-foundation
@@ -67,6 +76,7 @@ completed: 2026-03-09
 - **Files modified:** 8
 
 ## Accomplishments
+
 - Photo SQLAlchemy model with session/conversation foreign keys and cascade deletes
 - Upload endpoint with file type validation, 5MB size limit, and ownership guard
 - Retrieval endpoint serving photos as FileResponse with proper content type
@@ -83,6 +93,7 @@ Each task was committed atomically:
 2. **Task 2: Frontend PhotoUpload component and API integration** - `937e374` (feat)
 
 ## Files Created/Modified
+
 - `backend/src/app/db/models.py` — Photo model, Conversation.photos relationship
 - `backend/src/app/api/photos.py` — Upload and retrieve endpoints (new)
 - `backend/src/app/main.py` — Photos router registration, data/photos/ dir creation
@@ -93,6 +104,7 @@ Each task was committed atomically:
 - `frontend/src/lib/api.ts` — uploadPhoto() multipart function
 
 ## Decisions Made
+
 - Disk storage for photos at `data/photos/{session_id}/` (not DB blobs) — simpler, Docker volume compatible
 - Client-side canvas resize to 1568px max edge — Claude Vision optimal resolution, reduces upload size
 - Photo linked to conversation (not message) — allows referencing same photo across multiple messages
@@ -102,13 +114,16 @@ Each task was committed atomically:
 None — plan executed exactly as written.
 
 ## Issues Encountered
+
 None
 
 ## Next Phase Readiness
+
 - Photo upload infrastructure complete, ready for Vision analysis integration (05-02)
 - Photos stored on disk and retrievable via API for Claude Vision base64 encoding
 - Conversation-level photo association enables multi-message photo context
 
 ---
-*Phase: 05-photo-upload*
-*Completed: 2026-03-09*
+
+_Phase: 05-photo-upload_
+_Completed: 2026-03-09_

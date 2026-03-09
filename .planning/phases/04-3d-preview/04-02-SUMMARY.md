@@ -19,7 +19,12 @@ affects: [04-3d-preview, 06-conversational-iteration]
 # Tech tracking
 tech-stack:
   added: []
-  patterns: [billboard-text annotations, bounding-box-anchored overlays, perpendicular tick calculation]
+  patterns:
+    [
+      billboard-text annotations,
+      bounding-box-anchored overlays,
+      perpendicular tick calculation,
+    ]
 
 key-files:
   created:
@@ -60,6 +65,7 @@ completed: 2026-03-09
 - **Files modified:** 5
 
 ## Accomplishments
+
 - DimensionLine component with drei Line + perpendicular ticks + Billboard Text labels
 - DimensionOverlay maps width/height/depth/wall_thickness params to positioned color-coded annotations
 - Bounding box callback from StlMesh provides anchor positions for overlays
@@ -75,6 +81,7 @@ Each task was committed atomically:
 **Plan metadata:** (pending)
 
 ## Files Created/Modified
+
 - `frontend/src/components/preview/DimensionLine.tsx` - Reusable dimension annotation (line + ticks + billboard label)
 - `frontend/src/components/preview/DimensionOverlay.tsx` - Maps design params to positioned DimensionLines
 - `frontend/src/components/preview/StlMesh.tsx` - Added onBoundsComputed callback, MeshBounds export
@@ -82,6 +89,7 @@ Each task was committed atomically:
 - `frontend/src/components/preview/PreviewPanel.tsx` - Passes category/params through to StlViewer
 
 ## Decisions Made
+
 - Billboard + Text with outline for camera-facing readable labels
 - Cross-product perpendicular calculation with degenerate axis fallback for tick marks
 - 10% bounding box offset to prevent dimension/mesh overlap
@@ -92,6 +100,7 @@ Each task was committed atomically:
 ### Auto-fixed Issues
 
 **1. [Rule 1 - Bug] Fixed bounding box computed before center() in StlMesh**
+
 - **Found during:** Task 2 (DimensionOverlay integration)
 - **Issue:** Bounding box was computed before geometry centering, so reported min/max reflected pre-centered coordinates — dimensions would be positioned incorrectly
 - **Fix:** Added second `geom.computeBoundingBox()` call after `geom.center()`
@@ -105,12 +114,15 @@ Each task was committed atomically:
 **Impact on plan:** Bug fix necessary for correct dimension positioning. No scope creep.
 
 ## Issues Encountered
+
 None
 
 ## Next Phase Readiness
+
 - Dimension overlay system complete, ready for 04-03 (Preview integration)
 - DimensionLine is reusable for any future annotation needs
 
 ---
-*Phase: 04-3d-preview*
-*Completed: 2026-03-09*
+
+_Phase: 04-3d-preview_
+_Completed: 2026-03-09_

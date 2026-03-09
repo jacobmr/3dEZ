@@ -65,6 +65,7 @@ completed: 2026-03-09
 - **Files modified:** 16
 
 ## Accomplishments
+
 - Next.js 15 app with TypeScript strict mode, Tailwind, and Three.js dependencies
 - Mobile-first responsive layout shell: stacked on mobile, 40/60 two-column on desktop
 - Frontend Docker dev environment with hot reload via volume mounts
@@ -79,6 +80,7 @@ Each task was committed atomically:
 2. **Task 2: Mobile-first layout shell and Docker setup** - `069c18c` (feat)
 
 ## Files Created/Modified
+
 - `frontend/package.json` - Next.js 15 with three, R3F, drei deps
 - `frontend/tsconfig.json` - TypeScript strict mode
 - `frontend/next.config.ts` - Standalone output, API proxy rewrites
@@ -94,6 +96,7 @@ Each task was committed atomically:
 - `backend/pyproject.toml` - Fixed build-backend and wheel config
 
 ## Decisions Made
+
 - Used Next.js 16.x (latest from create-next-app) with App Router — aligns with project's modern stack approach
 - Tailwind v4 came as default — accepted as latest stable
 - 40%/60% desktop split for conversation/preview panels — standard for chat+preview UIs
@@ -104,6 +107,7 @@ Each task was committed atomically:
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Fixed backend Dockerfile.dev obsolete package**
+
 - **Found during:** Task 2 (Docker verification)
 - **Issue:** `libgl1-mesa-glx` package obsoleted in Debian trixie (node:20-alpine base). Docker build failed.
 - **Fix:** Replaced with `libgl1-mesa-dri` + `libegl1`
@@ -112,6 +116,7 @@ Each task was committed atomically:
 - **Committed in:** 069c18c (Task 2 commit)
 
 **2. [Rule 3 - Blocking] Fixed backend pyproject.toml build config**
+
 - **Found during:** Task 2 (Docker verification)
 - **Issue:** Build-backend was `hatchling.backends` (incorrect, should be `hatchling.build`), missing wheel package discovery config
 - **Fix:** Corrected build-backend string, added `[tool.hatch.build.targets.wheel]` section
@@ -125,13 +130,16 @@ Each task was committed atomically:
 **Impact on plan:** Both fixes necessary for docker-compose verification. No scope creep.
 
 ## Issues Encountered
+
 None — deviations handled inline.
 
 ## Next Phase Readiness
+
 - Frontend foundation complete, ready for 01-03 (monorepo glue)
 - Both services run together via docker-compose
 - Three.js installed but no scene yet (Phase 4 work)
 
 ---
-*Phase: 01-foundation*
-*Completed: 2026-03-09*
+
+_Phase: 01-foundation_
+_Completed: 2026-03-09_

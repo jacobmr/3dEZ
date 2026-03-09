@@ -56,12 +56,13 @@ The conversational design wizard — the guided, multi-turn conversation that tr
 
 ## Key Decisions
 
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| OCP over mesh-based generation | Solid B-rep produces clean manifold geometry; mesh approaches frequently have gaps and self-intersections | — Pending |
-| Parameter-driven templates over LLM code gen | Dramatically improves reliability; makes iteration predictable | — Pending |
-| Mobile-first responsive | Primary interaction is conversational text + photo upload, natural on mobile | — Pending |
-| Conversational wizard as core priority | This is the key differentiator and the hardest UX problem to solve | — Pending |
+| Decision                                     | Rationale                                                                                                 | Outcome   |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------- |
+| OCP over mesh-based generation               | Solid B-rep produces clean manifold geometry; mesh approaches frequently have gaps and self-intersections | — Pending |
+| Parameter-driven templates over LLM code gen | Dramatically improves reliability; makes iteration predictable                                            | — Pending |
+| Mobile-first responsive                      | Primary interaction is conversational text + photo upload, natural on mobile                              | — Pending |
+| Conversational wizard as core priority       | This is the key differentiator and the hardest UX problem to solve                                        | — Pending |
 
 ---
-*Last updated: 2026-03-08 after initialization*
+
+_Last updated: 2026-03-08 after initialization_
