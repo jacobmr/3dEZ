@@ -15,7 +15,7 @@ None
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Foundation** — Project scaffold, monorepo setup, dev tooling
+- [x] **Phase 1: Foundation** — Project scaffold, monorepo setup, dev tooling
 - [ ] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
 - [ ] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
 - [ ] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
@@ -36,7 +36,7 @@ Plans:
 
 - [x] 01-01: Backend scaffold — Python project with FastAPI, OCP dependencies, Docker dev environment
 - [x] 01-02: Frontend scaffold — React/Next.js app with Three.js, Tailwind, mobile-first layout
-- [ ] 01-03: Monorepo glue — Shared API types, dev scripts, CI pipeline, basic deployment config
+- [x] 01-03: Monorepo glue — Shared API types, dev scripts, CI pipeline, basic deployment config
 
 ### Phase 2: Conversation Engine
 
@@ -128,7 +128,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase                       | Plans Complete | Status      | Completed |
 | --------------------------- | -------------- | ----------- | --------- |
-| 1. Foundation               | 2/3            | In progress | -         |
+| 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
 | 2. Conversation Engine      | 0/4            | Not started | -         |
 | 3. Parametric Modeler       | 0/4            | Not started | -         |
 | 4. 3D Preview               | 0/3            | Not started | -         |

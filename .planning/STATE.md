@@ -5,35 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Conversation Engine
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-03-09 — Completed 01-02 (frontend scaffold)
+Phase: 1 of 7 (Foundation) — COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-03-09 — Completed 01-03 (monorepo glue)
 
-Progress: ██░░░░░░░░ 9%
+Progress: █░░░░░░░░░ 13%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 22 min
-- Total execution time: 0.75 hours
+- Total plans completed: 3
+- Average duration: 16 min
+- Total execution time: 0.8 hours
 
 **By Phase:**
 
 | Phase         | Plans | Total  | Avg/Plan |
 | ------------- | ----- | ------ | -------- |
-| 1. Foundation | 2/3   | 45 min | 22 min   |
+| 1. Foundation | 3/3   | 48 min | 16 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 16m, 29m
-- Trend: —
+- Last 5 plans: 16m, 29m, 3m
+- Trend: Accelerating
 
 ## Accumulated Context
 
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - Standalone output mode for future Docker production builds
 - API proxy rewrites in next.config.ts (frontend :3000 → backend :8000)
 - 40%/60% desktop split for conversation/preview panels
+- Shared types in shared/ dir with tsconfig path alias @shared/*
+- Makefile over npm scripts for cross-service orchestration
+- Parallel CI jobs (backend + frontend) without Docker/OCP
 
 ### Deferred Issues
 
@@ -61,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Plan 01-02 complete, ready for 01-03
+Stopped at: Phase 1 complete, ready for Phase 2
 Resume file: None
