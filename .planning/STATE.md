@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 4.1 — Server Deployment & CI/CD (next up)
+**Current focus:** Phase 5 — Photo Upload (next up)
 
 ## Current Position
 
-Phase: 4.1 of 7 (Server Deployment & CI/CD)
-Plan: 0 of 1 in current phase
+Phase: 5 of 7 (Photo Upload)
+Plan: 0 of 3 in current phase
 Status: Ready to plan
-Last activity: 2026-03-09 — Completed 04-03-PLAN.md (checkpoint deferred to post-deployment)
+Last activity: 2026-03-09 — Completed 04.1-01-PLAN.md, Phase 4.1 complete
 
-Progress: ██████████░░ 52%
+Progress: ███████████░ 56%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 9 min
-- Total execution time: 2.82 hours
+- Total execution time: 2.98 hours
 
 **By Phase:**
 
@@ -32,11 +32,12 @@ Progress: ██████████░░ 52%
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
 | 4. 3D Preview          | 3/3   | 91 min | 30 min   |
+| 4.1 Server Deployment  | 1/1   | 13 min | 13 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 3m, 7m, 30m, 3m, 58m
-- Trend: 04-03 included pause for server setup discussion
+- Last 5 plans: 7m, 30m, 3m, 58m, 13m
+- Trend: Stable execution times
 
 ## Accumulated Context
 
@@ -92,6 +93,10 @@ Recent decisions affecting current work:
 - Stale response discard pattern in usePreview hook
 - 503 error shows Docker-specific message in PreviewPanel
 - Server: ez3d.salundo.com on Hetzner (SSH key: id_ed25519)
+- Frontend build context at repo root (shared/ imports require monorepo context)
+- Caddy reverse proxy with auto-HTTPS (simpler than nginx + certbot)
+- No external ports for backend/frontend — Caddy is sole entry point
+- SQLite data volume at /app/data for persistence across container restarts
 
 ### Deferred Issues
 
@@ -104,6 +109,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 04-03-PLAN.md, Phase 4 complete, Phase 4.1 inserted for server deployment
+Stopped at: Completed 04.1-01-PLAN.md, Phase 4.1 complete
 Resume file: None
-Note: 04-03 checkpoint (end-to-end verification) deferred until server deployed
+Note: Production Docker config ready — deploy with `make deploy` after .env.production on server

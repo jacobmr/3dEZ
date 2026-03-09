@@ -19,7 +19,7 @@ None
 - [x] **Phase 2: Conversation Engine** — Claude API multi-turn conversation with structured parameter extraction
 - [x] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
 - [x] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
-- [ ] **Phase 4.1: Server Deployment & CI/CD** — Hetzner server setup, Docker deployment, GitHub Actions pipeline (INSERTED)
+- [x] **Phase 4.1: Server Deployment & CI/CD** — Hetzner server setup, Docker deployment, GitHub Actions pipeline (INSERTED)
 - [ ] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
 - [ ] **Phase 6: Conversational Iteration** — Natural language design modification and re-render loop
 - [ ] **Phase 7: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
@@ -87,11 +87,11 @@ Plans:
 **Goal**: Production deployment on Hetzner server with Docker, firewall, CI/CD pipeline via GitHub Actions
 **Depends on**: Phase 4 (need working app to deploy)
 **Research**: Unlikely (standard DevOps)
-**Plans**: TBD (to be planned)
+**Plans**: 1 plan
 
 Plans:
 
-- [ ] 04.1-01: Server setup & deployment — Hetzner server hardening, Docker Compose production config, firewall, DNS, app deployment
+- [x] 04.1-01: Server setup & deployment — Production Docker config, Caddy reverse proxy, multi-stage Dockerfiles
 
 ### Phase 5: Photo Upload
 
@@ -144,7 +144,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7
 | 2. Conversation Engine           | 5/5            | Complete    | 2026-03-09 |
 | 3. Parametric Modeler            | 3/3            | Complete    | 2026-03-09 |
 | 4. 3D Preview                    | 3/3            | Complete    | 2026-03-09 |
-| 4.1 Server Deployment & CI/CD   | 0/1            | Not started | -          |
+| 4.1 Server Deployment & CI/CD   | 1/1            | Complete    | 2026-03-09 |
 | 5. Photo Upload                  | 0/3            | Not started | -          |
 | 6. Conversational Iteration      | 0/3            | Not started | -          |
 | 7. Integration & Polish          | 0/3            | Not started | -          |
