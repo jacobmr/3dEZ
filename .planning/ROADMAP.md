@@ -77,7 +77,7 @@ Plans:
 
 Plans:
 
-- [ ] 04-01: Three.js renderer — Load and display STL/glTF, orbit controls, lighting, mobile WebGL
+- [x] 04-01: Three.js renderer — Load and display STL/glTF, orbit controls, lighting, mobile WebGL
 - [ ] 04-02: Dimension overlays — Display key measurements on the 3D model, annotation system
 - [ ] 04-03: Preview integration — Connect modeler output to renderer, loading states, error display
 
@@ -131,7 +131,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
 | 2. Conversation Engine      | 5/5            | Complete    | 2026-03-09 |
 | 3. Parametric Modeler       | 3/3            | Complete    | 2026-03-09 |
-| 4. 3D Preview               | 0/3            | Not started | -          |
+| 4. 3D Preview               | 1/3            | In progress | -          |
 | 5. Photo Upload             | 0/3            | Not started | -          |
 | 6. Conversational Iteration | 0/3            | Not started | -          |
 | 7. Integration & Polish     | 0/3            | Not started | -          |

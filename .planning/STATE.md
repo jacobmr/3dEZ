@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 3 — Parametric Modeler (complete)
+**Current focus:** Phase 4 — 3D Preview (in progress)
 
 ## Current Position
 
-Phase: 3 of 7 (Parametric Modeler)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-03-09 — Completed 03-03-PLAN.md
+Phase: 4 of 7 (3D Preview)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-03-09 — Completed 04-01-PLAN.md
 
-Progress: ████████░░ 39%
+Progress: █████████░ 43%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 11
-- Average duration: 7 min
-- Total execution time: 1.3 hours
+- Total plans completed: 12
+- Average duration: 8 min
+- Total execution time: 1.8 hours
 
 **By Phase:**
 
@@ -31,11 +31,12 @@ Progress: ████████░░ 39%
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
+| 4. 3D Preview          | 1/3   | 30 min | 30 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 3m, 4m, 9m, 3m, 7m
-- Trend: Consistent ~6 min for modeler plans
+- Last 5 plans: 4m, 9m, 3m, 7m, 30m
+- Trend: 04-01 longer due to checkpoint wait time
 
 ## Accumulated Context
 
@@ -80,6 +81,9 @@ Recent decisions affecting current work:
 - trimesh for mesh validation (lightweight, no GUI deps)
 - Validation-in-pipeline: validate_mesh() runs after every STL export
 - 503 guard on /api/generate when build123d unavailable (non-Docker)
+- ArrayBuffer → STLLoader.parse() in useMemo (POST-based, not useLoader)
+- frameloop="demand" for mobile battery savings
+- Geometry dispose on unmount via useEffect cleanup
 
 ### Deferred Issues
 
@@ -92,5 +96,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 03-03-PLAN.md — Phase 3 complete
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
