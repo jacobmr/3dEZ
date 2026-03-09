@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.conversations import router as conversations_router
 from app.api.designs import router as designs_router
+from app.api.generate import router as generate_router
 from app.api.health import router as health_router
 from app.db.engine import create_tables
 
@@ -30,3 +31,4 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(conversations_router)
 app.include_router(designs_router)
+app.include_router(generate_router)
