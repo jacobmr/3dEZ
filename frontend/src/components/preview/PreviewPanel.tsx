@@ -8,6 +8,10 @@ interface PreviewPanelProps {
   stlBytes: ArrayBuffer | null;
   isLoading: boolean;
   error: string | null;
+  /** Design category for dimension annotations. */
+  category?: string;
+  /** Design parameters for dimension annotations. */
+  params?: Record<string, unknown>;
 }
 
 function LoadingSpinner() {
@@ -59,6 +63,8 @@ export default function PreviewPanel({
   stlBytes,
   isLoading,
   error,
+  category,
+  params,
 }: PreviewPanelProps) {
   let content: React.ReactNode;
 
@@ -77,7 +83,7 @@ export default function PreviewPanel({
           gl={{ antialias: true }}
           className="flex-1"
         >
-          <StlViewer stlBytes={stlBytes} />
+          <StlViewer stlBytes={stlBytes} category={category} params={params} />
         </Canvas>
       </Suspense>
     );
