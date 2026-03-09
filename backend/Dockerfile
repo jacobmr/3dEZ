@@ -8,7 +8,8 @@ WORKDIR /app
 COPY pyproject.toml .
 COPY src/ src/
 
-RUN pip install --no-cache-dir cadquery build123d
+RUN pip install --no-cache-dir hatchling
+RUN pip install --no-cache-dir cadquery build123d trimesh
 RUN pip install --no-cache-dir .
 
 ###############################################################################
@@ -17,7 +18,9 @@ RUN pip install --no-cache-dir .
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
+    libgl1-mesa-dri \
+    libegl1 \
     libglu1-mesa \
     libx11-6 \
     libxext6 \
