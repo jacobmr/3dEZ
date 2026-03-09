@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 ## Current Position
 
 Phase: 4 of 7 (3D Preview)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-03-09 — Completed 04-01-PLAN.md
+Last activity: 2026-03-09 — Completed 04-02-PLAN.md
 
-Progress: █████████░ 43%
+Progress: ██████████░ 48%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 8 min
-- Total execution time: 1.8 hours
+- Total execution time: 1.85 hours
 
 **By Phase:**
 
@@ -31,12 +31,12 @@ Progress: █████████░ 43%
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
-| 4. 3D Preview          | 1/3   | 30 min | 30 min   |
+| 4. 3D Preview          | 2/3   | 33 min | 17 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 4m, 9m, 3m, 7m, 30m
-- Trend: 04-01 longer due to checkpoint wait time
+- Last 5 plans: 9m, 3m, 7m, 30m, 3m
+- Trend: 04-02 fast (no checkpoints, clean autonomous execution)
 
 ## Accumulated Context
 
@@ -84,6 +84,10 @@ Recent decisions affecting current work:
 - ArrayBuffer → STLLoader.parse() in useMemo (POST-based, not useLoader)
 - frameloop="demand" for mobile battery savings
 - Geometry dispose on unmount via useEffect cleanup
+- Billboard + Text with outline for camera-facing dimension labels
+- Color-coded dimensions: yellow=width, cyan=height, orange=depth, green=thickness
+- onBoundsComputed callback for child→parent geometry data flow
+- 10% bounding box offset for dimension line positioning
 
 ### Deferred Issues
 
@@ -96,5 +100,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 04-01-PLAN.md
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
