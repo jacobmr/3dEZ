@@ -9,30 +9,31 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation) — COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-03-09 — Completed 01-03 (monorepo glue)
+Phase: 2 of 7 (Conversation Engine) — IN PROGRESS
+Plan: 1 of 5 complete in current phase
+Status: Executing phase plans
+Last activity: 2026-03-09 — Completed 02-01 (Claude API client & data layer)
 
-Progress: █░░░░░░░░░ 13%
+Progress: █▓░░░░░░░░ 17%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
-- Average duration: 16 min
-- Total execution time: 0.8 hours
+- Total plans completed: 4
+- Average duration: 13 min
+- Total execution time: 0.85 hours
 
 **By Phase:**
 
-| Phase         | Plans | Total  | Avg/Plan |
-| ------------- | ----- | ------ | -------- |
-| 1. Foundation | 3/3   | 48 min | 16 min   |
+| Phase                  | Plans | Total  | Avg/Plan |
+| ---------------------- | ----- | ------ | -------- |
+| 1. Foundation          | 3/3   | 48 min | 16 min   |
+| 2. Conversation Engine | 1/5   | 3 min  | 3 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 16m, 29m, 3m
+- Last 5 plans: 16m, 29m, 3m, 3m
 - Trend: Accelerating
 
 ## Accumulated Context
@@ -52,6 +53,10 @@ Recent decisions affecting current work:
 - Shared types in shared/ dir with tsconfig path alias @shared/*
 - Makefile over npm scripts for cross-service orchestration
 - Parallel CI jobs (backend + frontend) without Docker/OCP
+- pydantic-settings as separate dependency (required for Pydantic v2 Settings classes)
+- Lazy singleton pattern for AsyncAnthropic client (no global mutable state)
+- SQLite with aiosqlite for V1, migration path to PostgreSQL via DATABASE_URL config
+- UUID4 primary keys on all tables for distributed-safe IDs
 
 ### Deferred Issues
 
@@ -64,5 +69,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Phase 1 complete, ready for Phase 2
+Stopped at: Phase 2, Plan 1 complete — executing remaining plans
 Resume file: None
