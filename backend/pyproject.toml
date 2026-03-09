@@ -8,6 +8,10 @@ dependencies = [
     "uvicorn[standard]",
     "python-multipart",
     "pydantic>=2",
+    "pydantic-settings>=2",
+    "anthropic",
+    "sqlalchemy[asyncio]",
+    "aiosqlite",
 ]
 
 [project.optional-dependencies]
