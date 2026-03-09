@@ -184,6 +184,44 @@ export async function getDesign(id: string): Promise<SavedDesign> {
   return json<SavedDesign>(res);
 }
 
+/* ------------------------------------------------------------------ */
+/*  STL generation                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Request STL generation from the parametric modeler.
+ *
+ * POST /api/generate with `{category, parameters}`.
+ * Returns the raw binary STL bytes.
+ */
+export async function generateStl(
+  category: string,
+  parameters: Record<string, unknown>,
+): Promise<ArrayBuffer> {
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({ category, parameters }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+
+    if (res.status === 503) {
+      throw new Error("3D preview requires Docker environment");
+    }
+    if (res.status === 400) {
+      throw new Error(`Invalid category: ${body}`);
+    }
+    if (res.status === 422) {
+      throw new Error(`Invalid parameters: ${body}`);
+    }
+    throw new Error(`STL generation failed (${res.status}): ${body}`);
+  }
+
+  return res.arrayBuffer();
+}
+
 /* Re-export types for convenience */
 export type {
   ConversationSummary,
