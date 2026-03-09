@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 ## Current Position
 
 Phase: 3 of 7 (Parametric Modeler)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-03-09 — Completed 03-01-PLAN.md
+Last activity: 2026-03-09 — Completed 03-02-PLAN.md
 
-Progress: ██████░░░░ 25%
+Progress: ██████░░░░ 29%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
-- Average duration: 8 min
+- Total plans completed: 10
+- Average duration: 7 min
 - Total execution time: 1.2 hours
 
 **By Phase:**
@@ -30,12 +30,12 @@ Progress: ██████░░░░ 25%
 | ---------------------- | ----- | ------ | -------- |
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
 | 2. Conversation Engine | 5/5   | 15 min | 3 min    |
-| 3. Parametric Modeler  | 1/4   | 9 min  | 9 min    |
+| 3. Parametric Modeler  | 2/4   | 12 min | 6 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 2m, 3m, 3m, 4m, 9m
-- Trend: Modeler tasks heavier (Docker verification)
+- Last 5 plans: 3m, 3m, 4m, 9m, 3m
+- Trend: Template implementation faster than engine setup
 
 ## Accumulated Context
 
@@ -74,6 +74,9 @@ Recent decisions affecting current work:
 - tempfile-based STL export (build123d export_stl requires file path, not BytesIO)
 - libgl1 added to Dockerfile.dev for OCP OpenGL dependency
 - Template registry pattern on ModelEngine for category→function routing
+- create_engine() factory for auto-registering templates from TEMPLATE_REGISTRY
+- Fillet-last with try/except fallback for OCCT geometry failures
+- BuildPart + GridLocations for patterned hole placement
 
 ### Deferred Issues
 
@@ -86,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
