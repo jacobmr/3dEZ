@@ -9,7 +9,7 @@ interface ChatPanelProps {
   isStreaming: boolean;
   error: string | null;
   hasDesign: boolean;
-  onSend: (text: string) => void;
+  onSend: (text: string, photo?: File) => void;
   onStartNew: () => void;
 }
 
@@ -65,13 +65,8 @@ export default function ChatPanel({
 
       {/* Input */}
       <MessageInput
-        onSend={(text) => {
-          if (hasDesign) {
-            // If there's an active design, treat new messages as revisions
-            onSend(text);
-          } else {
-            onSend(text);
-          }
+        onSend={(text, photo) => {
+          onSend(text, photo);
         }}
         disabled={isStreaming}
         placeholder={

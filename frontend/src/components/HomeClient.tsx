@@ -6,6 +6,7 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
 import { usePreview } from "@/hooks/usePreview";
+import { uploadPhoto } from "@/lib/api";
 
 export default function HomeClient() {
   const {
@@ -31,7 +32,16 @@ export default function HomeClient() {
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
 
   const handleSend = useCallback(
-    (text: string) => {
+    async (text: string, photo?: File) => {
+      // If photo is attached and we have a conversation, upload it first
+      if (photo && conversationId) {
+        try {
+          await uploadPhoto(conversationId, photo);
+        } catch {
+          // Photo upload failed — still send the text message
+        }
+      }
+
       if (currentDesign) {
         reviseDesign(text);
       } else {
@@ -40,7 +50,7 @@ export default function HomeClient() {
       // Refresh sidebar after a short delay to pick up new conversations
       setTimeout(() => setSidebarRefreshKey((k) => k + 1), 1500);
     },
-    [currentDesign, reviseDesign, sendMessage],
+    [conversationId, currentDesign, reviseDesign, sendMessage],
   );
 
   const handleSelectConversation = useCallback(

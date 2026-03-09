@@ -222,6 +222,25 @@ export async function generateStl(
   return res.arrayBuffer();
 }
 
+/* ------------------------------------------------------------------ */
+/*  Photo endpoints                                                    */
+/* ------------------------------------------------------------------ */
+
+export async function uploadPhoto(
+  conversationId: string,
+  file: File,
+): Promise<{ id: string; filename: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`/api/conversations/${conversationId}/photos`, {
+    method: "POST",
+    headers: { "X-Session-ID": getSessionId() },
+    // No Content-Type — browser sets multipart boundary automatically
+    body: formData,
+  });
+  return json<{ id: string; filename: string }>(res);
+}
+
 /* Re-export types for convenience */
 export type {
   ConversationSummary,
