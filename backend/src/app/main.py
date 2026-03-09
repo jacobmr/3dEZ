@@ -1,9 +1,21 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
+from app.db.engine import create_tables
 
-app = FastAPI(title="3dEZ Backend")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    """Startup / shutdown lifecycle hook."""
+    await create_tables()
+    yield
+
+
+app = FastAPI(title="3dEZ Backend", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
