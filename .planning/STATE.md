@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 ## Current Position
 
 Phase: 2 of 7 (Conversation Engine) — IN PROGRESS
-Plan: 3 of 5 complete in current phase
+Plan: 4 of 5 complete in current phase
 Status: Executing phase plans
-Last activity: 2026-03-09 — Completed 02-03 (design wizard & conversation service)
+Last activity: 2026-03-09 — Completed 02-04 (conversation API endpoints)
 
 Progress: █▓░░░░░░░░ 17%
 
@@ -20,21 +20,21 @@ Progress: █▓░░░░░░░░ 17%
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: 10 min
-- Total execution time: 0.93 hours
+- Total plans completed: 7
+- Average duration: 8 min
+- Total execution time: 0.98 hours
 
 **By Phase:**
 
 | Phase                  | Plans | Total  | Avg/Plan |
 | ---------------------- | ----- | ------ | -------- |
 | 1. Foundation          | 3/3   | 48 min | 16 min   |
-| 2. Conversation Engine | 3/5   | 8 min  | 2.7 min  |
+| 2. Conversation Engine | 4/5   | 11 min | 2.8 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 29m, 3m, 3m, 2m, 3m
-- Trend: Accelerating
+- Last 5 plans: 3m, 3m, 2m, 3m, 3m
+- Trend: Stable fast
 
 ## Accumulated Context
 
@@ -63,6 +63,9 @@ Recent decisions affecting current work:
 - Non-streaming create_message() for tool use detection (stream_message only yields text)
 - Async generator event dicts for SSE consumption pattern
 - prompts/ and services/ packages for system prompt and business logic
+- SSE via StreamingResponse with POST (not WebSocket)
+- Session upsert on every request via get_session_id dependency
+- Ownership guard pattern for multi-tenant conversation access
 
 ### Deferred Issues
 
@@ -75,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Phase 2, Plan 3 complete — executing remaining plans
+Stopped at: Phase 2, Plan 4 complete — executing remaining plans
 Resume file: None
