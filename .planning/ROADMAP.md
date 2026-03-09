@@ -50,7 +50,7 @@ Plans:
 
 - [x] 02-01: Claude API client & data layer — Async Anthropic client, SQLAlchemy models, session-based multi-tenancy
 - [x] 02-02: Parameter schemas & tool definitions — Pydantic design models, Claude tool schemas, TypeScript mirrors
-- [ ] 02-03: Design wizard & conversation service — System prompt, ConversationService orchestrator with tool use
+- [x] 02-03: Design wizard & conversation service — System prompt, ConversationService orchestrator with tool use
 - [ ] 02-04: Conversation API endpoints — REST CRUD + SSE streaming endpoints for real-time conversation
 - [ ] 02-05: Conversation UI & design management — Chat components, saved designs sidebar, revision flow
 
@@ -130,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase                       | Plans Complete | Status      | Completed  |
 | --------------------------- | -------------- | ----------- | ---------- |
 | 1. Foundation               | 3/3            | Complete    | 2026-03-09 |
-| 2. Conversation Engine      | 2/5            | In progress | -          |
+| 2. Conversation Engine      | 3/5            | In progress | -          |
 | 3. Parametric Modeler       | 0/4            | Not started | -          |
 | 4. 3D Preview               | 0/3            | Not started | -          |
 | 5. Photo Upload             | 0/3            | Not started | -          |
