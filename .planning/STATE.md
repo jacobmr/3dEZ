@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 ## Current Position
 
 Phase: 5 of 7 (Photo Upload)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-03-09 — Completed 05-01-PLAN.md
+Last activity: 2026-03-09 — Completed 05-02-PLAN.md
 
-Progress: ████████████░ 59%
+Progress: █████████████░ 63%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 9 min
-- Total execution time: 3.05 hours
+- Total execution time: 3.1 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: ████████████░ 59%
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
 | 4. 3D Preview          | 3/3   | 91 min | 30 min   |
 | 4.1 Server Deployment  | 1/1   | 13 min | 13 min   |
-| 5. Photo Upload        | 1/3   | 4 min  | 4 min    |
+| 5. Photo Upload        | 2/3   | 7 min  | 4 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 30m, 3m, 58m, 13m, 4m
+- Last 5 plans: 3m, 58m, 13m, 4m, 3m
 - Trend: Stable execution times
 
 ## Accumulated Context
@@ -101,6 +101,9 @@ Recent decisions affecting current work:
 - Disk storage for photos at data/photos/{session_id}/ (not DB blobs)
 - Client-side canvas resize to 1568px max edge before upload (Claude Vision optimal)
 - Photo linked to conversation (not message) for cross-message reference
+- photo_ids JSON column on Message for multi-photo support per message
+- Async _build_api_messages with db session for on-demand base64 encoding
+- photo_analysis SSE event type for streaming analyze_photo tool results
 
 ### Deferred Issues
 
@@ -113,5 +116,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed 05-01-PLAN.md
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

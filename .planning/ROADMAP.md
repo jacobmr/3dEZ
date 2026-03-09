@@ -103,8 +103,8 @@ Plans:
 
 Plans:
 
-- [ ] 05-01: Photo upload UI — Mobile camera capture, gallery upload, image compression, upload endpoint
-- [ ] 05-02: Vision analysis — Claude Vision integration, reference object detection, context extraction
+- [x] 05-01: Photo upload UI — Mobile camera capture, gallery upload, image compression, upload endpoint
+- [x] 05-02: Vision analysis — Claude Vision integration, reference object detection, context extraction
 - [ ] 05-03: Dimension inference — Estimate dimensions from reference objects, user confirmation flow
 
 ### Phase 6: Conversational Iteration
@@ -145,6 +145,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7
 | 3. Parametric Modeler         | 3/3            | Complete    | 2026-03-09 |
 | 4. 3D Preview                 | 3/3            | Complete    | 2026-03-09 |
 | 4.1 Server Deployment & CI/CD | 1/1            | Complete    | 2026-03-09 |
-| 5. Photo Upload               | 1/3            | In progress | -          |
+| 5. Photo Upload               | 2/3            | In progress | -          |
 | 6. Conversational Iteration   | 0/3            | Not started | -          |
 | 7. Integration & Polish       | 0/3            | Not started | -          |
