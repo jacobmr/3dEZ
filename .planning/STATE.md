@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 5 — Photo Upload (planned, ready to execute)
+**Current focus:** Phase 5 — Photo Upload (in progress)
 
 ## Current Position
 
 Phase: 5 of 7 (Photo Upload)
-Plan: 0 of 3 in current phase
-Status: Planned — ready to execute 05-01
-Last activity: 2026-03-09 — Created Phase 5 plans (05-01, 05-02, 05-03)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-03-09 — Completed 05-01-PLAN.md
 
-Progress: ███████████░ 56%
+Progress: ████████████░ 59%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 9 min
-- Total execution time: 2.98 hours
+- Total execution time: 3.05 hours
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: ███████████░ 56%
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
 | 4. 3D Preview          | 3/3   | 91 min | 30 min   |
 | 4.1 Server Deployment  | 1/1   | 13 min | 13 min   |
+| 5. Photo Upload        | 1/3   | 4 min  | 4 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 7m, 30m, 3m, 58m, 13m
+- Last 5 plans: 30m, 3m, 58m, 13m, 4m
 - Trend: Stable execution times
 
 ## Accumulated Context
@@ -97,6 +98,9 @@ Recent decisions affecting current work:
 - Caddy reverse proxy with auto-HTTPS (simpler than nginx + certbot)
 - No external ports for backend/frontend — Caddy is sole entry point
 - SQLite data volume at /app/data for persistence across container restarts
+- Disk storage for photos at data/photos/{session_id}/ (not DB blobs)
+- Client-side canvas resize to 1568px max edge before upload (Claude Vision optimal)
+- Photo linked to conversation (not message) for cross-message reference
 
 ### Deferred Issues
 
@@ -109,6 +113,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Created Phase 5 plans (05-01, 05-02, 05-03)
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
-Note: Phase 5 planned with 3 plans. Execute with /gsd:execute-plan starting at 05-01.
