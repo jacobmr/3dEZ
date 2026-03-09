@@ -5,6 +5,7 @@ import AppShell from "@/components/layout/AppShell";
 import ChatPanel from "@/components/chat/ChatPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
+import { usePreview } from "@/hooks/usePreview";
 
 export default function HomeClient() {
   const {
@@ -18,6 +19,13 @@ export default function HomeClient() {
     loadConversation,
     startNew,
   } = useConversation();
+
+  const {
+    stlBytes,
+    isLoading: previewLoading,
+    error: previewError,
+    regenerate,
+  } = usePreview(currentDesign);
 
   // Bump to force sidebar refresh after mutations
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
@@ -63,7 +71,14 @@ export default function HomeClient() {
         />
       }
       previewPanel={
-        <PreviewPanel stlBytes={null} isLoading={false} error={null} />
+        <PreviewPanel
+          stlBytes={stlBytes}
+          isLoading={previewLoading}
+          error={previewError}
+          category={currentDesign?.params.category}
+          params={currentDesign?.params as Record<string, unknown> | undefined}
+          onRetry={regenerate}
+        />
       }
     />
   );

@@ -12,6 +12,8 @@ interface PreviewPanelProps {
   category?: string;
   /** Design parameters for dimension annotations. */
   params?: Record<string, unknown>;
+  /** Callback to retry STL generation after an error. */
+  onRetry?: () => void;
 }
 
 function LoadingSpinner() {
@@ -19,18 +21,36 @@ function LoadingSpinner() {
     <div className="flex flex-1 items-center justify-center p-6">
       <div className="flex flex-col items-center gap-3 text-zinc-400">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-300" />
-        <p className="text-sm">Generating model&hellip;</p>
+        <p className="text-sm">Generating 3D model&hellip;</p>
       </div>
     </div>
   );
 }
 
-function ErrorState({ message }: { message: string }) {
+function ErrorState({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) {
+  const isDockerError = message.includes("Docker environment");
+
   return (
     <div className="flex flex-1 items-center justify-center p-6 text-center">
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-3">
         <div className="text-2xl text-red-400">&#9888;</div>
-        <p className="text-sm text-red-300">{message}</p>
+        <p className="text-sm text-red-300">
+          {isDockerError ? "3D preview requires Docker environment" : message}
+        </p>
+        {onRetry && !isDockerError && (
+          <button
+            onClick={onRetry}
+            className="rounded-md border border-zinc-600 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-800"
+          >
+            Retry
+          </button>
+        )}
       </div>
     </div>
   );
@@ -65,26 +85,33 @@ export default function PreviewPanel({
   error,
   category,
   params,
+  onRetry,
 }: PreviewPanelProps) {
   let content: React.ReactNode;
 
   if (isLoading) {
     content = <LoadingSpinner />;
   } else if (error) {
-    content = <ErrorState message={error} />;
+    content = <ErrorState message={error} onRetry={onRetry} />;
   } else if (!stlBytes) {
     content = <EmptyState />;
   } else {
     content = (
       <Suspense fallback={<CanvasFallback />}>
-        <Canvas
-          frameloop="demand"
-          camera={{ position: [0, 0, 100], fov: 50 }}
-          gl={{ antialias: true }}
-          className="flex-1"
-        >
-          <StlViewer stlBytes={stlBytes} category={category} params={params} />
-        </Canvas>
+        <div className="flex flex-1 animate-fade-in">
+          <Canvas
+            frameloop="demand"
+            camera={{ position: [0, 0, 100], fov: 50 }}
+            gl={{ antialias: true }}
+            className="flex-1"
+          >
+            <StlViewer
+              stlBytes={stlBytes}
+              category={category}
+              params={params}
+            />
+          </Canvas>
+        </div>
       </Suspense>
     );
   }
