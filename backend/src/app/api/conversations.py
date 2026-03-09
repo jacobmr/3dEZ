@@ -42,6 +42,7 @@ class StartConversationResponse(BaseModel):
 
 class SendMessageRequest(BaseModel):
     message: str
+    photo_id: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -158,7 +159,7 @@ async def send_message(
     service = ConversationService(db)
     await _verify_conversation_ownership(conversation_id, session_id, service)
 
-    events = service.send_message(conversation_id, body.message)
+    events = service.send_message(conversation_id, body.message, photo_id=body.photo_id)
     return StreamingResponse(
         _sse_stream(events),
         media_type="text/event-stream",

@@ -91,6 +91,7 @@ class Message(Base):
     role: Mapped[str] = mapped_column(String(20))  # user / assistant / system
     content: Mapped[str] = mapped_column(Text)
     tool_use: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    photo_ids: Mapped[list | None] = mapped_column(JSON, nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

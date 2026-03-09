@@ -6,9 +6,11 @@ parameter extraction and clarification requests.
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
 from collections.abc import AsyncGenerator
+from pathlib import Path
 from typing import Any
 
 from pydantic import ValidationError
@@ -18,7 +20,7 @@ from sqlalchemy.orm import selectinload
 
 from app.core.claude_client import get_client
 from app.core.config import get_settings
-from app.db.models import Conversation, Design, Message
+from app.db.models import Conversation, Design, Message, Photo
 from app.models.designs import DesignParamsUnion
 from app.models.tools import DESIGN_TOOLS
 from app.prompts.design_wizard import get_system_prompt
@@ -45,7 +47,10 @@ class ConversationService:
         return conversation
 
     async def send_message(
-        self, conversation_id: str, user_content: str
+        self,
+        conversation_id: str,
+        user_content: str,
+        photo_id: str | None = None,
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Send a user message and yield response events.
 
@@ -66,12 +71,15 @@ class ConversationService:
                 conversation_id=conversation_id,
                 role="user",
                 content=user_content,
+                photo_ids=[photo_id] if photo_id else None,
             )
             self._db.add(user_msg)
             await self._db.commit()
 
             # Build API messages from conversation history
-            api_messages = self._build_api_messages(conversation.messages + [user_msg])
+            api_messages = await self._build_api_messages(
+                conversation.messages + [user_msg], self._db
+            )
             system_prompt = get_system_prompt(
                 self._build_context(conversation)
             )
@@ -259,14 +267,34 @@ class ConversationService:
         return result.scalar_one_or_none()
 
     @staticmethod
-    def _build_api_messages(
+    async def _build_api_messages(
         db_messages: list[Message],
+        db: AsyncSession,
     ) -> list[dict[str, Any]]:
         """Convert DB message records to Anthropic API message format."""
         api_msgs: list[dict[str, Any]] = []
         for msg in db_messages:
             if msg.role == "user":
-                api_msgs.append({"role": "user", "content": msg.content})
+                if msg.photo_ids:
+                    content_blocks: list[dict[str, Any]] = [
+                        {"type": "text", "text": msg.content},
+                    ]
+                    for photo_id in msg.photo_ids:
+                        photo = await db.get(Photo, photo_id)
+                        if photo:
+                            image_data = Path(photo.file_path).read_bytes()
+                            b64 = base64.b64encode(image_data).decode()
+                            content_blocks.append({
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": photo.content_type,
+                                    "data": b64,
+                                },
+                            })
+                    api_msgs.append({"role": "user", "content": content_blocks})
+                else:
+                    api_msgs.append({"role": "user", "content": msg.content})
             elif msg.role == "assistant":
                 content_blocks: list[dict[str, Any]] = []
                 if msg.content:

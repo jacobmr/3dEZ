@@ -100,7 +100,7 @@ export function useConversation() {
   );
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (text: string, photoId?: string) => {
       if (isStreaming || !text.trim()) return;
 
       setError(null);
@@ -124,7 +124,7 @@ export function useConversation() {
         ]);
 
         // Stream assistant response
-        const stream = streamMessage(convId, text);
+        const stream = streamMessage(convId, text, photoId);
         await processStream(stream);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to send message");

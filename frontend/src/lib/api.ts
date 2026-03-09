@@ -141,11 +141,12 @@ export async function deleteConversation(id: string): Promise<void> {
 export async function* streamMessage(
   conversationId: string,
   message: string,
+  photoId?: string,
 ): AsyncGenerator<SSEEvent, void, unknown> {
   const res = await fetch(`/api/conversations/${conversationId}/message`, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, ...(photoId && { photo_id: photoId }) }),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
