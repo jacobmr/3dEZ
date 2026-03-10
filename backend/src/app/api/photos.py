@@ -99,8 +99,9 @@ async def upload_photo(
     - File is an image (content_type starts with image/)
     - File size <= 5 MB
     """
-    # Ownership check
-    await _verify_conversation_ownership(conversation_id, ctx, db)
+    # Ownership check — returns conversation so we can use its session_id
+    conversation = await _verify_conversation_ownership(conversation_id, ctx, db)
+    owner_session_id = conversation.session_id
 
     # Validate content type
     content_type = file.content_type or ""
@@ -126,13 +127,13 @@ async def upload_photo(
     }
     ext = ext_map.get(content_type, ".jpg")
 
-    # Generate photo ID and save to disk
+    # Generate photo ID and save to disk (use conversation's session, not current)
     photo_id = str(uuid.uuid4())
-    session_dir = PHOTOS_DIR / ctx.session_id
+    session_dir = PHOTOS_DIR / owner_session_id
     session_dir.mkdir(parents=True, exist_ok=True)
 
     filename = f"{photo_id}{ext}"
-    relative_path = f"photos/{ctx.session_id}/{filename}"
+    relative_path = f"photos/{owner_session_id}/{filename}"
     disk_path = DATA_DIR / relative_path
 
     disk_path.write_bytes(contents)
@@ -140,7 +141,7 @@ async def upload_photo(
     # Create DB record
     photo = Photo(
         id=photo_id,
-        session_id=ctx.session_id,
+        session_id=owner_session_id,
         conversation_id=conversation_id,
         filename=file.filename or filename,
         content_type=content_type,

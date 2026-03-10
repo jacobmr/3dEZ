@@ -314,9 +314,7 @@ export async function authMe(): Promise<AuthUser> {
 }
 
 export async function authLogout(): Promise<void> {
-  // Clear refresh cookie by calling a logout-like endpoint or just let it expire
-  // For now, just a no-op on the server side — cookie will be overwritten
-  await fetch("/api/auth/refresh", {
+  await fetch("/api/auth/logout", {
     method: "POST",
     credentials: "include",
   }).catch(() => {});

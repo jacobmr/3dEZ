@@ -138,6 +138,19 @@ async def refresh(
     return {"access_token": new_access}
 
 
+@router.post("/logout")
+async def logout(response: Response):
+    """Clear the refresh token cookie."""
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        path="/api/auth",
+    )
+    return {"ok": True}
+
+
 @router.get("/me", response_model=AuthUserResponse)
 async def me(
     authorization: str | None = Header(default=None),
