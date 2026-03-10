@@ -245,9 +245,13 @@ class ConversationService:
 
     async def list_conversations(self, session_id: str) -> list[dict[str, Any]]:
         """List all conversations for a session, newest first."""
+        return await self.list_conversations_multi([session_id])
+
+    async def list_conversations_multi(self, session_ids: list[str]) -> list[dict[str, Any]]:
+        """List all conversations for multiple sessions, newest first."""
         result = await self._db.execute(
             select(Conversation)
-            .where(Conversation.session_id == session_id)
+            .where(Conversation.session_id.in_(session_ids))
             .order_by(Conversation.updated_at.desc())
         )
         conversations = result.scalars().all()

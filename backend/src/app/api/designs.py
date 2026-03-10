@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.deps import get_session_id
+from app.api.deps import RequestContext, get_request_context
 from app.db.engine import get_db
 from app.db.models import Conversation, Design
 
@@ -22,14 +22,14 @@ router = APIRouter(prefix="/api/designs", tags=["designs"])
 
 @router.get("/")
 async def list_designs(
-    session_id: str = Depends(get_session_id),
+    ctx: RequestContext = Depends(get_request_context),
     db: AsyncSession = Depends(get_db),
 ) -> list[dict[str, Any]]:
-    """List saved designs for the current session, newest first."""
+    """List saved designs for the current session/user, newest first."""
     result = await db.execute(
         select(Design)
         .join(Conversation, Design.conversation_id == Conversation.id)
-        .where(Conversation.session_id == session_id)
+        .where(Conversation.session_id.in_(ctx.all_session_ids))
         .options(selectinload(Design.conversation))
         .order_by(Design.created_at.desc())
     )
@@ -52,14 +52,14 @@ async def list_designs(
 @router.get("/{design_id}")
 async def get_design(
     design_id: str,
-    session_id: str = Depends(get_session_id),
+    ctx: RequestContext = Depends(get_request_context),
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     """Get a single design by ID (must belong to session)."""
     result = await db.execute(
         select(Design)
         .join(Conversation, Design.conversation_id == Conversation.id)
-        .where(Design.id == design_id, Conversation.session_id == session_id)
+        .where(Design.id == design_id, Conversation.session_id.in_(ctx.all_session_ids))
         .options(selectinload(Design.conversation))
     )
     design = result.scalar_one_or_none()

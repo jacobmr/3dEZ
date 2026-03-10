@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_session_id
+from app.api.deps import RequestContext, get_request_context, get_session_id
 from app.db.engine import get_db
 from app.db.models import Conversation, Photo, PHOTO_MAX_SIZE_BYTES
 
@@ -51,28 +51,28 @@ class PhotoResponse(BaseModel):
 
 async def _verify_conversation_ownership(
     conversation_id: str,
-    session_id: str,
+    ctx: RequestContext,
     db: AsyncSession,
 ) -> Conversation:
-    """Load a conversation and verify it belongs to the given session."""
+    """Load a conversation and verify it belongs to the request context."""
     result = await db.execute(
         select(Conversation).where(Conversation.id == conversation_id)
     )
     conversation = result.scalar_one_or_none()
-    if conversation is None or conversation.session_id != session_id:
+    if conversation is None or conversation.session_id not in ctx.all_session_ids:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conversation
 
 
 async def _verify_photo_ownership(
     photo_id: str,
-    session_id: str,
+    ctx: RequestContext,
     db: AsyncSession,
 ) -> Photo:
-    """Load a photo and verify it belongs to the given session."""
+    """Load a photo and verify it belongs to the request context."""
     result = await db.execute(select(Photo).where(Photo.id == photo_id))
     photo = result.scalar_one_or_none()
-    if photo is None or photo.session_id != session_id:
+    if photo is None or photo.session_id not in ctx.all_session_ids:
         raise HTTPException(status_code=404, detail="Photo not found")
     return photo
 
@@ -89,7 +89,7 @@ async def _verify_photo_ownership(
 async def upload_photo(
     conversation_id: str,
     file: UploadFile,
-    session_id: str = Depends(get_session_id),
+    ctx: RequestContext = Depends(get_request_context),
     db: AsyncSession = Depends(get_db),
 ) -> PhotoResponse:
     """Upload a photo for a conversation.
@@ -100,7 +100,7 @@ async def upload_photo(
     - File size <= 5 MB
     """
     # Ownership check
-    await _verify_conversation_ownership(conversation_id, session_id, db)
+    await _verify_conversation_ownership(conversation_id, ctx, db)
 
     # Validate content type
     content_type = file.content_type or ""
@@ -128,11 +128,11 @@ async def upload_photo(
 
     # Generate photo ID and save to disk
     photo_id = str(uuid.uuid4())
-    session_dir = PHOTOS_DIR / session_id
+    session_dir = PHOTOS_DIR / ctx.session_id
     session_dir.mkdir(parents=True, exist_ok=True)
 
     filename = f"{photo_id}{ext}"
-    relative_path = f"photos/{session_id}/{filename}"
+    relative_path = f"photos/{ctx.session_id}/{filename}"
     disk_path = DATA_DIR / relative_path
 
     disk_path.write_bytes(contents)
@@ -140,7 +140,7 @@ async def upload_photo(
     # Create DB record
     photo = Photo(
         id=photo_id,
-        session_id=session_id,
+        session_id=ctx.session_id,
         conversation_id=conversation_id,
         filename=file.filename or filename,
         content_type=content_type,
@@ -161,11 +161,11 @@ async def upload_photo(
 @router.get("/photos/{photo_id}")
 async def get_photo(
     photo_id: str,
-    session_id: str = Depends(get_session_id),
+    ctx: RequestContext = Depends(get_request_context),
     db: AsyncSession = Depends(get_db),
 ) -> FileResponse:
     """Serve a photo file."""
-    photo = await _verify_photo_ownership(photo_id, session_id, db)
+    photo = await _verify_photo_ownership(photo_id, ctx, db)
 
     file_path = DATA_DIR / photo.file_path
     if not file_path.exists():
