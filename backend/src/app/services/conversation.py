@@ -279,7 +279,10 @@ class ConversationService:
         result = await self._db.execute(
             select(Conversation)
             .where(Conversation.id == conversation_id)
-            .options(selectinload(Conversation.messages))
+            .options(
+                selectinload(Conversation.messages),
+                selectinload(Conversation.designs),
+            )
         )
         return result.scalar_one_or_none()
 
