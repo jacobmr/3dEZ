@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     CLAUDE_MODEL: str = "claude-sonnet-4-5-20250929"
     DATABASE_URL: str = "sqlite+aiosqlite:///./3dez.db"
     SESSION_SECRET: str = "change-me-in-production"
+    JWT_SECRET_KEY: str = "change-me-in-production-jwt-secret"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

@@ -25,6 +25,23 @@ class Base(DeclarativeBase):
     pass
 
 
+class User(Base):
+    """Registered user account."""
+
+    __tablename__ = "users"
+
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=_new_uuid
+    )
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    sessions: Mapped[list[Session]] = relationship(back_populates="user")
+
+
 class Session(Base):
     """Anonymous user session (identified by client-side UUID token)."""
 
@@ -33,6 +50,9 @@ class Session(Base):
     id: Mapped[str] = mapped_column(
         String(36), primary_key=True, default=_new_uuid
     )
+    user_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -40,6 +60,7 @@ class Session(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=_utcnow
     )
 
+    user: Mapped[User | None] = relationship(back_populates="sessions")
     conversations: Mapped[list[Conversation]] = relationship(
         back_populates="session", cascade="all, delete-orphan"
     )
