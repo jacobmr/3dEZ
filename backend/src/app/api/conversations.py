@@ -11,8 +11,11 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy import select
+
 from app.api.deps import RequestContext, get_request_context, get_session_id
 from app.db.engine import get_db
+from app.db.models import Photo
 from app.services.conversation import ConversationService
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
@@ -158,6 +161,13 @@ async def send_message(
     """Send a message and stream the assistant response as SSE."""
     service = ConversationService(db)
     await _verify_conversation_ownership(conversation_id, ctx, service)
+
+    # Validate photo ownership if provided
+    if body.photo_id:
+        result = await db.execute(select(Photo).where(Photo.id == body.photo_id))
+        photo = result.scalar_one_or_none()
+        if photo is None or photo.session_id not in ctx.all_session_ids:
+            raise HTTPException(status_code=404, detail="Photo not found")
 
     events = service.send_message(conversation_id, body.message, photo_id=body.photo_id)
     return StreamingResponse(
