@@ -29,8 +29,8 @@ function downloadStl(stlBytes: ArrayBuffer, category?: string) {
 function LoadingSpinner() {
   return (
     <div className="flex flex-1 items-center justify-center p-6">
-      <div className="flex flex-col items-center gap-3 text-zinc-400">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-300" />
+      <div className="flex flex-col items-center gap-3 text-gray-400 dark:text-zinc-400">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 dark:border-zinc-600 dark:border-t-zinc-300" />
         <p className="text-sm">Generating 3D model&hellip;</p>
       </div>
     </div>
@@ -56,7 +56,7 @@ function ErrorState({
         {onRetry && !isDockerError && (
           <button
             onClick={onRetry}
-            className="rounded-md border border-zinc-600 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-800"
+            className="rounded-md border border-gray-300 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800"
           >
             Retry
           </button>
@@ -68,7 +68,7 @@ function ErrorState({
 
 function EmptyState() {
   return (
-    <div className="flex flex-1 items-center justify-center p-6 text-center text-zinc-500">
+    <div className="flex flex-1 items-center justify-center p-6 text-center text-gray-400 dark:text-zinc-500">
       <div>
         <div className="mb-2 text-3xl">&#9651;</div>
         <p className="text-sm">Design something to see it here</p>
@@ -80,7 +80,7 @@ function EmptyState() {
 function CanvasFallback() {
   return (
     <div className="flex flex-1 items-center justify-center p-6">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-300" />
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 dark:border-zinc-600 dark:border-t-zinc-300" />
     </div>
   );
 }
@@ -127,16 +127,26 @@ export default function PreviewPanel({
   }
 
   return (
-    <div className="flex h-full flex-col border-t border-zinc-800 lg:border-l lg:border-t-0">
-      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
-        <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
+    <div className="flex h-full flex-col border-t border-gray-200 lg:border-l lg:border-t-0 dark:border-zinc-800">
+      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2 dark:border-zinc-800">
+        <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">
           Preview
         </span>
         {stlBytes && (
           <button
             onClick={() => downloadStl(stlBytes, category)}
-            className="rounded px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+            className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500 active:bg-indigo-700"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-3.5 w-3.5"
+              aria-hidden="true"
+            >
+              <path d="M8 10.5a.75.75 0 0 1-.53-.22l-3-3a.75.75 0 1 1 1.06-1.06L7.25 7.94V2.75a.75.75 0 0 1 1.5 0v5.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3A.75.75 0 0 1 8 10.5Z" />
+              <path d="M2.75 13a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 0 1.5H2.75Z" />
+            </svg>
             Download STL
           </button>
         )}
