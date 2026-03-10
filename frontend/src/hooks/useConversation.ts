@@ -152,6 +152,17 @@ export function useConversation() {
     [],
   );
 
+  /** Create conversation if none exists yet. Returns the conversation ID. */
+  const ensureConversation = useCallback(
+    async (text: string): Promise<string> => {
+      if (conversationId) return conversationId;
+      const created = await createConversation(text);
+      setConversationId(created.conversation_id);
+      return created.conversation_id;
+    },
+    [conversationId],
+  );
+
   const sendMessage = useCallback(
     async (text: string, photoId?: string) => {
       if (isStreaming || !text.trim()) return;
@@ -161,14 +172,7 @@ export function useConversation() {
       abortRef.current = false;
 
       try {
-        let convId = conversationId;
-
-        // If no active conversation, create one first
-        if (!convId) {
-          const created = await createConversation(text);
-          convId = created.conversation_id;
-          setConversationId(convId);
-        }
+        const convId = await ensureConversation(text);
 
         // Add user message
         setMessages((prev) => [
@@ -190,7 +194,7 @@ export function useConversation() {
         setIsStreaming(false);
       }
     },
-    [conversationId, isStreaming, processStream],
+    [isStreaming, ensureConversation, processStream],
   );
 
   const reviseDesign = useCallback(
@@ -261,6 +265,7 @@ export function useConversation() {
     isStreaming,
     currentDesign,
     error,
+    ensureConversation,
     sendMessage,
     reviseDesign,
     loadConversation,

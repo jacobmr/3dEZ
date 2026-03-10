@@ -15,6 +15,7 @@ export default function HomeClient() {
     isStreaming,
     currentDesign,
     error,
+    ensureConversation,
     sendMessage,
     reviseDesign,
     loadConversation,
@@ -31,17 +32,23 @@ export default function HomeClient() {
   // Bump to force sidebar refresh after mutations
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
 
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
   const handleSend = useCallback(
     async (text: string, photo?: File) => {
+      setPhotoError(null);
       let photoId: string | undefined;
 
-      // If photo is attached and we have a conversation, upload it first
-      if (photo && conversationId) {
+      if (photo) {
         try {
-          const result = await uploadPhoto(conversationId, photo);
+          // Ensure conversation exists before uploading photo
+          const convId = await ensureConversation(text);
+          const result = await uploadPhoto(convId, photo);
           photoId = result.id;
-        } catch {
-          // Photo upload failed — still send the text message
+        } catch (err) {
+          const msg =
+            err instanceof Error ? err.message : "Photo upload failed";
+          setPhotoError(msg);
         }
       }
 
@@ -53,7 +60,7 @@ export default function HomeClient() {
       // Refresh sidebar after a short delay to pick up new conversations
       setTimeout(() => setSidebarRefreshKey((k) => k + 1), 1500);
     },
-    [conversationId, currentDesign, reviseDesign, sendMessage],
+    [ensureConversation, currentDesign, reviseDesign, sendMessage],
   );
 
   const handleSelectConversation = useCallback(
@@ -77,7 +84,7 @@ export default function HomeClient() {
         <ChatPanel
           messages={messages}
           isStreaming={isStreaming}
-          error={error}
+          error={photoError || error}
           hasDesign={!!currentDesign}
           onSend={handleSend}
           onStartNew={startNew}
