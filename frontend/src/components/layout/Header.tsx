@@ -1,12 +1,14 @@
 "use client";
 
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+
 interface HeaderProps {
   onMenuClick?: () => void;
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
   return (
-    <header className="flex h-12 shrink-0 items-center bg-gray-900 px-4 text-white">
+    <header className="flex h-12 shrink-0 items-center bg-gray-900 px-4 text-white dark:bg-gray-900">
       {onMenuClick && (
         <button
           onClick={onMenuClick}
@@ -28,6 +30,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </button>
       )}
       <span className="text-lg font-bold tracking-tight">3dEZ</span>
+      <ThemeToggle />
     </header>
   );
 }

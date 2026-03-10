@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Register class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -20,8 +23,15 @@ body {
   height: 100%;
 }
 
+/* Light mode defaults */
 body {
+  background: #f8f8f8;
+  color: #111111;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Dark mode overrides */
+html.dark body {
   background: #0a0a0a;
   color: #ededed;
-  font-family: Arial, Helvetica, sans-serif;
 }

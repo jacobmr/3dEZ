@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeRoot } from "@/components/theme/ThemeRoot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +29,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // NOTE: dangerouslySetInnerHTML below is safe — the script string is a
+  // hard-coded literal with no user-supplied content. It reads localStorage
+  // to restore the user's theme preference before first paint, preventing flash.
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
+      <head>
+        {/* eslint-disable-next-line react/no-danger */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}})();",
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeRoot>{children}</ThemeRoot>
       </body>
     </html>
   );
