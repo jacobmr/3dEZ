@@ -22,10 +22,14 @@ The conversational design wizard — the guided, multi-turn conversation that tr
 - [ ] **STL Export** — One-click download of print-ready STL. Must open correctly in Cura, PrusaSlicer, BambuStudio. Manifold, under 5MB for typical functional parts.
 - [ ] **Photo Upload** — Mobile camera/gallery upload. System uses photos to understand physical context and infer approximate dimensions from reference objects (wall plates, USB ports, screws). User confirms/corrects measurements.
 - [ ] **Conversational Iteration** — After preview, user requests changes in natural language ("make it 3mm deeper", "add a slot on the left"). System modifies parametric model and re-renders. Dimensional changes apply correctly ≥90% of the time.
-- [ ] **STEP Export** (P1) — Optional STEP file export for CAD tool import. Editable solid bodies, not tessellated mesh.
-- [ ] **Print Service Integration** (P1) — Order a print: choose material, color, shipping. Single fulfillment partner at launch.
-- [ ] **Design Library** (P1) — Saved designs with version history and conversation transcripts. Resume where you left off.
-- [ ] **Template Gallery** (P1) — 20+ pre-built starting points (phone stands, cable organizers, brackets, mounts, planters, hooks). Fully customizable via conversation.
+- [ ] **Multi-tenant Auth** — User registration and login, per-user data isolation, replace localStorage sessions with real accounts
+- [ ] **Design Library** — Per-user saved designs with version history and conversation transcripts. Duplicate designs to create variants. Resume where you left off.
+- [ ] **STL Upload & Modification** — Upload existing STL files as starting point. Conversation-driven modifications to uploaded meshes.
+- [ ] **Cost Estimation & Pricing** — Complexity-based COGS estimation, 2x markup sale price. Show cost before STL generation, require approval. Internal tracking now, payment integration later.
+- [ ] **Light/Dark Mode** — Theme toggle with preference persistence
+- [ ] **STEP Export** (P2) — Optional STEP file export for CAD tool import. Editable solid bodies, not tessellated mesh.
+- [ ] **Print Service Integration** (P2) — Order a print: choose material, color, shipping. Single fulfillment partner at launch.
+- [ ] **Template Gallery** (P2) — 20+ pre-built starting points (phone stands, cable organizers, brackets, mounts, planters, hooks). Fully customizable via conversation.
 
 ### Out of Scope
 

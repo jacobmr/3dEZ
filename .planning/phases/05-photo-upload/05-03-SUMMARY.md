@@ -5,6 +5,7 @@
 ## What Was Done
 
 ### Task 1: Dimension inference tool and reference calibration
+
 - Added `infer_dimensions` tool to `backend/src/app/models/tools.py` with reference_used, estimated_dimensions, confidence, and notes fields
 - Updated system prompt in `design_wizard.py` with DIMENSION INFERENCE section — calibration instructions, confidence level guidelines, mandatory user confirmation before design extraction
 - Added `dimension_inference` SSE event type in ConversationService to stream inference data to frontend
@@ -12,6 +13,7 @@
 - **Commits:** `ee50748`, `81ef0c5`, `e68ce95`, `d5addb4`, `3dedad6`, `d562d46`, `7580213`
 
 ### Task 2: Frontend dimension confirmation display
+
 - Created `DimensionCard.tsx` — styled card showing reference object, estimated dimensions (W×H×D), confidence badge (green/yellow/red), and estimation notes
 - Added `dimensionInference` field to `ChatMessage` type and `dimension_inference` SSE event handler in `useConversation.ts`
 - Updated `MessageBubble.tsx` to render DimensionCard inline within assistant messages
@@ -19,6 +21,7 @@
 - **Commits:** included in Task 1 commits (co-developed)
 
 ### Task 3: End-to-end photo flow verification (checkpoint:human-verify)
+
 - Deployed to production at ez3d.salundo.com
 - **UAT findings and fixes:**
   - Raw JSON displayed in chat — SSE events contained `{"type":"text","content":"..."}` but frontend appended full JSON string. Fixed by parsing JSON and extracting `.content`/`.question`/`.message` fields per event type (`e3a92f0`)
@@ -34,17 +37,17 @@
 
 ## Commit Log
 
-| Hash | Type | Description |
-|------|------|-------------|
-| `ee50748` | fix | Eager-load designs relationship to prevent MissingGreenlet |
-| `81ef0c5` | chore | Update SOPS encrypted secrets with real API key |
-| `e68ce95` | feat | Add basic auth to Caddy reverse proxy |
-| `d5addb4` | feat | SOPS decrypt-to-RAM secrets pattern |
-| `3dedad6` | fix | Flatten tool schema to remove top-level oneOf |
-| `d562d46` | fix | Use TypeAdapter for DesignParamsUnion validation |
-| `7580213` | fix | Move TypeAdapter init below imports to fix E402 |
-| `e3a92f0` | fix | Parse SSE JSON data before rendering in chat |
-| `5377d26` | feat | Add STL download button and rename Conversation to Design |
+| Hash      | Type  | Description                                                |
+| --------- | ----- | ---------------------------------------------------------- |
+| `ee50748` | fix   | Eager-load designs relationship to prevent MissingGreenlet |
+| `81ef0c5` | chore | Update SOPS encrypted secrets with real API key            |
+| `e68ce95` | feat  | Add basic auth to Caddy reverse proxy                      |
+| `d5addb4` | feat  | SOPS decrypt-to-RAM secrets pattern                        |
+| `3dedad6` | fix   | Flatten tool schema to remove top-level oneOf              |
+| `d562d46` | fix   | Use TypeAdapter for DesignParamsUnion validation           |
+| `7580213` | fix   | Move TypeAdapter init below imports to fix E402            |
+| `e3a92f0` | fix   | Parse SSE JSON data before rendering in chat               |
+| `5377d26` | feat  | Add STL download button and rename Conversation to Design  |
 
 ## Key Decisions
 

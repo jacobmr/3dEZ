@@ -26,13 +26,13 @@ Progress: ██████████████░ 70%
 
 **By Phase:**
 
-| Phase                  | Plans | Total  | Avg/Plan |
-| ---------------------- | ----- | ------ | -------- |
-| 1. Foundation          | 3/3   | 48 min | 16 min   |
-| 2. Conversation Engine | 5/5   | 15 min | 3 min    |
-| 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
-| 4. 3D Preview          | 3/3   | 91 min | 30 min   |
-| 4.1 Server Deployment  | 1/1   | 13 min | 13 min   |
+| Phase                  | Plans | Total   | Avg/Plan |
+| ---------------------- | ----- | ------- | -------- |
+| 1. Foundation          | 3/3   | 48 min  | 16 min   |
+| 2. Conversation Engine | 5/5   | 15 min  | 3 min    |
+| 3. Parametric Modeler  | 3/3   | 19 min  | 6 min    |
+| 4. 3D Preview          | 3/3   | 91 min  | 30 min   |
+| 4.1 Server Deployment  | 1/1   | 13 min  | 13 min   |
 | 5. Photo Upload        | 3/3   | ~30 min | ~10 min  |
 
 **Recent Trend:**

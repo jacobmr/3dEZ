@@ -21,8 +21,11 @@ None
 - [x] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
 - [x] **Phase 4.1: Server Deployment & CI/CD** — Hetzner server setup, Docker deployment, GitHub Actions pipeline (INSERTED)
 - [x] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
-- [ ] **Phase 6: Conversational Iteration** — Natural language design modification and re-render loop
-- [ ] **Phase 7: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
+- [ ] **Phase 6: Multi-tenant Auth & Design Library** — User accounts, auth, per-user design library with duplicate/variant support
+- [ ] **Phase 7: STL Upload & Modification** — Upload existing STL files, modify designs through conversation
+- [ ] **Phase 8: Cost Estimation & Pricing** — Complexity-based pricing, pre-approval flow, internal cost tracking
+- [ ] **Phase 9: Conversational Iteration** — Natural language design modification and re-render loop
+- [ ] **Phase 10: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
 
 ## Phase Details
 
@@ -107,7 +110,47 @@ Plans:
 - [x] 05-02: Vision analysis — Claude Vision integration, reference object detection, context extraction
 - [x] 05-03: Dimension inference — Estimate dimensions from reference objects, user confirmation flow
 
-### Phase 6: Conversational Iteration
+### Phase 6: Multi-tenant Auth & Design Library
+
+**Goal**: User accounts with authentication, per-user design isolation, design library with duplicate/variant support
+**Depends on**: Phase 5 (working app to add auth to)
+**Research**: Likely (auth strategy — magic link vs OAuth vs simple email/password)
+**Research topics**: Auth patterns for small SaaS, session management, migration from localStorage sessions to user accounts
+**Plans**: 3 plans
+
+Plans:
+
+- [ ] 06-01: Auth system — User registration, login, session management (replace localStorage UUID)
+- [ ] 06-02: Multi-tenant data isolation — Per-user conversations, designs, photos with ownership enforcement
+- [ ] 06-03: Design library UI — User's saved designs, duplicate/variant creation, design management
+
+### Phase 7: STL Upload & Modification
+
+**Goal**: Users can upload existing STL files and modify them through conversation
+**Depends on**: Phase 6 (user accounts for file ownership), Phase 3 (parametric modeler)
+**Research**: Likely (STL parsing, mesh-to-parametric conversion strategies)
+**Research topics**: STL import into OCP, mesh analysis for feature detection, modification strategies for non-parametric meshes
+**Plans**: 2 plans
+
+Plans:
+
+- [ ] 07-01: STL upload & parsing — Upload endpoint, STL validation, mesh analysis, storage
+- [ ] 07-02: STL modification flow — Conversation-driven modifications to uploaded meshes, re-export
+
+### Phase 8: Cost Estimation & Pricing
+
+**Goal**: Estimate design complexity cost, show pricing before STL generation, internal cost tracking
+**Depends on**: Phase 6 (user accounts for billing association)
+**Research**: Likely (pricing models for AI-generated designs, complexity metrics)
+**Research topics**: Claude API token cost estimation, OCP computation cost heuristics, pricing display patterns
+**Plans**: 2 plans
+
+Plans:
+
+- [ ] 08-01: Cost estimation engine — Complexity metrics, token usage tracking, COGS calculation, 2x markup pricing
+- [ ] 08-02: Pricing UX & approval flow — Show estimated cost before generation, user approval gate, usage tracking
+
+### Phase 9: Conversational Iteration
 
 **Goal**: Users modify designs through natural language, system updates parameters and re-renders
 **Depends on**: Phase 2 (conversation), Phase 3 (modeler), Phase 4 (preview)
@@ -116,11 +159,11 @@ Plans:
 
 Plans:
 
-- [ ] 06-01: Change detection — Parse natural language modifications, map to parameter changes
-- [ ] 06-02: Parameter updates — Apply changes to parameter dictionary, regenerate geometry, re-render
-- [ ] 06-03: Iteration UX — Version history within session, undo/redo, comparison view
+- [ ] 09-01: Change detection — Parse natural language modifications, map to parameter changes
+- [ ] 09-02: Parameter updates — Apply changes to parameter dictionary, regenerate geometry, re-render
+- [ ] 09-03: Iteration UX — Version history within session, undo/redo, comparison view
 
-### Phase 7: Integration & Polish
+### Phase 10: Integration & Polish
 
 **Goal**: Polished end-to-end flow from conversation to STL download, mobile-optimized
 **Depends on**: All previous phases
@@ -129,22 +172,25 @@ Plans:
 
 Plans:
 
-- [ ] 07-01: End-to-end flow — Connect all components, happy path testing, STL download
-- [ ] 07-02: Mobile UX polish — Responsive layout, touch interactions, performance on low-end devices
-- [ ] 07-03: Error handling & edge cases — Graceful failures, retry logic, input validation, loading states
+- [ ] 10-01: End-to-end flow — Connect all components, happy path testing, STL download
+- [ ] 10-02: Mobile UX polish — Responsive layout, touch interactions, performance on low-end devices
+- [ ] 10-03: Error handling & edge cases — Graceful failures, retry logic, input validation, loading states
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7 → 8 → 9 → 10
 
-| Phase                         | Plans Complete | Status      | Completed  |
-| ----------------------------- | -------------- | ----------- | ---------- |
-| 1. Foundation                 | 3/3            | Complete    | 2026-03-09 |
-| 2. Conversation Engine        | 5/5            | Complete    | 2026-03-09 |
-| 3. Parametric Modeler         | 3/3            | Complete    | 2026-03-09 |
-| 4. 3D Preview                 | 3/3            | Complete    | 2026-03-09 |
-| 4.1 Server Deployment & CI/CD | 1/1            | Complete    | 2026-03-09 |
-| 5. Photo Upload               | 3/3            | Complete    | 2026-03-10 |
-| 6. Conversational Iteration   | 0/3            | Not started | -          |
-| 7. Integration & Polish       | 0/3            | Not started | -          |
+| Phase                          | Plans Complete | Status      | Completed  |
+| ------------------------------ | -------------- | ----------- | ---------- |
+| 1. Foundation                  | 3/3            | Complete    | 2026-03-09 |
+| 2. Conversation Engine         | 5/5            | Complete    | 2026-03-09 |
+| 3. Parametric Modeler          | 3/3            | Complete    | 2026-03-09 |
+| 4. 3D Preview                  | 3/3            | Complete    | 2026-03-09 |
+| 4.1 Server Deployment & CI/CD  | 1/1            | Complete    | 2026-03-09 |
+| 5. Photo Upload                | 3/3            | Complete    | 2026-03-10 |
+| 6. Multi-tenant Auth & Library | 0/3            | Not started | -          |
+| 7. STL Upload & Modification   | 0/2            | Not started | -          |
+| 8. Cost Estimation & Pricing   | 0/2            | Not started | -          |
+| 9. Conversational Iteration    | 0/3            | Not started | -          |
+| 10. Integration & Polish       | 0/3            | Not started | -          |
