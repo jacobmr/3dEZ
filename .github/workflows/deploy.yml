@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Required GitHub Secrets:
+#   SSH_HOST: Server hostname or IP
+#   SSH_USER: SSH user (root)
+#   SSH_KEY: Private SSH key for server access
+#   ANTHROPIC_API_KEY: For .env.production on server
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Sync files to server
+        run: |
+          rsync -avz --delete \
+            --exclude=node_modules \
+            --exclude=.next \
+            --exclude=__pycache__ \
+            --exclude=.git \
+            --exclude=.planning \
+            --exclude=.env.production \
+            --exclude='*.pyc' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ "${SSH_USER}@${SSH_HOST}:/opt/3dez/"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Write .env.production
+        run: |
+          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" "cat > /opt/3dez/.env.production << 'ENV'
+          ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+          DATABASE_URL=sqlite+aiosqlite:///./data/3dez.db
+          ENV"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Build and deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" \
+            'cd /opt/3dez && docker compose -f docker-compose.prod.yml up -d --build'
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Verify deployment
+        run: |
+          sleep 10
+          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" \
+            'curl -sf http://localhost:8000/api/health || echo "Health check failed"'
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
