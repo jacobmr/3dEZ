@@ -44,10 +44,8 @@ jobs:
 
       - name: Write .env.production
         run: |
-          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" "cat > /opt/3dez/.env.production << 'ENV'
-          ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-          DATABASE_URL=sqlite+aiosqlite:///./data/3dez.db
-          ENV"
+          printf 'ANTHROPIC_API_KEY=%s\nDATABASE_URL=sqlite+aiosqlite:///./data/3dez.db\n' "$ANTHROPIC_API_KEY" \
+            | ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" 'cat > /opt/3dez/.env.production'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -63,9 +61,9 @@ jobs:
 
       - name: Verify deployment
         run: |
-          sleep 10
+          sleep 15
           ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" \
-            'curl -sf http://localhost:8000/api/health || echo "Health check failed"'
+            'docker compose -f /opt/3dez/docker-compose.prod.yml ps --format "{{.Name}} {{.Status}}" | grep -q healthy'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
