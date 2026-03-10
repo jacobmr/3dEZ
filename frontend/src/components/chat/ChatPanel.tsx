@@ -25,10 +25,10 @@ export default function ChatPanel({
 
   return (
     <div className="flex h-full flex-col">
-      {/* Header bar with new conversation button */}
+      {/* Header bar with new design button */}
       <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
         <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-          Conversation
+          Design
         </span>
         {hasMessages && (
           <button

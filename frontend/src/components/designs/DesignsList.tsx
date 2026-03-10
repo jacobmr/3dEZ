@@ -38,7 +38,7 @@ export default function DesignsList({
 
   const handleDelete = useCallback(async (id: string) => {
     const confirmed = window.confirm(
-      "Delete this conversation? This cannot be undone.",
+      "Delete this design? This cannot be undone.",
     );
     if (!confirmed) return;
 

@@ -16,6 +16,16 @@ interface PreviewPanelProps {
   onRetry?: () => void;
 }
 
+function downloadStl(stlBytes: ArrayBuffer, category?: string) {
+  const blob = new Blob([stlBytes], { type: "model/stl" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${category ?? "design"}.stl`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function LoadingSpinner() {
   return (
     <div className="flex flex-1 items-center justify-center p-6">
@@ -118,10 +128,18 @@ export default function PreviewPanel({
 
   return (
     <div className="flex h-full flex-col border-t border-zinc-800 lg:border-l lg:border-t-0">
-      <div className="border-b border-zinc-800 px-4 py-2">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
         <span className="text-xs font-medium uppercase tracking-wider text-zinc-400">
           Preview
         </span>
+        {stlBytes && (
+          <button
+            onClick={() => downloadStl(stlBytes, category)}
+            className="rounded px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+          >
+            Download STL
+          </button>
+        )}
       </div>
       <div className="flex flex-1 flex-col">{content}</div>
     </div>

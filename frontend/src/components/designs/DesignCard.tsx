@@ -69,7 +69,7 @@ export default function DesignCard({
           onDelete();
         }}
         className="mt-0.5 hidden rounded p-0.5 text-zinc-500 transition-colors hover:bg-zinc-700 hover:text-zinc-300 group-hover:block"
-        aria-label="Delete conversation"
+        aria-label="Delete design"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
