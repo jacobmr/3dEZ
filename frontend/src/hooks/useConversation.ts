@@ -68,15 +68,21 @@ export function useConversation() {
         if (abortRef.current) break;
 
         switch (event.type) {
-          case "text":
+          case "text": {
+            let text = event.data;
+            try {
+              const parsed = JSON.parse(event.data);
+              if (parsed.content) text = parsed.content;
+            } catch {
+              // plain text fallback
+            }
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === assistantId
-                  ? { ...m, content: m.content + event.data }
-                  : m,
+                m.id === assistantId ? { ...m, content: m.content + text } : m,
               ),
             );
             break;
+          }
 
           case "parameters_extracted": {
             try {
@@ -107,19 +113,35 @@ export function useConversation() {
             break;
           }
 
-          case "clarification":
+          case "clarification": {
+            let clarText = event.data;
+            try {
+              const parsed = JSON.parse(event.data);
+              if (parsed.question) clarText = parsed.question;
+            } catch {
+              // plain text fallback
+            }
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
-                  ? { ...m, content: m.content + event.data }
+                  ? { ...m, content: m.content + clarText }
                   : m,
               ),
             );
             break;
+          }
 
-          case "error":
-            setError(event.data);
+          case "error": {
+            let errMsg = event.data;
+            try {
+              const parsed = JSON.parse(event.data);
+              if (parsed.message) errMsg = parsed.message;
+            } catch {
+              // plain text fallback
+            }
+            setError(errMsg);
             break;
+          }
 
           case "done":
             // Stream finished
