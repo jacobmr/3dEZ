@@ -1,9 +1,12 @@
 import { getSessionId } from "./session";
+import { getAccessToken } from "./auth";
 import type {
   ConversationSummary,
   ConversationMessage,
   SavedDesign,
   DesignParams,
+  AuthResponse,
+  AuthUser,
 } from "@shared/api-types";
 
 /* ------------------------------------------------------------------ */
@@ -11,10 +14,26 @@ import type {
 /* ------------------------------------------------------------------ */
 
 function headers(): HeadersInit {
-  return {
+  const h: Record<string, string> = {
     "Content-Type": "application/json",
     "X-Session-ID": getSessionId(),
   };
+  const token = getAccessToken();
+  if (token) {
+    h["Authorization"] = `Bearer ${token}`;
+  }
+  return h;
+}
+
+function authHeaders(): Record<string, string> {
+  const h: Record<string, string> = {
+    "X-Session-ID": getSessionId(),
+  };
+  const token = getAccessToken();
+  if (token) {
+    h["Authorization"] = `Bearer ${token}`;
+  }
+  return h;
 }
 
 async function json<T>(res: Response): Promise<T> {
@@ -235,11 +254,72 @@ export async function uploadPhoto(
   formData.append("file", file);
   const res = await fetch(`/api/conversations/${conversationId}/photos`, {
     method: "POST",
-    headers: { "X-Session-ID": getSessionId() },
+    headers: authHeaders(),
     // No Content-Type — browser sets multipart boundary automatically
     body: formData,
   });
   return json<{ id: string; filename: string }>(res);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Auth endpoints                                                     */
+/* ------------------------------------------------------------------ */
+
+export async function authRegister(
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Session-ID": getSessionId(),
+    },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+  return json<AuthResponse>(res);
+}
+
+export async function authLogin(
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Session-ID": getSessionId(),
+    },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+  return json<AuthResponse>(res);
+}
+
+export async function authRefresh(): Promise<{ access_token: string }> {
+  const res = await fetch("/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  });
+  return json<{ access_token: string }>(res);
+}
+
+export async function authMe(): Promise<AuthUser> {
+  const token = getAccessToken();
+  const res = await fetch("/api/auth/me", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  return json<AuthUser>(res);
+}
+
+export async function authLogout(): Promise<void> {
+  // Clear refresh cookie by calling a logout-like endpoint or just let it expire
+  // For now, just a no-op on the server side — cookie will be overwritten
+  await fetch("/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  }).catch(() => {});
 }
 
 /* Re-export types for convenience */
@@ -248,4 +328,6 @@ export type {
   ConversationMessage,
   SavedDesign,
   DesignParams,
+  AuthResponse,
+  AuthUser,
 };

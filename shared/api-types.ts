@@ -45,3 +45,15 @@ export interface SavedDesign {
   version: number;
   created_at: string;
 }
+
+/** Authenticated user profile. */
+export interface AuthUser {
+  id: string;
+  email: string;
+}
+
+/** Response from /api/auth/register and /api/auth/login. */
+export interface AuthResponse {
+  access_token: string;
+  user: AuthUser;
+}
