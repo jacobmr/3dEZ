@@ -20,7 +20,7 @@ None
 - [x] **Phase 3: Parametric Modeler** — OCP-based geometry generation from parameter dictionaries, STL export
 - [x] **Phase 4: 3D Preview** — Interactive Three.js renderer with dimension overlays
 - [x] **Phase 4.1: Server Deployment & CI/CD** — Hetzner server setup, Docker deployment, GitHub Actions pipeline (INSERTED)
-- [ ] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
+- [x] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
 - [ ] **Phase 6: Conversational Iteration** — Natural language design modification and re-render loop
 - [ ] **Phase 7: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
 
@@ -105,7 +105,7 @@ Plans:
 
 - [x] 05-01: Photo upload UI — Mobile camera capture, gallery upload, image compression, upload endpoint
 - [x] 05-02: Vision analysis — Claude Vision integration, reference object detection, context extraction
-- [ ] 05-03: Dimension inference — Estimate dimensions from reference objects, user confirmation flow
+- [x] 05-03: Dimension inference — Estimate dimensions from reference objects, user confirmation flow
 
 ### Phase 6: Conversational Iteration
 
@@ -145,6 +145,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7
 | 3. Parametric Modeler         | 3/3            | Complete    | 2026-03-09 |
 | 4. 3D Preview                 | 3/3            | Complete    | 2026-03-09 |
 | 4.1 Server Deployment & CI/CD | 1/1            | Complete    | 2026-03-09 |
-| 5. Photo Upload               | 2/3            | In progress | -          |
+| 5. Photo Upload               | 3/3            | Complete    | 2026-03-10 |
 | 6. Conversational Iteration   | 0/3            | Not started | -          |
 | 7. Integration & Polish       | 0/3            | Not started | -          |

@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 5 — Photo Upload (in progress)
+**Current focus:** Phase 5 — Photo Upload (complete)
 
 ## Current Position
 
 Phase: 5 of 7 (Photo Upload)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-03-09 — Completed 05-02-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Complete
+Last activity: 2026-03-10 — Completed 05-03-PLAN.md
 
-Progress: █████████████░ 63%
+Progress: ██████████████░ 70%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 17
-- Average duration: 9 min
-- Total execution time: 3.1 hours
+- Total plans completed: 18
+- Average duration: 10 min
+- Total execution time: 3.6 hours
 
 **By Phase:**
 
@@ -33,12 +33,12 @@ Progress: █████████████░ 63%
 | 3. Parametric Modeler  | 3/3   | 19 min | 6 min    |
 | 4. 3D Preview          | 3/3   | 91 min | 30 min   |
 | 4.1 Server Deployment  | 1/1   | 13 min | 13 min   |
-| 5. Photo Upload        | 2/3   | 7 min  | 4 min    |
+| 5. Photo Upload        | 3/3   | ~30 min | ~10 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 3m, 58m, 13m, 4m, 3m
-- Trend: Stable execution times
+- Last 5 plans: 58m, 13m, 4m, 3m, ~30m
+- Trend: Variable — UAT-driven plans take longer due to iterative bug fixing
 
 ## Accumulated Context
 
@@ -104,6 +104,10 @@ Recent decisions affecting current work:
 - photo_ids JSON column on Message for multi-photo support per message
 - Async \_build_api_messages with db session for on-demand base64 encoding
 - photo_analysis SSE event type for streaming analyze_photo tool results
+- TypeAdapter for runtime discriminated union validation (Claude API rejects oneOf in tool schemas)
+- JSON parsing with try/catch fallback for SSE event data extraction
+- Blob download pattern for client-side STL export
+- Commit/push/CI as standard deployment method (not rsync)
 
 ### Deferred Issues
 
@@ -115,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-09
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-10
+Stopped at: Completed 05-03-PLAN.md — Phase 5 complete
 Resume file: None
