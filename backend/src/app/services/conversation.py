@@ -22,10 +22,10 @@ from app.core.claude_client import get_client
 from app.core.config import get_settings
 from app.db.models import Conversation, Design, Message, Photo
 from app.models.designs import DesignParamsUnion
-
-_params_adapter = TypeAdapter(DesignParamsUnion)
 from app.models.tools import DESIGN_TOOLS
 from app.prompts.design_wizard import get_system_prompt
+
+_params_adapter = TypeAdapter(DesignParamsUnion)
 
 logger = logging.getLogger(__name__)
 
