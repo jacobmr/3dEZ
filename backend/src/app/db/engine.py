@@ -37,3 +37,21 @@ async def create_tables() -> None:
 
     async with _engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    # Inline migrations for SQLite (ALTER TABLE ADD COLUMN is idempotent-safe)
+    await _run_migrations()
+
+
+async def _run_migrations() -> None:
+    """Add columns that create_all won't add to existing tables."""
+    migrations = [
+        "ALTER TABLE designs ADD COLUMN name VARCHAR(255)",
+        "ALTER TABLE designs ADD COLUMN parent_design_id VARCHAR(36) REFERENCES designs(id)",
+    ]
+    async with _engine.begin() as conn:
+        for sql in migrations:
+            try:
+                await conn.execute(__import__("sqlalchemy").text(sql))
+            except Exception:
+                # Column already exists — safe to ignore
+                pass

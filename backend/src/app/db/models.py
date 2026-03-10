@@ -131,14 +131,21 @@ class Design(Base):
     conversation_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("conversations.id"), index=True
     )
+    name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     parameters: Mapped[dict] = mapped_column(JSON, default=dict)
     category: Mapped[str] = mapped_column(String(100))
     version: Mapped[int] = mapped_column(Integer, default=1)
+    parent_design_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("designs.id"), nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
 
     conversation: Mapped[Conversation] = relationship(back_populates="designs")
+    parent_design: Mapped[Design | None] = relationship(
+        remote_side=[id], foreign_keys=[parent_design_id]
+    )
 
 
 class Photo(Base):
