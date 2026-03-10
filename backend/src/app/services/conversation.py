@@ -13,7 +13,7 @@ from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -22,6 +22,8 @@ from app.core.claude_client import get_client
 from app.core.config import get_settings
 from app.db.models import Conversation, Design, Message, Photo
 from app.models.designs import DesignParamsUnion
+
+_params_adapter = TypeAdapter(DesignParamsUnion)
 from app.models.tools import DESIGN_TOOLS
 from app.prompts.design_wizard import get_system_prompt
 
@@ -414,7 +416,7 @@ class ConversationService:
     ) -> dict[str, Any]:
         """Validate extracted parameters and save a Design record."""
         try:
-            params = DesignParamsUnion.model_validate(tool_input)
+            params = _params_adapter.validate_python(tool_input)
         except ValidationError as exc:
             logger.warning("Parameter validation failed: %s", exc)
             return {
