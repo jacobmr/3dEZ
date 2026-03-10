@@ -8,7 +8,7 @@ on:
 #   SSH_HOST: Server hostname or IP
 #   SSH_USER: SSH user (root)
 #   SSH_KEY: Private SSH key for server access
-#   ANTHROPIC_API_KEY: For .env.production on server
+# Secrets are SOPS-encrypted in secrets.production.env.enc (decrypted on server via age key)
 
 jobs:
   deploy:
@@ -42,19 +42,10 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
-      - name: Write .env.production
-        run: |
-          printf 'ANTHROPIC_API_KEY=%s\nDATABASE_URL=sqlite+aiosqlite:///./data/3dez.db\n' "$ANTHROPIC_API_KEY" \
-            | ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" 'cat > /opt/3dez/.env.production'
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-
-      - name: Build and deploy
+      - name: Decrypt secrets and deploy
         run: |
           ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" \
-            'cd /opt/3dez && docker compose -f docker-compose.prod.yml up -d --build'
+            'cd /opt/3dez && sops decrypt --input-type dotenv --output-type dotenv secrets.production.env.enc > /dev/shm/.env.production && chmod 600 /dev/shm/.env.production && docker compose -f docker-compose.prod.yml up -d --build'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
