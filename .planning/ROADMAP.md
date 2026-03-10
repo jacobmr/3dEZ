@@ -120,7 +120,7 @@ Plans:
 
 Plans:
 
-- [ ] 06-01: Auth system — User registration, login, session management (replace localStorage UUID)
+- [x] 06-01: Auth system — User registration, login, session management (replace localStorage UUID)
 - [ ] 06-02: Multi-tenant data isolation — Per-user conversations, designs, photos with ownership enforcement
 - [ ] 06-03: Design library UI — User's saved designs, duplicate/variant creation, design management
 
@@ -189,7 +189,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7 �
 | 4. 3D Preview                  | 3/3            | Complete    | 2026-03-09 |
 | 4.1 Server Deployment & CI/CD  | 1/1            | Complete    | 2026-03-09 |
 | 5. Photo Upload                | 3/3            | Complete    | 2026-03-10 |
-| 6. Multi-tenant Auth & Library | 0/3            | Not started | -          |
+| 6. Multi-tenant Auth & Library | 1/3            | In progress | -          |
 | 7. STL Upload & Modification   | 0/2            | Not started | -          |
 | 8. Cost Estimation & Pricing   | 0/2            | Not started | -          |
 | 9. Conversational Iteration    | 0/3            | Not started | -          |

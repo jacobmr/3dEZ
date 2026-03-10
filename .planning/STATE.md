@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** The conversational design wizard — the guided, multi-turn conversation that transforms a vague idea into a fully specified, dimensionally accurate 3D model.
-**Current focus:** Phase 5 — Photo Upload (complete)
+**Current focus:** Phase 6 — Multi-tenant Auth & Design Library (in progress)
 
 ## Current Position
 
-Phase: 5 of 7 (Photo Upload)
-Plan: 3 of 3 in current phase
-Status: Complete
-Last activity: 2026-03-10 — Completed 05-03-PLAN.md
+Phase: 6 of 10 (Multi-tenant Auth & Design Library)
+Plan: 1 of 3 in current phase
+Status: Plan 1 complete, plans 2-3 pending
+Last activity: 2026-03-10 — Completed 06-01-PLAN.md
 
-Progress: ██████████████░ 70%
+Progress: ███████████████░ 73%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 10 min
-- Total execution time: 3.6 hours
+- Total execution time: 3.8 hours
 
 **By Phase:**
 
@@ -34,11 +34,12 @@ Progress: ██████████████░ 70%
 | 4. 3D Preview          | 3/3   | 91 min  | 30 min   |
 | 4.1 Server Deployment  | 1/1   | 13 min  | 13 min   |
 | 5. Photo Upload        | 3/3   | ~30 min | ~10 min  |
+| 6. Auth & Library      | 1/3   | ~15 min | ~15 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 58m, 13m, 4m, 3m, ~30m
-- Trend: Variable — UAT-driven plans take longer due to iterative bug fixing
+- Last 5 plans: 13m, 4m, 3m, ~30m, ~15m
+- Trend: Variable — scope-dependent
 
 ## Accumulated Context
 
@@ -108,6 +109,12 @@ Recent decisions affecting current work:
 - JSON parsing with try/catch fallback for SSE event data extraction
 - Blob download pattern for client-side STL export
 - Commit/push/CI as standard deployment method (not rsync)
+- Email+password auth with self-hosted JWT (no external auth providers)
+- JWT access tokens (15min) + refresh tokens (7 days, httpOnly cookie)
+- Dual-mode auth: Bearer JWT with X-Session-ID anonymous fallback
+- RequestContext dataclass for multi-session ownership across routes
+- In-memory access token storage (not localStorage) for XSS safety
+- Session claiming: link anonymous sessions to user accounts on register/login
 
 ### Deferred Issues
 
@@ -120,5 +127,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: Completed 05-03-PLAN.md — Phase 5 complete
+Stopped at: Completed 06-01-PLAN.md — Auth system complete, plans 06-02 and 06-03 pending
 Resume file: None
