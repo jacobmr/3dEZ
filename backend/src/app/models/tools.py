@@ -19,211 +19,133 @@ DESIGN_TOOLS: list[dict] = [
         ),
         "input_schema": {
             "type": "object",
-            "oneOf": [
-                {
-                    "title": "MountingBracketParams",
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "const": "mounting_bracket",
-                            "description": "Design category discriminator",
-                        },
-                        "units": {
-                            "type": "string",
-                            "enum": ["mm", "in"],
-                            "default": "mm",
-                            "description": "Measurement unit system",
-                        },
-                        "notes": {
-                            "type": "string",
-                            "default": "",
-                            "description": "Free-form user notes",
-                        },
-                        "width": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall width",
-                        },
-                        "height": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall height",
-                        },
-                        "depth": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall depth / projection",
-                        },
-                        "thickness": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "default": 3.0,
-                            "description": "Material thickness",
-                        },
-                        "hole_diameter": {
-                            "type": "number",
-                            "minimum": 0,
-                            "default": 4.5,
-                            "description": "Mounting-hole diameter (0 = no holes)",
-                        },
-                        "hole_count": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "default": 2,
-                            "description": "Number of mounting holes",
-                        },
-                        "lip_height": {
-                            "type": "number",
-                            "minimum": 0,
-                            "default": 5.0,
-                            "description": "Height of retaining lip",
-                        },
-                    },
-                    "required": ["category", "width", "height", "depth"],
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "enum": ["mounting_bracket", "enclosure", "organizer"],
+                    "description": "Design category",
                 },
-                {
-                    "title": "EnclosureParams",
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "const": "enclosure",
-                            "description": "Design category discriminator",
-                        },
-                        "units": {
-                            "type": "string",
-                            "enum": ["mm", "in"],
-                            "default": "mm",
-                            "description": "Measurement unit system",
-                        },
-                        "notes": {
-                            "type": "string",
-                            "default": "",
-                            "description": "Free-form user notes",
-                        },
-                        "inner_width": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Interior width",
-                        },
-                        "inner_height": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Interior height",
-                        },
-                        "inner_depth": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Interior depth",
-                        },
-                        "wall_thickness": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "default": 2.0,
-                            "description": "Wall thickness",
-                        },
-                        "lid_type": {
-                            "type": "string",
-                            "enum": ["snap", "slide", "screw", "none"],
-                            "default": "snap",
-                            "description": "Lid attachment method",
-                        },
-                        "ventilation_slots": {
-                            "type": "boolean",
-                            "default": False,
-                            "description": "Add ventilation slot pattern",
-                        },
-                        "cable_hole_diameter": {
-                            "type": "number",
-                            "minimum": 0,
-                            "default": 0.0,
-                            "description": "Cable pass-through hole diameter (0 = none)",
-                        },
-                        "corner_radius": {
-                            "type": "number",
-                            "minimum": 0,
-                            "default": 2.0,
-                            "description": "Fillet radius on vertical edges",
-                        },
-                    },
-                    "required": [
-                        "category",
-                        "inner_width",
-                        "inner_height",
-                        "inner_depth",
-                    ],
+                "units": {
+                    "type": "string",
+                    "enum": ["mm", "in"],
+                    "default": "mm",
+                    "description": "Measurement unit system",
                 },
-                {
-                    "title": "OrganizerParams",
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "const": "organizer",
-                            "description": "Design category discriminator",
-                        },
-                        "units": {
-                            "type": "string",
-                            "enum": ["mm", "in"],
-                            "default": "mm",
-                            "description": "Measurement unit system",
-                        },
-                        "notes": {
-                            "type": "string",
-                            "default": "",
-                            "description": "Free-form user notes",
-                        },
-                        "width": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall width",
-                        },
-                        "height": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall height",
-                        },
-                        "depth": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "description": "Overall depth",
-                        },
-                        "compartments_x": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "default": 1,
-                            "description": "Grid columns",
-                        },
-                        "compartments_y": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "default": 1,
-                            "description": "Grid rows",
-                        },
-                        "wall_thickness": {
-                            "type": "number",
-                            "exclusiveMinimum": 0,
-                            "default": 1.5,
-                            "description": "Wall thickness",
-                        },
-                        "has_labels": {
-                            "type": "boolean",
-                            "default": False,
-                            "description": "Emboss label areas on compartments",
-                        },
-                        "stackable": {
-                            "type": "boolean",
-                            "default": False,
-                            "description": "Add stacking alignment features",
-                        },
-                    },
-                    "required": ["category", "width", "height", "depth"],
+                "notes": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Free-form user notes",
                 },
-            ],
-            "discriminator": {
-                "propertyName": "category",
+                # -- mounting_bracket fields --
+                "width": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Overall width (mounting_bracket, organizer)",
+                },
+                "height": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Overall height (mounting_bracket, organizer)",
+                },
+                "depth": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Overall depth / projection (mounting_bracket, organizer)",
+                },
+                "thickness": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "default": 3.0,
+                    "description": "Material thickness (mounting_bracket)",
+                },
+                "hole_diameter": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 4.5,
+                    "description": "Mounting-hole diameter (0 = no holes) (mounting_bracket)",
+                },
+                "hole_count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 2,
+                    "description": "Number of mounting holes (mounting_bracket)",
+                },
+                "lip_height": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 5.0,
+                    "description": "Height of retaining lip (mounting_bracket)",
+                },
+                # -- enclosure fields --
+                "inner_width": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Interior width (enclosure)",
+                },
+                "inner_height": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Interior height (enclosure)",
+                },
+                "inner_depth": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "description": "Interior depth (enclosure)",
+                },
+                "wall_thickness": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "default": 2.0,
+                    "description": "Wall thickness (enclosure, organizer — default 2.0 for enclosure, 1.5 for organizer)",
+                },
+                "lid_type": {
+                    "type": "string",
+                    "enum": ["snap", "slide", "screw", "none"],
+                    "default": "snap",
+                    "description": "Lid attachment method (enclosure)",
+                },
+                "ventilation_slots": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Add ventilation slot pattern (enclosure)",
+                },
+                "cable_hole_diameter": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 0.0,
+                    "description": "Cable pass-through hole diameter (0 = none) (enclosure)",
+                },
+                "corner_radius": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 2.0,
+                    "description": "Fillet radius on vertical edges (enclosure)",
+                },
+                # -- organizer fields --
+                "compartments_x": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1,
+                    "description": "Grid columns (organizer)",
+                },
+                "compartments_y": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1,
+                    "description": "Grid rows (organizer)",
+                },
+                "has_labels": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Emboss label areas on compartments (organizer)",
+                },
+                "stackable": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Add stacking alignment features (organizer)",
+                },
             },
+            "required": ["category"],
         },
     },
     {
@@ -368,10 +290,9 @@ DESIGN_TOOLS: list[dict] = [
                     "description": "The clarifying question to present to the user",
                 },
                 "options": {
-                    "type": ["array", "null"],
+                    "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional list of suggested answers",
-                    "default": None,
                 },
                 "parameter_name": {
                     "type": "string",
