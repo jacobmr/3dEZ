@@ -18,13 +18,19 @@ interface DimensionCardProps {
 const confidenceConfig = {
   high: {
     label: "High",
-    className: "bg-green-900/50 text-green-300 border-green-700",
+    className:
+      "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700",
   },
   medium: {
     label: "Medium",
-    className: "bg-yellow-900/50 text-yellow-300 border-yellow-700",
+    className:
+      "bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-700",
   },
-  low: { label: "Low", className: "bg-red-900/50 text-red-300 border-red-700" },
+  low: {
+    label: "Low",
+    className:
+      "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700",
+  },
 } as const;
 
 export type { DimensionData };
@@ -35,10 +41,10 @@ export default function DimensionCard({ data }: DimensionCardProps) {
   const { width_mm, height_mm, depth_mm } = estimated_dimensions;
 
   return (
-    <div className="my-2 rounded-lg border border-zinc-700 bg-zinc-800/60 p-3">
+    <div className="my-2 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/60">
       {/* Header row */}
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-zinc-400">
+        <span className="text-xs font-medium text-gray-500 dark:text-zinc-400">
           Estimated Dimensions
         </span>
         <span
@@ -49,25 +55,27 @@ export default function DimensionCard({ data }: DimensionCardProps) {
       </div>
 
       {/* Dimensions */}
-      <div className="flex items-baseline gap-1 text-lg font-semibold text-zinc-100">
+      <div className="flex items-baseline gap-1 text-lg font-semibold text-gray-800 dark:text-zinc-100">
         <span>{width_mm}</span>
-        <span className="text-xs text-zinc-500">mm</span>
-        <span className="text-zinc-500">&times;</span>
+        <span className="text-xs text-gray-400 dark:text-zinc-500">mm</span>
+        <span className="text-gray-400 dark:text-zinc-500">&times;</span>
         <span>{height_mm}</span>
-        <span className="text-xs text-zinc-500">mm</span>
+        <span className="text-xs text-gray-400 dark:text-zinc-500">mm</span>
         {depth_mm != null && (
           <>
-            <span className="text-zinc-500">&times;</span>
+            <span className="text-gray-400 dark:text-zinc-500">&times;</span>
             <span>{depth_mm}</span>
-            <span className="text-xs text-zinc-500">mm</span>
+            <span className="text-xs text-gray-400 dark:text-zinc-500">mm</span>
           </>
         )}
       </div>
 
       {/* Reference & notes */}
-      <div className="mt-2 space-y-1 text-xs text-zinc-400">
+      <div className="mt-2 space-y-1 text-xs text-gray-500 dark:text-zinc-400">
         <div>
-          <span className="font-medium text-zinc-300">Calibrated from:</span>{" "}
+          <span className="font-medium text-gray-700 dark:text-zinc-300">
+            Calibrated from:
+          </span>{" "}
           {reference_used}
         </div>
         {notes && <div className="italic">{notes}</div>}

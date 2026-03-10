@@ -52,13 +52,15 @@ export default function DesignsList({
 
   if (loading && conversations.length === 0) {
     return (
-      <div className="p-4 text-center text-xs text-zinc-500">Loading...</div>
+      <div className="p-4 text-center text-xs text-gray-400 dark:text-zinc-500">
+        Loading...
+      </div>
     );
   }
 
   if (conversations.length === 0) {
     return (
-      <div className="p-4 text-center text-xs text-zinc-500">
+      <div className="p-4 text-center text-xs text-gray-400 dark:text-zinc-500">
         No designs yet. Start a conversation!
       </div>
     );

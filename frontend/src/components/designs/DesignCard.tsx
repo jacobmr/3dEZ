@@ -45,8 +45,8 @@ export default function DesignCard({
       onClick={onClick}
       className={`group flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
         isActive
-          ? "bg-indigo-600/20 text-zinc-100"
-          : "text-zinc-300 hover:bg-zinc-800"
+          ? "bg-indigo-600/20 text-gray-900 dark:text-zinc-100"
+          : "text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
       }`}
     >
       <span className="mt-0.5 text-base leading-none">{icon}</span>
@@ -54,9 +54,9 @@ export default function DesignCard({
         <div className="truncate text-sm font-medium">
           {conversation.title || "Untitled design"}
         </div>
-        <div className="mt-0.5 flex items-center gap-2 text-xs text-zinc-500">
+        <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-400 dark:text-zinc-500">
           {conversation.category && (
-            <span className="rounded bg-zinc-800 px-1 py-0.5 text-[10px]">
+            <span className="rounded bg-gray-200 px-1 py-0.5 text-[10px] dark:bg-zinc-800">
               {conversation.category.replace("_", " ")}
             </span>
           )}
@@ -68,7 +68,7 @@ export default function DesignCard({
           e.stopPropagation();
           onDelete();
         }}
-        className="mt-0.5 hidden rounded p-0.5 text-zinc-500 transition-colors hover:bg-zinc-700 hover:text-zinc-300 group-hover:block"
+        className="mt-0.5 hidden rounded p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 group-hover:block dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
         aria-label="Delete design"
       >
         <svg

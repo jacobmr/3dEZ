@@ -32,9 +32,9 @@ export default function Sidebar({
   }, [isOpen, onClose]);
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-zinc-950">
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
-        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+    <div className="flex h-full flex-col bg-gray-50 dark:bg-zinc-950">
+      <div className="flex items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-zinc-800">
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-zinc-400">
           Designs
         </span>
         <button
@@ -63,7 +63,7 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop sidebar — always visible */}
-      <div className="hidden w-[200px] shrink-0 border-r border-zinc-800 lg:block">
+      <div className="hidden w-[200px] shrink-0 border-r border-gray-200 lg:block dark:border-zinc-800">
         {sidebarContent}
       </div>
 

@@ -77,7 +77,7 @@ export default function MessageList({
               className={`max-w-[85%] rounded-lg px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
                 isUser
                   ? "bg-indigo-600 text-white"
-                  : "bg-zinc-800 text-zinc-100"
+                  : "bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-100"
               }`}
             >
               {/* Photo thumbnail for user messages */}
@@ -106,7 +106,7 @@ export default function MessageList({
         messages.length > 0 &&
         messages[messages.length - 1].role === "user" && (
           <div className="flex justify-start">
-            <div className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-zinc-400">
+            <div className="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-500 dark:bg-zinc-800 dark:text-zinc-400">
               <span className="inline-flex items-center gap-1">
                 <span className="animate-pulse">Thinking</span>
                 <span className="animate-bounce">...</span>

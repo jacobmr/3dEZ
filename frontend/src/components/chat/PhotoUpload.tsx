@@ -133,7 +133,7 @@ export default function PhotoUpload({
         type="button"
         onClick={() => setShowMenu((prev) => !prev)}
         disabled={disabled || isCompressing || !!pendingPhoto}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200 disabled:opacity-40"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
         aria-label="Attach photo"
       >
         {isCompressing ? (
@@ -182,14 +182,14 @@ export default function PhotoUpload({
             className="fixed inset-0 z-10"
             onClick={() => setShowMenu(false)}
           />
-          <div className="absolute bottom-full left-0 z-20 mb-2 w-44 rounded-lg border border-zinc-700 bg-zinc-800 py-1 shadow-xl">
+          <div className="absolute bottom-full left-0 z-20 mb-2 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
             <button
               type="button"
               onClick={() => {
                 cameraInputRef.current?.click();
                 setShowMenu(false);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-zinc-200 dark:hover:bg-zinc-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -212,7 +212,7 @@ export default function PhotoUpload({
                 galleryInputRef.current?.click();
                 setShowMenu(false);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-zinc-200 dark:hover:bg-zinc-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -234,7 +234,7 @@ export default function PhotoUpload({
 
       {/* Pending photo preview */}
       {pendingPhoto && (
-        <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 p-1.5">
+        <div className="absolute bottom-full left-0 mb-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-white p-1.5 dark:border-zinc-700 dark:bg-zinc-800">
           <img
             src={pendingPhoto.preview}
             alt="Upload preview"
@@ -246,7 +246,7 @@ export default function PhotoUpload({
               URL.revokeObjectURL(pendingPhoto.preview);
               onPhotoRemoved();
             }}
-            className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-600 text-xs text-zinc-200 hover:bg-red-600"
+            className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-xs text-gray-700 hover:bg-red-500 hover:text-white dark:bg-zinc-600 dark:text-zinc-200 dark:hover:bg-red-600"
             aria-label="Remove photo"
           >
             &times;

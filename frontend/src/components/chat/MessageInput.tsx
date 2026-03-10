@@ -42,16 +42,16 @@ export default function MessageInput({
   );
 
   return (
-    <div className="border-t border-zinc-800 p-3">
+    <div className="border-t border-gray-200 p-3 dark:border-zinc-800">
       {/* Pending photo preview strip */}
       {pendingPhoto && (
-        <div className="mb-2 flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 p-2">
+        <div className="mb-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2 dark:border-zinc-700 dark:bg-zinc-800/50">
           <img
             src={pendingPhoto.preview}
             alt="Upload preview"
             className="h-16 w-16 rounded object-cover"
           />
-          <div className="flex-1 text-xs text-zinc-400 truncate">
+          <div className="flex-1 text-xs text-gray-500 truncate dark:text-zinc-400">
             {pendingPhoto.file.name}
           </div>
           <button
@@ -60,7 +60,7 @@ export default function MessageInput({
               URL.revokeObjectURL(pendingPhoto.preview);
               setPendingPhoto(null);
             }}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-700 hover:text-red-400"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200 hover:text-red-500 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-red-400"
             aria-label="Remove photo"
           >
             <svg
@@ -91,7 +91,7 @@ export default function MessageInput({
           disabled={disabled}
           placeholder={placeholder}
           rows={1}
-          className="min-h-[40px] max-h-32 flex-1 resize-none rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
+          className="min-h-[40px] max-h-32 flex-1 resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500"
         />
         <button
           onClick={handleSend}

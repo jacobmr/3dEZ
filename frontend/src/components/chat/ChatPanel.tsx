@@ -26,14 +26,14 @@ export default function ChatPanel({
   return (
     <div className="flex h-full flex-col">
       {/* Header bar with new design button */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
-        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2 dark:border-zinc-800">
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-zinc-400">
           Design
         </span>
         {hasMessages && (
           <button
             onClick={onStartNew}
-            className="rounded px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+            className="rounded px-2 py-1 text-xs text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
             + New
           </button>
@@ -46,10 +46,10 @@ export default function ChatPanel({
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
           <div className="text-4xl">&#9653;</div>
-          <h2 className="text-lg font-semibold text-zinc-100">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-zinc-100">
             What would you like to create?
           </h2>
-          <p className="max-w-xs text-sm text-zinc-400">
+          <p className="max-w-xs text-sm text-gray-500 dark:text-zinc-400">
             Describe a 3D-printable part &mdash; a mounting bracket, enclosure,
             or organizer &mdash; and I&apos;ll help design it.
           </p>
