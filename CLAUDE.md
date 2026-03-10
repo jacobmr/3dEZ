@@ -155,11 +155,11 @@ make deploy-logs      # tail production logs
 
 ## Design Categories (V1)
 
-| Category | Key Parameters | Defaults |
-|---|---|---|
-| `mounting_bracket` | width, height, depth, thickness, hole_diameter, hole_count, lip_height | thickness=3mm, holes=4.5mm×2, lip=5mm |
-| `enclosure` | inner_width/height/depth, wall_thickness, lid_type, ventilation_slots, cable_hole_diameter, corner_radius | wall=2mm, corner_radius=2mm |
-| `organizer` | width, height, depth, compartments_x/y, wall_thickness, has_labels, stackable | wall=1.5mm |
+| Category           | Key Parameters                                                                                            | Defaults                              |
+| ------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `mounting_bracket` | width, height, depth, thickness, hole_diameter, hole_count, lip_height                                    | thickness=3mm, holes=4.5mm×2, lip=5mm |
+| `enclosure`        | inner_width/height/depth, wall_thickness, lid_type, ventilation_slots, cable_hole_diameter, corner_radius | wall=2mm, corner_radius=2mm           |
+| `organizer`        | width, height, depth, compartments_x/y, wall_thickness, has_labels, stackable                             | wall=1.5mm                            |
 
 ## Conventions
 

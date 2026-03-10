@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import TypeAdapter
 
+from app.models.designs import DesignParamsUnion
 from app.models.tools import DESIGN_TOOLS
+
+_params_adapter = TypeAdapter(DesignParamsUnion)
 
 COMPOSITION_KEYS = {"oneOf", "allOf", "anyOf"}
 
@@ -73,6 +77,32 @@ class TestExtractDesignParameters:
         props = set(schema["properties"].keys())
         missing = ALL_EXPECTED_PROPS - props
         assert not missing, f"Missing properties in flat schema: {missing}"
+
+
+class TestParamsValidation:
+    """Verify DesignParamsUnion validates via TypeAdapter (not model_validate)."""
+
+    def test_enclosure_params(self) -> None:
+        result = _params_adapter.validate_python({
+            "category": "enclosure",
+            "inner_width": 20, "inner_height": 20, "inner_depth": 20,
+        })
+        assert result.category == "enclosure"
+        assert result.inner_width == 20
+
+    def test_mounting_bracket_params(self) -> None:
+        result = _params_adapter.validate_python({
+            "category": "mounting_bracket",
+            "width": 50, "height": 30, "depth": 20,
+        })
+        assert result.category == "mounting_bracket"
+
+    def test_organizer_params(self) -> None:
+        result = _params_adapter.validate_python({
+            "category": "organizer",
+            "width": 100, "height": 50, "depth": 80,
+        })
+        assert result.category == "organizer"
 
 
 class TestNoArrayTypeUnions:
