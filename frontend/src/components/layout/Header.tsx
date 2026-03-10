@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { UserMenu } from "@/components/auth/UserMenu";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -30,7 +31,10 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </button>
       )}
       <span className="text-lg font-bold tracking-tight">3dEZ</span>
-      <ThemeToggle />
+      <div className="ml-auto flex items-center gap-2">
+        <ThemeToggle />
+        <UserMenu />
+      </div>
     </header>
   );
 }
