@@ -121,7 +121,7 @@ Plans:
 Plans:
 
 - [x] 06-01: Auth system — User registration, login, session management (replace localStorage UUID)
-- [ ] 06-02: Multi-tenant data isolation — Per-user conversations, designs, photos with ownership enforcement
+- [x] 06-02: Multi-tenant data isolation — Per-user conversations, designs, photos with ownership enforcement
 - [ ] 06-03: Design library UI — User's saved designs, duplicate/variant creation, design management
 
 ### Phase 7: STL Upload & Modification
