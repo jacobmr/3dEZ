@@ -105,27 +105,22 @@ make clean            # down -v, remove caches + .next
 
 ## Server / Deployment
 
-- **Server:** ez3d.salundo.com (Hetzner, SSH key: id_ed25519)
-- **Reverse proxy:** Caddy with auto-HTTPS (Let's Encrypt) + basic auth
-- **Deploy:** `make deploy` (docker-compose.prod.yml up -d --build)
-- **Logs:** `make deploy-logs`
+- **Server:** Hetzner (37.27.198.218), SSH alias `3dez` in ~/.ssh/config
+- **Reverse proxy:** Caddy with auto-HTTPS (Let's Encrypt)
 - **No external ports** for backend/frontend — Caddy is sole entry point
 - **SQLite data volume** at /app/data for persistence across container restarts
 - **Photo storage:** disk at `data/photos/{session_id}/` (not DB blobs, 5MB max per photo)
 - **STL cache:** disk at `data/stl/generated/{design_id}.stl`, tracked via `Design.stl_path`
-- **Secrets:** SOPS-encrypted `secrets.production.env.enc`, decrypted to `/dev/shm/.env.production`
+- **Secrets:** SOPS-encrypted `secrets.production.env.enc`, decrypted on server via age key
 
-**IMPORTANT — Deploy process:**
-- Deployment runs **on the server itself** via `make deploy` (which runs `docker compose -f docker-compose.prod.yml up -d --build`)
-- The repo is cloned/pulled **on the server** — there is no rsync, scp, or file-copy step
-- **NEVER use rsync or SSH file transfers** to deploy. Always: `git push` → SSH to server → `git pull` → `make deploy`
-- All builds happen inside Docker on the server (no local builds shipped)
-
-```bash
-make deploy           # docker compose -f docker-compose.prod.yml up -d --build
-make deploy-down      # production down
-make deploy-logs      # tail production logs
-```
+**IMPORTANT — Deploy process (GitHub Actions ONLY):**
+- **Deployment is fully automated** via `.github/workflows/deploy.yml`
+- Pushing to `main` triggers the deploy workflow automatically
+- The workflow: rsyncs files → decrypts secrets via SOPS → `docker compose up -d --build` → health check
+- **NEVER SSH to the server to deploy manually.** Just `git push origin main` and the workflow handles everything.
+- **NEVER use `make deploy`, `git pull` on server, or any manual SSH deploy steps.**
+- Monitor deploy: `gh run list --workflow=deploy.yml` or `gh run watch <run-id>`
+- Server path: `/opt/3dez/` (managed by GitHub Actions rsync, not manual git clone)
 
 ## Key Patterns
 
