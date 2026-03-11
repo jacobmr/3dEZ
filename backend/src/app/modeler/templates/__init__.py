@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
+from app.modeler.templates.csg_primitive import generate_csg_primitive
 from app.modeler.templates.enclosure import generate_enclosure
 from app.modeler.templates.mounting_bracket import generate_mounting_bracket
 from app.modeler.templates.organizer import generate_organizer
@@ -18,10 +19,12 @@ TEMPLATE_REGISTRY: dict[str, Callable[..., Part]] = {
     "mounting_bracket": generate_mounting_bracket,
     "enclosure": generate_enclosure,
     "organizer": generate_organizer,
+    "csg_primitive": generate_csg_primitive,
 }
 
 __all__ = [
     "TEMPLATE_REGISTRY",
+    "generate_csg_primitive",
     "generate_enclosure",
     "generate_mounting_bracket",
     "generate_organizer",

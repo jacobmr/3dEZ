@@ -415,6 +415,79 @@ DESIGN_TOOLS: list[dict] = [
         },
     },
     {
+        "name": "generate_csg",
+        "description": (
+            "Generate a custom 3D shape using composable CSG primitives. "
+            "Use this for ANY design that doesn't fit mounting_bracket, enclosure, or organizer. "
+            "Build the shape as a flat ordered list of primitives (box, cylinder, sphere) combined "
+            "with union (add material) and difference (remove material) operations. "
+            "All positions and rotations are GLOBAL (absolute) coordinates — not relative to parent. "
+            "The first part is always the base body (union). "
+            "Use difference for holes, cutouts, and slots."
+        ),
+        "input_schema": {
+            "type": "object",
+            "required": ["tree"],
+            "properties": {
+                "tree": {
+                    "type": "object",
+                    "required": ["parts"],
+                    "properties": {
+                        "name": {"type": "string"},
+                        "parts": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "items": {
+                                "type": "object",
+                                "required": ["label", "dims"],
+                                "properties": {
+                                    "label": {"type": "string"},
+                                    "dims": {
+                                        "type": "object",
+                                        "required": ["shape"],
+                                        "properties": {
+                                            "shape": {
+                                                "type": "string",
+                                                "enum": ["box", "cylinder", "sphere"],
+                                            },
+                                            "width": {"type": "number", "exclusiveMinimum": 0},
+                                            "height": {"type": "number", "exclusiveMinimum": 0},
+                                            "depth": {"type": "number", "exclusiveMinimum": 0},
+                                            "radius": {"type": "number", "exclusiveMinimum": 0},
+                                        },
+                                    },
+                                    "pos_x": {"type": "number", "default": 0},
+                                    "pos_y": {"type": "number", "default": 0},
+                                    "pos_z": {"type": "number", "default": 0},
+                                    "rot_x": {"type": "number", "default": 0},
+                                    "rot_y": {"type": "number", "default": 0},
+                                    "rot_z": {"type": "number", "default": 0},
+                                    "operation": {
+                                        "type": "string",
+                                        "enum": ["union", "difference"],
+                                        "default": "union",
+                                    },
+                                    "fillet_radius": {
+                                        "type": "number",
+                                        "minimum": 0,
+                                        "default": 0,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                "notes": {"type": "string", "default": ""},
+                "suggest_modifications": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "2-3 brief, actionable modification suggestions",
+                },
+            },
+        },
+    },
+    {
         "name": "request_clarification",
         "description": (
             "Ask the user a clarifying question when a required design "

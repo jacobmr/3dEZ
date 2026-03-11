@@ -6,7 +6,11 @@
  */
 
 /** Supported design categories. */
-export type DesignCategory = "mounting_bracket" | "enclosure" | "organizer";
+export type DesignCategory =
+  | "mounting_bracket"
+  | "enclosure"
+  | "organizer"
+  | "csg_primitive";
 
 /** Fields common to every design category. */
 export interface BaseDesignParams {
@@ -53,8 +57,38 @@ export interface OrganizerParams extends BaseDesignParams {
   stackable?: boolean;
 }
 
+/** A single primitive in a CSG assembly. */
+export interface CsgPart {
+  label: string;
+  dims:
+    | { shape: "box"; width: number; height: number; depth: number }
+    | { shape: "cylinder"; radius: number; height: number }
+    | { shape: "sphere"; radius: number };
+  pos_x?: number;
+  pos_y?: number;
+  pos_z?: number;
+  rot_x?: number;
+  rot_y?: number;
+  rot_z?: number;
+  operation?: "union" | "difference";
+  fillet_radius?: number;
+}
+
+/** Flat ordered list of CSG primitives. */
+export interface CsgTree {
+  name?: string;
+  parts: CsgPart[];
+}
+
+/** Parameters for a composable CSG primitive design. */
+export interface CsgPrimitiveParams extends BaseDesignParams {
+  category: "csg_primitive";
+  tree: CsgTree;
+}
+
 /** Discriminated union of all design parameter types. */
 export type DesignParams =
   | MountingBracketParams
   | EnclosureParams
-  | OrganizerParams;
+  | OrganizerParams
+  | CsgPrimitiveParams;

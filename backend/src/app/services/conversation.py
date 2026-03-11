@@ -190,6 +190,29 @@ class ConversationService:
                         "tool_use_id": tool_id,
                         "content": json.dumps(dimension_event),
                     })
+                elif tool_name == "generate_csg":
+                    result_event = await self._handle_generate_csg(
+                        conversation_id, tool_input
+                    )
+                    yield result_event
+                    tool_results.append({
+                        "tool_use_id": tool_id,
+                        "content": json.dumps(result_event),
+                    })
+                    # Emit cost estimate after CSG design is saved
+                    if result_event.get("type") == "parameters_extracted":
+                        try:
+                            cost = await estimate_cost(self._db, conversation_id)
+                            yield {
+                                "type": "cost_estimate",
+                                **cost.to_dict(),
+                            }
+                        except Exception:
+                            logger.warning(
+                                "Cost estimation failed for %s",
+                                conversation_id,
+                                exc_info=True,
+                            )
                 elif tool_name == "request_clarification":
                     clarification_event = {
                         "type": "clarification",
@@ -591,6 +614,47 @@ class ConversationService:
         if suggestions and isinstance(suggestions, list):
             event["suggest_modifications"] = suggestions[:3]
 
+        return event
+
+    async def _handle_generate_csg(
+        self, conversation_id: str, tool_input: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Validate CSG tree and save a Design record."""
+        from app.models.designs import CsgPrimitiveParams
+
+        try:
+            params = CsgPrimitiveParams.model_validate({
+                "category": "csg_primitive",
+                "tree": tool_input["tree"],
+                "notes": tool_input.get("notes", ""),
+            })
+        except Exception as exc:
+            return {"type": "error", "message": f"CSG validation failed: {exc}"}
+
+        latest = await self._get_latest_design(conversation_id)
+        next_version = (latest.version + 1) if latest else 1
+
+        design = Design(
+            conversation_id=conversation_id,
+            parameters=params.model_dump(),
+            category="csg_primitive",
+            version=next_version,
+            parent_design_id=latest.id if latest else None,
+        )
+        self._db.add(design)
+        await self._db.commit()
+        await self._db.refresh(design)
+
+        event: dict[str, Any] = {
+            "type": "parameters_extracted",
+            "parameters": params.model_dump(),
+            "design_id": design.id,
+            "version": next_version,
+            "is_revision": next_version > 1,
+        }
+        suggestions = tool_input.get("suggest_modifications")
+        if suggestions and isinstance(suggestions, list):
+            event["suggest_modifications"] = suggestions[:3]
         return event
 
     async def _handle_modify_stl(

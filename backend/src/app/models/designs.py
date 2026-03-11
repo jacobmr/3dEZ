@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -115,8 +115,78 @@ class OrganizerParams(BaseDesignParams):
     )
 
 
+# ---------------------------------------------------------------------------
+# CSG (Constructive Solid Geometry) types
+# ---------------------------------------------------------------------------
+
+
+class BoxDims(BaseModel):
+    """Axis-aligned box primitive."""
+
+    shape: Literal["box"] = "box"
+    width: float = Field(gt=0, le=500)
+    height: float = Field(gt=0, le=500)
+    depth: float = Field(gt=0, le=500)
+
+
+class CylinderDims(BaseModel):
+    """Cylinder primitive (along Z axis before rotation)."""
+
+    shape: Literal["cylinder"] = "cylinder"
+    radius: float = Field(gt=0, le=250)
+    height: float = Field(gt=0, le=500)
+
+
+class SphereDims(BaseModel):
+    """Sphere primitive."""
+
+    shape: Literal["sphere"] = "sphere"
+    radius: float = Field(gt=0, le=250)
+
+
+PrimitiveDims = Annotated[
+    Union[BoxDims, CylinderDims, SphereDims],
+    Field(discriminator="shape"),
+]
+
+
+class CsgPart(BaseModel):
+    """A single primitive in a CSG assembly."""
+
+    label: str = Field(description="Human-readable name, e.g. 'back_plate'")
+    dims: PrimitiveDims
+    pos_x: float = 0.0
+    pos_y: float = 0.0
+    pos_z: float = 0.0
+    rot_x: float = Field(default=0.0, ge=-360, le=360)
+    rot_y: float = Field(default=0.0, ge=-360, le=360)
+    rot_z: float = Field(default=0.0, ge=-360, le=360)
+    operation: Literal["union", "difference"] = "union"
+    fillet_radius: float = Field(default=0.0, ge=0, le=50)
+
+
+class CsgTree(BaseModel):
+    """Flat ordered list of CSG primitives processed left-to-right."""
+
+    name: str = ""
+    parts: list[CsgPart] = Field(min_length=1, max_length=50)
+
+    @model_validator(mode="after")
+    def first_part_must_be_union(self) -> "CsgTree":
+        if self.parts and self.parts[0].operation != "union":
+            self.parts[0].operation = "union"
+        return self
+
+
+class CsgPrimitiveParams(BaseDesignParams):
+    """Parameters for a composable CSG primitive design."""
+
+    category: Literal["csg_primitive"] = "csg_primitive"
+    tree: CsgTree
+
+
 # Discriminated union keyed on the ``category`` field.
 DesignParamsUnion = Annotated[
-    Union[MountingBracketParams, EnclosureParams, OrganizerParams],
+    Union[MountingBracketParams, EnclosureParams, OrganizerParams, CsgPrimitiveParams],
     Field(discriminator="category"),
 ]
