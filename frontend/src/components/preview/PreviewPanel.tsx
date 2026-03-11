@@ -26,6 +26,8 @@ interface PreviewPanelProps {
   modificationDescription?: string | null;
   /** Design version number (1, 2, 3, ...). */
   version?: number;
+  /** Design ID for download tracking. */
+  designId?: string | null;
   /** Conversation ID for version history lookup. */
   conversationId?: string | null;
   /** Called when user selects a version from history. */
@@ -36,14 +38,33 @@ interface PreviewPanelProps {
   versionHistoryRefreshKey?: number;
 }
 
-function downloadStl(stlBytes: ArrayBuffer, category?: string) {
+function downloadStl(
+  stlBytes: ArrayBuffer,
+  category?: string,
+  version?: number,
+  designId?: string | null,
+) {
+  const cat = (category ?? "design").replace(/\s+/g, "_");
+  const ver = version && version > 0 ? `_v${version}` : "";
+  const filename = `${cat}${ver}.stl`;
+
   const blob = new Blob([stlBytes], { type: "model/stl" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${category ?? "design"}.stl`;
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+
+  // Fire-and-forget download tracking
+  if (designId) {
+    fetch(`/api/designs/${designId}/download`, {
+      method: "POST",
+      headers: {
+        "X-Session-ID": localStorage.getItem("3dez-session-id") ?? "",
+      },
+    }).catch(() => {});
+  }
 }
 
 function LoadingSkeleton() {
@@ -150,6 +171,7 @@ export default function PreviewPanel({
   onToggleBeforeAfter,
   modificationDescription,
   version,
+  designId,
   conversationId,
   onSelectVersion,
   onRevertVersion,
@@ -256,8 +278,8 @@ export default function PreviewPanel({
         <div className="flex items-center gap-2">
           {stlBytes && (
             <button
-              onClick={() => downloadStl(stlBytes, category)}
-              className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500 active:bg-indigo-700"
+              onClick={() => downloadStl(stlBytes, category, version, designId)}
+              className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 active:bg-indigo-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

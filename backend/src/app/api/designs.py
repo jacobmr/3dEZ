@@ -42,6 +42,7 @@ def _design_dict(d: Design) -> dict[str, Any]:
         "parameters": d.parameters,
         "version": d.version,
         "parent_design_id": d.parent_design_id,
+        "download_count": d.download_count,
         "created_at": d.created_at.isoformat(),
     }
 
@@ -221,3 +222,27 @@ async def list_variants(
     variants = result.scalars().all()
 
     return [_design_dict(d) for d in variants]
+
+
+@router.post("/{design_id}/download")
+async def track_download(
+    design_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Increment download count for a design."""
+    result = await db.execute(
+        select(Design)
+        .join(Conversation, Design.conversation_id == Conversation.id)
+        .where(Design.id == design_id, Conversation.session_id.in_(ctx.all_session_ids))
+        .options(selectinload(Design.conversation))
+    )
+    design = result.scalar_one_or_none()
+    if design is None:
+        raise HTTPException(status_code=404, detail="Design not found")
+
+    design.download_count = (design.download_count or 0) + 1
+    await db.commit()
+    await db.refresh(design)
+
+    return _design_dict(design)

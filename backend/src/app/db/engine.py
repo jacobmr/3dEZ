@@ -50,6 +50,8 @@ async def _run_migrations() -> None:
         "ALTER TABLE messages ADD COLUMN stl_file_ids JSON",
         "ALTER TABLE messages ADD COLUMN token_usage JSON",
         "ALTER TABLE designs ADD COLUMN cost_approved BOOLEAN DEFAULT 0",
+        "ALTER TABLE designs ADD COLUMN download_count INTEGER DEFAULT 0",
+        "ALTER TABLE designs ADD COLUMN share_token VARCHAR(36) UNIQUE",
     ]
     async with _engine.begin() as conn:
         for sql in migrations:

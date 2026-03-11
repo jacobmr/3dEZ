@@ -148,6 +148,10 @@ class Design(Base):
         String(36), ForeignKey("designs.id"), nullable=True, index=True
     )
     cost_approved: Mapped[bool] = mapped_column(default=False)
+    download_count: Mapped[int] = mapped_column(Integer, default=0)
+    share_token: Mapped[str | None] = mapped_column(
+        String(36), unique=True, nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

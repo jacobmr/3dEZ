@@ -245,6 +245,7 @@ export default function HomeClient() {
           onToggleBeforeAfter={() => setShowingPrevious((v) => !v)}
           modificationDescription={modificationDescription}
           version={currentDesign?.version}
+          designId={currentDesign?.id}
           conversationId={conversationId}
           onSelectVersion={handleSelectVersion}
           onRevertVersion={handleRevertVersion}
