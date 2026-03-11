@@ -259,7 +259,7 @@ export default function PreviewPanel({
   }
 
   return (
-    <div className="flex h-full flex-col border-t border-gray-200 lg:border-l lg:border-t-0 dark:border-zinc-800">
+    <div className="flex h-full flex-col border-t border-gray-200 md:border-l md:border-t-0 dark:border-zinc-800">
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2 dark:border-zinc-800">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">

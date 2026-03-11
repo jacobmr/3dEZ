@@ -213,6 +213,7 @@ export default function HomeClient() {
       onSelectConversation={handleSelectConversation}
       onNewDesign={handleNewDesign}
       sidebarRefreshKey={sidebarRefreshKey}
+      hasPreview={!!(uploadedStlBytes ?? stlBytes) || previewLoading}
       conversationPanel={
         <ChatPanel
           messages={messages}
