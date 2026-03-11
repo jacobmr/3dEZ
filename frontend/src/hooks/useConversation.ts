@@ -110,6 +110,7 @@ export function useConversation() {
   const processStream = useCallback(
     async (stream: AsyncGenerator<{ type: string; data: string }>) => {
       const assistantId = nextId();
+      let costAutoApproved = false;
       setMessages((prev) => [
         ...prev,
         { id: assistantId, role: "assistant", content: "" },
@@ -142,9 +143,17 @@ export function useConversation() {
                 params: parsed.parameters ?? parsed,
                 id: parsed.design_id ?? "",
               });
-              // Reset cost state for new design extraction
-              setCostEstimate(null);
-              setCostApproved(false);
+              // For revisions with same category, auto-approve cost
+              // (no new conversation tokens needed -- just re-generate)
+              if (parsed.is_revision && !parsed.category_changed) {
+                setCostEstimate(null);
+                setCostApproved(true);
+                costAutoApproved = true;
+              } else {
+                // Reset cost state for first generation or category change
+                setCostEstimate(null);
+                setCostApproved(false);
+              }
 
               // Attach parameter diff for revisions
               if (parsed.is_revision && parsed.previous_parameters) {
@@ -169,6 +178,9 @@ export function useConversation() {
           }
 
           case "cost_estimate": {
+            // Skip cost display if auto-approved (parameter-only revision)
+            if (costAutoApproved) break;
+
             try {
               const costData: CostEstimateData = JSON.parse(event.data);
               setCostEstimate(costData);
