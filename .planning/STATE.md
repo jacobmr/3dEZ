@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: 7 of 10 (STL Upload & Modification) — IN PROGRESS
-Plan: 1 of 2 in current phase — COMPLETE
-Status: 07-01 complete, ready for 07-02
-Last activity: 2026-03-10 — Completed 07-01-PLAN.md
+Phase: 7 of 10 (STL Upload & Modification) — COMPLETE
+Plan: 2 of 2 in current phase
+Status: All plans complete, ready for Phase 8
+Last activity: 2026-03-10 — Completed 07-02-PLAN.md
 
-Progress: █████████████████░░ 82%
+Progress: ██████████████████░ 85%
 
 ## Performance Metrics
 
@@ -35,7 +35,7 @@ Progress: █████████████████░░ 82%
 | 4.1 Server Deployment  | 1/1   | 13 min  | 13 min   |
 | 5. Photo Upload        | 3/3   | ~30 min | ~10 min  |
 | 6. Auth & Library      | 3/3   | ~30 min | ~10 min  |
-| 7. STL Upload          | 1/2   | ~11 min | ~11 min  |
+| 7. STL Upload          | 2/2   | ~16 min | ~8 min   |
 
 **Recent Trend:**
 
@@ -120,6 +120,8 @@ Recent decisions affecting current work:
 - Reject non-watertight STL uploads (required for boolean ops in 07-02)
 - 500k face count cap on uploaded STLs
 - STL metadata injected as text in Claude messages (not binary)
+- trimesh auto-uses manifold3d for boolean ops when installed
+- Modified STL saved as new StlFile record (preserves original for before/after)
 
 ### Deferred Issues
 
@@ -132,5 +134,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: Completed 07-01 (STL Upload & Analysis), starting 07-02 (STL Modification Flow)
+Stopped at: Completed Phase 7 (STL Upload & Modification), ready for Phase 8
 Resume file: None
