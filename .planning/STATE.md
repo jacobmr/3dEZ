@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: 6 of 10 (Multi-tenant Auth & Design Library) — COMPLETE
-Plan: 3 of 3 in current phase
-Status: All plans complete, ready for Phase 7
-Last activity: 2026-03-10 — Completed 06-03-PLAN.md
+Phase: 7 of 10 (STL Upload & Modification) — IN PROGRESS
+Plan: 1 of 2 in current phase — COMPLETE
+Status: 07-01 complete, ready for 07-02
+Last activity: 2026-03-10 — Completed 07-01-PLAN.md
 
-Progress: █████████████████ 80%
+Progress: █████████████████░░ 82%
 
 ## Performance Metrics
 
@@ -35,10 +35,11 @@ Progress: █████████████████ 80%
 | 4.1 Server Deployment  | 1/1   | 13 min  | 13 min   |
 | 5. Photo Upload        | 3/3   | ~30 min | ~10 min  |
 | 6. Auth & Library      | 3/3   | ~30 min | ~10 min  |
+| 7. STL Upload          | 1/2   | ~11 min | ~11 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 4m, 3m, ~30m, ~15m, ~10m
+- Last 5 plans: 3m, ~30m, ~15m, ~10m, ~11m
 - Trend: Variable — scope-dependent
 
 ## Accumulated Context
@@ -115,6 +116,10 @@ Recent decisions affecting current work:
 - RequestContext dataclass for multi-session ownership across routes
 - In-memory access token storage (not localStorage) for XSS safety
 - Session claiming: link anonymous sessions to user accounts on register/login
+- Validate .stl file extension rather than content type (browsers send application/octet-stream)
+- Reject non-watertight STL uploads (required for boolean ops in 07-02)
+- 500k face count cap on uploaded STLs
+- STL metadata injected as text in Claude messages (not binary)
 
 ### Deferred Issues
 
@@ -127,5 +132,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: Completed Phase 6 — Auth & Design Library complete, Phase 7 next
+Stopped at: Completed 07-01 (STL Upload & Analysis), starting 07-02 (STL Modification Flow)
 Resume file: None

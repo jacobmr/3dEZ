@@ -134,7 +134,7 @@ Plans:
 
 Plans:
 
-- [ ] 07-01: STL upload & parsing — Upload endpoint, STL validation, mesh analysis, storage
+- [x] 07-01: STL upload & parsing — Upload endpoint, STL validation, mesh analysis, storage
 - [ ] 07-02: STL modification flow — Conversation-driven modifications to uploaded meshes, re-export
 
 ### Phase 8: Cost Estimation & Pricing
@@ -190,7 +190,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7 �
 | 4.1 Server Deployment & CI/CD  | 1/1            | Complete    | 2026-03-09 |
 | 5. Photo Upload                | 3/3            | Complete    | 2026-03-10 |
 | 6. Multi-tenant Auth & Library | 3/3            | Complete    | 2026-03-10 |
-| 7. STL Upload & Modification   | 0/2            | Not started | -          |
+| 7. STL Upload & Modification   | 1/2            | In progress | -          |
 | 8. Cost Estimation & Pricing   | 0/2            | Not started | -          |
 | 9. Conversational Iteration    | 0/3            | Not started | -          |
 | 10. Integration & Polish       | 0/3            | Not started | -          |
