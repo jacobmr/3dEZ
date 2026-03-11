@@ -14,6 +14,14 @@ interface PreviewPanelProps {
   params?: Record<string, unknown>;
   /** Callback to retry STL generation after an error. */
   onRetry?: () => void;
+  /** Previous STL bytes for before/after comparison. */
+  previousStlBytes?: ArrayBuffer | null;
+  /** Whether currently showing the previous (before) state. */
+  showingPrevious?: boolean;
+  /** Toggle between before and after views. */
+  onToggleBeforeAfter?: () => void;
+  /** Description of the modification that was applied. */
+  modificationDescription?: string | null;
 }
 
 function downloadStl(stlBytes: ArrayBuffer, category?: string) {
@@ -96,7 +104,12 @@ export default function PreviewPanel({
   category,
   params,
   onRetry,
+  previousStlBytes,
+  showingPrevious,
+  onToggleBeforeAfter,
+  modificationDescription,
 }: PreviewPanelProps) {
+  const hasBeforeAfter = !!previousStlBytes && !!onToggleBeforeAfter;
   let content: React.ReactNode;
 
   if (isLoading) {
@@ -129,27 +142,48 @@ export default function PreviewPanel({
   return (
     <div className="flex h-full flex-col border-t border-gray-200 lg:border-l lg:border-t-0 dark:border-zinc-800">
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2 dark:border-zinc-800">
-        <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-          Preview
-        </span>
-        {stlBytes && (
-          <button
-            onClick={() => downloadStl(stlBytes, category)}
-            className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500 active:bg-indigo-700"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              className="h-3.5 w-3.5"
-              aria-hidden="true"
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+            Preview
+          </span>
+          {hasBeforeAfter && (
+            <button
+              onClick={onToggleBeforeAfter}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                showingPrevious
+                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                  : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              }`}
             >
-              <path d="M8 10.5a.75.75 0 0 1-.53-.22l-3-3a.75.75 0 1 1 1.06-1.06L7.25 7.94V2.75a.75.75 0 0 1 1.5 0v5.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3A.75.75 0 0 1 8 10.5Z" />
-              <path d="M2.75 13a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 0 1.5H2.75Z" />
-            </svg>
-            Download STL
-          </button>
-        )}
+              {showingPrevious ? "Before" : "After"}
+            </button>
+          )}
+          {modificationDescription && !showingPrevious && (
+            <span className="max-w-[200px] truncate text-xs text-gray-400 dark:text-zinc-500">
+              {modificationDescription}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {stlBytes && (
+            <button
+              onClick={() => downloadStl(stlBytes, category)}
+              className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-500 active:bg-indigo-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
+                <path d="M8 10.5a.75.75 0 0 1-.53-.22l-3-3a.75.75 0 1 1 1.06-1.06L7.25 7.94V2.75a.75.75 0 0 1 1.5 0v5.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3A.75.75 0 0 1 8 10.5Z" />
+                <path d="M2.75 13a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 0 1.5H2.75Z" />
+              </svg>
+              Download STL
+            </button>
+          )}
+        </div>
       </div>
       <div className="flex flex-1 flex-col">{content}</div>
     </div>

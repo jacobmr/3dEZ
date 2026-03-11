@@ -32,6 +32,20 @@ export interface StlAnalysis {
   suggested_modifications: string[];
 }
 
+export interface StlModification {
+  stl_file_id: string;
+  original_stl_file_id: string;
+  modification_type: "add_feature" | "cut_hole" | "trim";
+  description: string;
+  dimensions: {
+    width_mm: number;
+    height_mm: number;
+    depth_mm: number;
+  };
+  face_count: number;
+  is_watertight: boolean;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
@@ -44,6 +58,8 @@ export interface ChatMessage {
   dimensionInference?: DimensionInference;
   /** STL analysis data from analyze_imported_stl tool */
   stlAnalysis?: StlAnalysis;
+  /** STL modification data from modify_stl tool */
+  stlModification?: StlModification;
 }
 
 export interface ConversationState {
@@ -68,6 +84,8 @@ export function useConversation() {
     id: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [latestModification, setLatestModification] =
+    useState<StlModification | null>(null);
 
   // Ref to allow aborting mid-stream (future use)
   const abortRef = useRef(false);
@@ -139,6 +157,21 @@ export function useConversation() {
               );
             } catch {
               // Ignore malformed STL analysis data
+            }
+            break;
+          }
+
+          case "stl_modified": {
+            try {
+              const modData: StlModification = JSON.parse(event.data);
+              setLatestModification(modData);
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, stlModification: modData } : m,
+                ),
+              );
+            } catch {
+              // Ignore malformed modification data
             }
             break;
           }
@@ -291,6 +324,7 @@ export function useConversation() {
     setConversationId(null);
     setMessages([]);
     setCurrentDesign(null);
+    setLatestModification(null);
     setError(null);
     setIsStreaming(false);
   }, []);
@@ -300,6 +334,7 @@ export function useConversation() {
     messages,
     isStreaming,
     currentDesign,
+    latestModification,
     error,
     ensureConversation,
     sendMessage,

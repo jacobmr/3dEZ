@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import AppShell from "@/components/layout/AppShell";
 import ChatPanel from "@/components/chat/ChatPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
@@ -14,6 +14,7 @@ export default function HomeClient() {
     messages,
     isStreaming,
     currentDesign,
+    latestModification,
     error,
     ensureConversation,
     sendMessage,
@@ -36,6 +37,43 @@ export default function HomeClient() {
   const [uploadedStlBytes, setUploadedStlBytes] = useState<ArrayBuffer | null>(
     null,
   );
+
+  // Before/after toggle state for STL modifications
+  const [previousStlBytes, setPreviousStlBytes] = useState<ArrayBuffer | null>(
+    null,
+  );
+  const [showingPrevious, setShowingPrevious] = useState(false);
+  const [modificationDescription, setModificationDescription] = useState<
+    string | null
+  >(null);
+
+  // When a modification arrives, fetch the new STL and store the old one
+  useEffect(() => {
+    if (!latestModification) return;
+
+    const fetchModifiedStl = async () => {
+      try {
+        // Save the current STL as "previous" for before/after toggle
+        const currentStl = uploadedStlBytes ?? stlBytes;
+        if (currentStl) {
+          setPreviousStlBytes(currentStl);
+        }
+
+        // Fetch the modified STL
+        const modifiedBytes = await fetchStlFile(
+          latestModification.stl_file_id,
+        );
+        setUploadedStlBytes(modifiedBytes);
+        setModificationDescription(latestModification.description);
+        setShowingPrevious(false);
+      } catch {
+        // Failed to fetch modified STL — preview stays on current
+      }
+    };
+
+    fetchModifiedStl();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [latestModification]);
 
   const handleSend = useCallback(
     async (text: string, photo?: File, stlFile?: File) => {
@@ -98,6 +136,9 @@ export default function HomeClient() {
   const handleNewDesign = useCallback(() => {
     startNew();
     setUploadedStlBytes(null);
+    setPreviousStlBytes(null);
+    setShowingPrevious(false);
+    setModificationDescription(null);
   }, [startNew]);
 
   return (
@@ -118,12 +159,18 @@ export default function HomeClient() {
       }
       previewPanel={
         <PreviewPanel
-          stlBytes={uploadedStlBytes ?? stlBytes}
+          stlBytes={
+            showingPrevious ? previousStlBytes : (uploadedStlBytes ?? stlBytes)
+          }
           isLoading={previewLoading}
           error={previewError}
           category={currentDesign?.params.category}
           params={currentDesign?.params as Record<string, unknown> | undefined}
           onRetry={regenerate}
+          previousStlBytes={previousStlBytes}
+          showingPrevious={showingPrevious}
+          onToggleBeforeAfter={() => setShowingPrevious((v) => !v)}
+          modificationDescription={modificationDescription}
         />
       }
     />
