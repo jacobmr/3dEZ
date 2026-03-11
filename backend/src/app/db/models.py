@@ -121,6 +121,7 @@ class Message(Base):
     tool_use: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     photo_ids: Mapped[list | None] = mapped_column(JSON, nullable=True, default=None)
     stl_file_ids: Mapped[list | None] = mapped_column(JSON, nullable=True, default=None)
+    token_usage: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -146,6 +147,7 @@ class Design(Base):
     parent_design_id: Mapped[str | None] = mapped_column(
         String(36), ForeignKey("designs.id"), nullable=True, index=True
     )
+    cost_approved: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

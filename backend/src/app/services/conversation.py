@@ -91,7 +91,7 @@ class ConversationService:
             )
 
             # Call Claude with streaming, collecting tool use blocks
-            assistant_text, tool_use_blocks, stop_reason = await self._call_claude(
+            assistant_text, tool_use_blocks, stop_reason, usage = await self._call_claude(
                 api_messages, system_prompt
             )
 
@@ -193,6 +193,7 @@ class ConversationService:
                     if tool_use_blocks
                     else None
                 ),
+                token_usage=usage,
             )
             self._db.add(assistant_msg)
             await self._db.commit()
@@ -432,8 +433,8 @@ class ConversationService:
         self,
         messages: list[dict[str, Any]],
         system_prompt: str,
-    ) -> tuple[str, list[dict[str, Any]], str]:
-        """Call Claude API and return (text, tool_use_blocks, stop_reason).
+    ) -> tuple[str, list[dict[str, Any]], str, dict[str, int]]:
+        """Call Claude API and return (text, tool_use_blocks, stop_reason, usage).
 
         Uses the streaming API with ``get_final_message()`` to get both
         streamed text and complete tool_use blocks.
@@ -464,7 +465,13 @@ class ConversationService:
                     "input": block.input,
                 })
 
-        return "".join(text_parts), tool_use_blocks, response.stop_reason
+        usage = {
+            "prompt_tokens": response.usage.input_tokens,
+            "completion_tokens": response.usage.output_tokens,
+            "total_tokens": response.usage.input_tokens + response.usage.output_tokens,
+        }
+
+        return "".join(text_parts), tool_use_blocks, response.stop_reason, usage
 
     async def _handle_extract_parameters(
         self, conversation_id: str, tool_input: dict[str, Any]
@@ -662,7 +669,7 @@ class ConversationService:
             {"role": "user", "content": tool_result_content},
         ]
 
-        followup_text, _, _ = await self._call_claude(
+        followup_text, _, _, followup_usage = await self._call_claude(
             followup_messages, system_prompt
         )
 
@@ -684,6 +691,7 @@ class ConversationService:
                 conversation_id=conversation_id,
                 role="assistant",
                 content=followup_text,
+                token_usage=followup_usage,
             )
             self._db.add(followup_msg)
 
