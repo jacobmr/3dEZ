@@ -11,9 +11,14 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.deps import get_session_id
+from app.db.engine import get_db
+from app.db.models import Design
 
 logger = logging.getLogger(__name__)
 
@@ -34,16 +39,22 @@ class GenerateRequest(BaseModel):
 
     category: str
     parameters: dict[str, Any]
+    design_id: str | None = None
 
 
 @router.post("/api/generate")
-async def generate_stl(body: GenerateRequest) -> Response:
+async def generate_stl(
+    body: GenerateRequest,
+    session_id: str = Depends(get_session_id),
+    db: AsyncSession = Depends(get_db),
+) -> Response:
     """Generate an STL file from a parametric template.
 
     Parameters
     ----------
     body
-        JSON body with ``category`` (str) and ``parameters`` (dict).
+        JSON body with ``category`` (str), ``parameters`` (dict), and
+        optional ``design_id`` (str).
 
     Returns
     -------
@@ -65,6 +76,15 @@ async def generate_stl(body: GenerateRequest) -> Response:
                 f"Available: {', '.join(sorted(known_categories))}"
             ),
         )
+
+    # Soft gate: check cost approval if design_id provided
+    if body.design_id:
+        design = await db.get(Design, body.design_id)
+        if design and not design.cost_approved:
+            logger.warning(
+                "STL generation for design %s without cost approval",
+                body.design_id,
+            )
 
     try:
         engine = create_engine()

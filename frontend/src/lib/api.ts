@@ -253,11 +253,16 @@ export async function duplicateDesign(id: string): Promise<SavedDesign> {
 export async function generateStl(
   category: string,
   parameters: Record<string, unknown>,
+  designId?: string,
 ): Promise<ArrayBuffer> {
   const res = await fetch("/api/generate", {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({ category, parameters }),
+    body: JSON.stringify({
+      category,
+      parameters,
+      ...(designId && { design_id: designId }),
+    }),
   });
 
   if (!res.ok) {

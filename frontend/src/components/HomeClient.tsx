@@ -32,7 +32,7 @@ export default function HomeClient() {
     isLoading: previewLoading,
     error: previewError,
     regenerate,
-  } = usePreview(currentDesign);
+  } = usePreview(currentDesign, { costApproved });
 
   // Bump to force sidebar refresh after mutations
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
