@@ -26,6 +26,16 @@ class ConversationMessage(BaseModel):
     timestamp: str = Field(description="ISO-8601 timestamp")
 
 
+class ErrorResponse(BaseModel):
+    """Standard error response returned by all endpoints."""
+
+    error: str = Field(description="Machine-readable error code")
+    message: str = Field(description="Human-readable error message")
+    details: dict[str, Any] | None = Field(
+        default=None, description="Optional structured error details"
+    )
+
+
 class DesignParameters(BaseModel):
     """Parameters describing a 3D design."""
 

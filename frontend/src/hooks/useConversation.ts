@@ -8,9 +8,26 @@ import {
   streamRevision,
   getCostEstimate,
   approveCost,
+  ApiRequestError,
 } from "@/lib/api";
 import type { DesignParams } from "@shared/api-types";
 import type { CostEstimateData } from "@/lib/api";
+
+/** Extract a user-friendly message from an error. */
+function friendlyError(err: unknown, fallback: string): string {
+  if (err instanceof ApiRequestError) return err.message;
+  if (err instanceof Error) {
+    // Network errors from fetch
+    if (
+      err.message === "Failed to fetch" ||
+      err.message === "NetworkError when attempting to fetch resource."
+    ) {
+      return "Unable to reach the server. Check your internet connection.";
+    }
+    return err.message;
+  }
+  return fallback;
+}
 
 export interface DimensionInference {
   reference_used: string;
@@ -109,6 +126,12 @@ export function useConversation() {
 
   // Ref to allow aborting mid-stream (future use)
   const abortRef = useRef(false);
+
+  // Track the last failed action for retry support
+  const lastActionRef = useRef<{
+    type: "send" | "revise";
+    args: unknown[];
+  } | null>(null);
 
   const processStream = useCallback(
     async (stream: AsyncGenerator<{ type: string; data: string }>) => {
@@ -345,7 +368,11 @@ export function useConversation() {
         );
         await processStream(stream);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to send message");
+        setError(friendlyError(err, "Failed to send message"));
+        lastActionRef.current = {
+          type: "send",
+          args: [text, photoId, stlFileId],
+        };
       } finally {
         setIsStreaming(false);
       }
@@ -370,9 +397,8 @@ export function useConversation() {
         const stream = streamRevision(conversationId, text);
         await processStream(stream);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to revise design",
-        );
+        setError(friendlyError(err, "Failed to revise design"));
+        lastActionRef.current = { type: "revise", args: [text] };
       } finally {
         setIsStreaming(false);
       }
@@ -402,9 +428,7 @@ export function useConversation() {
         setCurrentDesign(null);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to load conversation",
-      );
+      setError(friendlyError(err, "Failed to load conversation"));
     }
   }, []);
 
@@ -415,7 +439,7 @@ export function useConversation() {
       await approveCost(conversationId);
       setCostApproved(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to approve cost");
+      setError(friendlyError(err, "Failed to approve cost"));
     } finally {
       setIsApprovingCost(false);
     }
@@ -431,6 +455,31 @@ export function useConversation() {
     );
   }, []);
 
+  /** Retry the last failed operation. */
+  const retry = useCallback(() => {
+    const action = lastActionRef.current;
+    if (!action) return;
+    lastActionRef.current = null;
+    setError(null);
+    if (action.type === "send") {
+      const [text, photoId, stlFileId] = action.args as [
+        string,
+        string | undefined,
+        string | undefined,
+      ];
+      sendMessage(text, photoId, stlFileId);
+    } else if (action.type === "revise") {
+      const [text] = action.args as [string];
+      reviseDesign(text);
+    }
+  }, [sendMessage, reviseDesign]);
+
+  /** Dismiss the current error. */
+  const dismissError = useCallback(() => {
+    setError(null);
+    lastActionRef.current = null;
+  }, []);
+
   const startNew = useCallback(() => {
     setConversationId(null);
     setMessages([]);
@@ -441,6 +490,7 @@ export function useConversation() {
     setIsApprovingCost(false);
     setError(null);
     setIsStreaming(false);
+    lastActionRef.current = null;
   }, []);
 
   return {
@@ -461,5 +511,7 @@ export function useConversation() {
     startNew,
     handleApproveCost,
     handleDeclineCost,
+    retry,
+    dismissError,
   };
 }

@@ -37,6 +37,10 @@ interface ChatPanelProps {
   onParameterNudge?: (parameterKey: string, newValue: number) => void;
   /** True while STL is being generated/regenerated. */
   isGenerating?: boolean;
+  /** Called when user clicks retry on a failed operation. */
+  onRetry?: () => void;
+  /** Called when user dismisses an error. */
+  onDismissError?: () => void;
 }
 
 export default function ChatPanel({
@@ -53,6 +57,8 @@ export default function ChatPanel({
   onSuggestedModification,
   onParameterNudge,
   isGenerating = false,
+  onRetry,
+  onDismissError,
 }: ChatPanelProps) {
   const hasMessages = messages.length > 0;
 
@@ -115,8 +121,27 @@ export default function ChatPanel({
 
       {/* Error display */}
       {error && (
-        <div className="mx-4 mb-2 rounded-lg border border-red-800 bg-red-900/30 px-3 py-2 text-sm text-red-300">
-          {error}
+        <div className="mx-4 mb-2 flex items-start gap-2 rounded-lg border border-red-800 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+          <span className="flex-1">{error}</span>
+          <div className="flex shrink-0 gap-1.5">
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="rounded px-2 py-0.5 text-xs font-medium text-red-200 transition-colors hover:bg-red-800/50 hover:text-white"
+              >
+                Retry
+              </button>
+            )}
+            {onDismissError && (
+              <button
+                onClick={onDismissError}
+                className="rounded px-1.5 py-0.5 text-xs text-red-400 transition-colors hover:text-red-200"
+                aria-label="Dismiss error"
+              >
+                &#x2715;
+              </button>
+            )}
+          </div>
         </div>
       )}
 

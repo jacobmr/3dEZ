@@ -36,10 +36,62 @@ function authHeaders(): Record<string, string> {
   return h;
 }
 
+/** Structured error from the backend {error, message, details} format. */
+export interface ApiError {
+  error: string;
+  message: string;
+  details?: Record<string, unknown> | null;
+}
+
+/** User-friendly messages for common error scenarios. */
+const FRIENDLY_MESSAGES: Record<string, string> = {
+  rate_limited: "You're sending messages too quickly. Please wait a moment.",
+  service_unavailable:
+    "The design service is temporarily unavailable. Please try again shortly.",
+  unauthorized: "Your session has expired. Please refresh the page.",
+  internal_error: "Something went wrong on our end. Please try again.",
+  not_found: "The requested resource was not found.",
+  validation_error:
+    "Some of the provided values are invalid. Please check and try again.",
+  payload_too_large: "The file is too large. Please try a smaller file.",
+};
+
+/** Custom error class that carries structured API error data. */
+export class ApiRequestError extends Error {
+  status: number;
+  code: string;
+  details: Record<string, unknown> | null;
+
+  constructor(status: number, apiError: ApiError) {
+    const friendly =
+      FRIENDLY_MESSAGES[apiError.error] ??
+      apiError.message ??
+      "An error occurred";
+    super(friendly);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.code = apiError.error;
+    this.details = apiError.details ?? null;
+  }
+}
+
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`API ${res.status}: ${body}`);
+    // Try to parse structured error
+    try {
+      const body = await res.json();
+      if (body && typeof body.error === "string") {
+        throw new ApiRequestError(res.status, body as ApiError);
+      }
+    } catch (err) {
+      if (err instanceof ApiRequestError) throw err;
+    }
+    // Fallback for non-JSON error bodies
+    const text = await res.text().catch(() => "");
+    throw new ApiRequestError(res.status, {
+      error: "unknown",
+      message: text || `Request failed (${res.status})`,
+    });
   }
   return res.json() as Promise<T>;
 }
@@ -157,25 +209,47 @@ export async function deleteConversation(id: string): Promise<void> {
 /*  Streaming message endpoints                                       */
 /* ------------------------------------------------------------------ */
 
+/** Parse a non-OK streaming response into a user-friendly error. */
+async function throwStreamError(res: Response): Promise<never> {
+  try {
+    const body = await res.json();
+    if (body && typeof body.error === "string") {
+      throw new ApiRequestError(res.status, body as ApiError);
+    }
+  } catch (err) {
+    if (err instanceof ApiRequestError) throw err;
+  }
+  const text = await res.text().catch(() => "");
+  throw new ApiRequestError(res.status, {
+    error: "unknown",
+    message: text || `Request failed (${res.status})`,
+  });
+}
+
 export async function* streamMessage(
   conversationId: string,
   message: string,
   photoId?: string,
   stlFileId?: string,
 ): AsyncGenerator<SSEEvent, void, unknown> {
-  const res = await fetch(`/api/conversations/${conversationId}/message`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify({
-      message,
-      ...(photoId && { photo_id: photoId }),
-      ...(stlFileId && { stl_file_id: stlFileId }),
-    }),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`API ${res.status}: ${body}`);
+  let res: Response;
+  try {
+    res = await fetch(`/api/conversations/${conversationId}/message`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify({
+        message,
+        ...(photoId && { photo_id: photoId }),
+        ...(stlFileId && { stl_file_id: stlFileId }),
+      }),
+    });
+  } catch {
+    throw new ApiRequestError(0, {
+      error: "network_error",
+      message: "Unable to reach the server. Check your internet connection.",
+    });
   }
+  if (!res.ok) await throwStreamError(res);
   yield* parseSSE(res);
 }
 
@@ -183,15 +257,20 @@ export async function* streamRevision(
   conversationId: string,
   message: string,
 ): AsyncGenerator<SSEEvent, void, unknown> {
-  const res = await fetch(`/api/conversations/${conversationId}/revise`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify({ message }),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`API ${res.status}: ${body}`);
+  let res: Response;
+  try {
+    res = await fetch(`/api/conversations/${conversationId}/revise`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify({ message }),
+    });
+  } catch {
+    throw new ApiRequestError(0, {
+      error: "network_error",
+      message: "Unable to reach the server. Check your internet connection.",
+    });
   }
+  if (!res.ok) await throwStreamError(res);
   yield* parseSSE(res);
 }
 

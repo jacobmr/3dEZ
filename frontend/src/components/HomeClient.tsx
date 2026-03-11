@@ -45,6 +45,8 @@ export default function HomeClient() {
     startNew,
     handleApproveCost,
     handleDeclineCost,
+    retry,
+    dismissError,
   } = useConversation();
 
   const {
@@ -242,6 +244,8 @@ export default function HomeClient() {
           onSuggestedModification={handleSuggestedModification}
           onParameterNudge={handleParameterNudge}
           isGenerating={previewLoading}
+          onRetry={retry}
+          onDismissError={dismissError}
         />
       }
       previewPanel={
