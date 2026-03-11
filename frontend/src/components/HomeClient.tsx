@@ -167,7 +167,8 @@ export default function HomeClient() {
       // Preview this version's parameters without changing state permanently
       if (!currentDesign) return;
       setCurrentDesign({
-        params: entry.parameters as import("@shared/api-types").DesignParams,
+        params:
+          entry.parameters as unknown as import("@shared/api-types").DesignParams,
         id: entry.id,
         version: entry.version,
       });
@@ -182,7 +183,8 @@ export default function HomeClient() {
         const result = await revertToVersion(conversationId, entry.id);
         // Update current design with the new version (copy of reverted params)
         setCurrentDesign({
-          params: result.parameters as import("@shared/api-types").DesignParams,
+          params:
+            result.parameters as unknown as import("@shared/api-types").DesignParams,
           id: result.design_id,
           version: result.version,
         });

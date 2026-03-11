@@ -5,10 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface AuthModalProps {
   onClose: () => void;
+  initialMode?: "login" | "register";
 }
 
-export function AuthModal({ onClose }: AuthModalProps) {
-  const [mode, setMode] = useState<"login" | "register">("login");
+export function AuthModal({ onClose, initialMode = "login" }: AuthModalProps) {
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);

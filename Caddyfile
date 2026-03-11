@@ -1,7 +1,4 @@
 ez3d.salundo.com {
-	basicauth * {
-		jacob $2a$14$kYhZPfEMqJLLtAgttsBJn.cpampwjq/Ef6Xw057xmMn.JJshrB3Vi
-	}
 	handle /api/* {
 		reverse_proxy backend:8000
 	}
