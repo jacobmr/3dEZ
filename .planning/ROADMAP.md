@@ -23,7 +23,7 @@ None
 - [x] **Phase 5: Photo Upload** — Mobile photo capture, Claude Vision analysis, dimension inference
 - [x] **Phase 6: Multi-tenant Auth & Design Library** — User accounts, auth, per-user design library with duplicate/variant support
 - [x] **Phase 7: STL Upload & Modification** — Upload existing STL files, modify designs through conversation
-- [ ] **Phase 8: Cost Estimation & Pricing** — Complexity-based pricing, pre-approval flow, internal cost tracking
+- [x] **Phase 8: Cost Estimation & Pricing** — Complexity-based pricing, pre-approval flow, internal cost tracking
 - [ ] **Phase 9: Conversational Iteration** — Natural language design modification and re-render loop
 - [ ] **Phase 10: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
 
@@ -147,8 +147,8 @@ Plans:
 
 Plans:
 
-- [ ] 08-01: Cost estimation engine — Complexity metrics, token usage tracking, COGS calculation, 2x markup pricing
-- [ ] 08-02: Pricing UX & approval flow — Show estimated cost before generation, user approval gate, usage tracking
+- [x] 08-01: Cost estimation engine — Complexity metrics, token usage tracking, COGS calculation, 2x markup pricing
+- [x] 08-02: Pricing UX & approval flow — Show estimated cost before generation, user approval gate, usage tracking
 
 ### Phase 9: Conversational Iteration
 
@@ -191,6 +191,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7 �
 | 5. Photo Upload                | 3/3            | Complete    | 2026-03-10 |
 | 6. Multi-tenant Auth & Library | 3/3            | Complete    | 2026-03-10 |
 | 7. STL Upload & Modification   | 2/2            | Complete    | 2026-03-10 |
-| 8. Cost Estimation & Pricing   | 1/2            | In progress | -          |
+| 8. Cost Estimation & Pricing   | 2/2            | Complete    | 2026-03-10 |
 | 9. Conversational Iteration    | 0/3            | Not started | -          |
 | 10. Integration & Polish       | 0/3            | Not started | -          |
