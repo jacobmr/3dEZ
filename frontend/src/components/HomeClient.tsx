@@ -181,6 +181,15 @@ export default function HomeClient() {
     [conversationId, setCurrentDesign],
   );
 
+  const handleSuggestedModification = useCallback(
+    (suggestion: string) => {
+      if (currentDesign) {
+        reviseDesign(suggestion);
+      }
+    },
+    [currentDesign, reviseDesign],
+  );
+
   const handleNewDesign = useCallback(() => {
     startNew();
     setUploadedStlBytes(null);
@@ -207,6 +216,7 @@ export default function HomeClient() {
           onDeclineCost={handleDeclineCost}
           isApprovingCost={isApprovingCost}
           costApproved={costApproved}
+          onSuggestedModification={handleSuggestedModification}
         />
       }
       previewPanel={

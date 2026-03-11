@@ -72,6 +72,8 @@ export interface ChatMessage {
   costEstimate?: CostEstimateData;
   /** Parameter diff for revision designs (version > 1) */
   parameterDiff?: ParameterDiffData;
+  /** Suggested modifications from Claude after parameter extraction */
+  suggestedModifications?: string[];
 }
 
 export interface ConversationState {
@@ -168,6 +170,23 @@ export function useConversation() {
                             previous: parsed.previous_parameters,
                             current: parsed.parameters,
                           },
+                        }
+                      : m,
+                  ),
+                );
+              }
+
+              // Attach suggested modifications
+              if (
+                parsed.suggest_modifications &&
+                Array.isArray(parsed.suggest_modifications)
+              ) {
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId
+                      ? {
+                          ...m,
+                          suggestedModifications: parsed.suggest_modifications,
                         }
                       : m,
                   ),

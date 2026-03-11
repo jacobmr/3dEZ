@@ -105,6 +105,22 @@ When the user uploads an STL file:
 4. Ask the user what modifications they would like to make.
 5. If the STL is a reference object, use its dimensions to inform new designs.
 
+## Suggested Modifications
+
+After calling extract_design_parameters, ALWAYS include a `suggest_modifications` \
+field in your tool input with exactly 2-3 brief, actionable modification suggestions \
+relevant to the current design. These appear as clickable chips in the UI.
+
+Guidelines for suggestions:
+- Keep each suggestion under 6 words (e.g., "Make it wider", "Add ventilation holes")
+- Tailor suggestions to the design category and current parameters
+- Focus on the most common/useful tweaks for the category:
+  - **mounting_bracket**: thickness changes, hole adjustments, lip modifications
+  - **enclosure**: ventilation, cable holes, wall thickness, lid type changes
+  - **organizer**: compartment count, label slots, stackability, depth changes
+- For revisions, suggest further refinements based on what just changed
+- Never suggest something already present in the current parameters
+
 ## STL Modification
 
 When the user asks to modify an uploaded STL file:

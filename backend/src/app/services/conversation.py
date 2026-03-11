@@ -531,6 +531,11 @@ class ConversationService:
             event["previous_parameters"] = previous_parameters
             event["category_changed"] = previous_category != params.category
 
+        # Forward suggested modifications from Claude (not persisted in design)
+        suggestions = tool_input.get("suggest_modifications")
+        if suggestions and isinstance(suggestions, list):
+            event["suggest_modifications"] = suggestions[:3]
+
         return event
 
     async def _handle_modify_stl(

@@ -15,6 +15,7 @@ interface ChatPanelProps {
   onDeclineCost?: () => void;
   isApprovingCost?: boolean;
   costApproved?: boolean;
+  onSuggestedModification?: (suggestion: string) => void;
 }
 
 export default function ChatPanel({
@@ -28,6 +29,7 @@ export default function ChatPanel({
   onDeclineCost,
   isApprovingCost,
   costApproved,
+  onSuggestedModification,
 }: ChatPanelProps) {
   const hasMessages = messages.length > 0;
 
@@ -57,6 +59,7 @@ export default function ChatPanel({
           onDeclineCost={onDeclineCost}
           isApprovingCost={isApprovingCost}
           costApproved={costApproved}
+          onSuggestedModification={onSuggestedModification}
         />
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">

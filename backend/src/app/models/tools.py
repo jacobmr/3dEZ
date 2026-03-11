@@ -144,6 +144,15 @@ DESIGN_TOOLS: list[dict] = [
                     "default": False,
                     "description": "Add stacking alignment features (organizer)",
                 },
+                "suggest_modifications": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "2-3 brief, actionable modification suggestions "
+                        "for the user (e.g., 'Make it wider', 'Add ventilation holes'). "
+                        "Keep each under 6 words."
+                    ),
+                },
             },
             "required": ["category"],
         },

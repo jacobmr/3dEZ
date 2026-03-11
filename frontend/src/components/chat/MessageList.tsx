@@ -6,6 +6,7 @@ import StreamingMessage from "./StreamingMessage";
 import DimensionCard from "./DimensionCard";
 import CostEstimate from "./CostEstimate";
 import ParameterDiff from "./ParameterDiff";
+import SuggestedModifications from "./SuggestedModifications";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -14,6 +15,7 @@ interface MessageListProps {
   onDeclineCost?: () => void;
   isApprovingCost?: boolean;
   costApproved?: boolean;
+  onSuggestedModification?: (suggestion: string) => void;
 }
 
 function PhotoThumbnail({ photoId }: { photoId: string }) {
@@ -58,6 +60,7 @@ export default function MessageList({
   onDeclineCost,
   isApprovingCost = false,
   costApproved = false,
+  onSuggestedModification,
 }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -119,6 +122,18 @@ export default function MessageList({
                     onDecline={onDeclineCost}
                     isApproving={isApprovingCost}
                     approved={costApproved}
+                  />
+                )}
+
+              {/* Suggested modifications chips */}
+              {!isUser &&
+                msg.suggestedModifications &&
+                msg.suggestedModifications.length > 0 &&
+                onSuggestedModification && (
+                  <SuggestedModifications
+                    suggestions={msg.suggestedModifications}
+                    onSelect={onSuggestedModification}
+                    disabled={isStreaming}
                   />
                 )}
 
