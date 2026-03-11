@@ -47,7 +47,15 @@ export default function StlViewer({
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
       <directionalLight position={[-3, -3, 2]} intensity={0.3} />
-      <OrbitControls makeDefault enableDamping dampingFactor={0.1} />
+      <OrbitControls
+        makeDefault
+        enableDamping
+        dampingFactor={0.1}
+        touchAction="none"
+        rotateSpeed={0.7}
+        panSpeed={0.8}
+        zoomSpeed={0.8}
+      />
       <ContactShadows
         position={[0, -0.5, 0]}
         opacity={0.25}

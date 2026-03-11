@@ -280,10 +280,10 @@ export default function PreviewPanel({
           {hasBeforeAfter && (
             <button
               onClick={onToggleBeforeAfter}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              className={`min-h-[44px] rounded-md px-3 py-2 text-xs font-medium transition-colors md:min-h-0 md:px-2.5 md:py-1 ${
                 showingPrevious
-                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-                  : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                  ? "bg-amber-100 text-amber-700 active:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400"
+                  : "bg-green-100 text-green-700 active:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
               }`}
             >
               {showingPrevious ? "Before" : "After"}
@@ -300,7 +300,7 @@ export default function PreviewPanel({
             <button
               onClick={handleShare}
               disabled={shareStatus === "loading"}
-              className="flex items-center gap-1.5 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 active:bg-gray-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:active:bg-zinc-700 md:min-h-0 md:py-1.5"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +317,7 @@ export default function PreviewPanel({
           {stlBytes && (
             <button
               onClick={() => downloadStl(stlBytes, category, version, designId)}
-              className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 active:bg-indigo-700"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 active:bg-indigo-700 md:min-h-0 md:py-1.5"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

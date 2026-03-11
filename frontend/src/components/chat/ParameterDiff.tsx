@@ -82,12 +82,12 @@ function NudgeButtons({
   const minValue = step; // Don't allow zero or negative
 
   return (
-    <span className="ml-1 inline-flex items-center gap-0.5">
+    <span className="ml-1 inline-flex items-center gap-1">
       <button
         type="button"
         onClick={() => onNudge(paramKey, Math.max(minValue, value - step))}
         disabled={disabled || value - step < minValue}
-        className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50"
+        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-xs font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 active:bg-amber-300 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50 dark:active:bg-amber-900/70"
         aria-label={`Decrease ${paramKey} by ${step}`}
         title={`-${step}mm`}
       >
@@ -97,7 +97,7 @@ function NudgeButtons({
         type="button"
         onClick={() => onNudge(paramKey, value + step)}
         disabled={disabled}
-        className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50"
+        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-xs font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 active:bg-amber-300 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50 dark:active:bg-amber-900/70"
         aria-label={`Increase ${paramKey} by ${step}`}
         title={`+${step}mm`}
       >

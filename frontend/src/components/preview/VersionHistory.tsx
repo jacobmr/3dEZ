@@ -76,7 +76,7 @@ export default function VersionHistory({
     <div className="border-b border-gray-200 dark:border-zinc-800">
       <button
         onClick={() => setIsOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-4 py-1.5 text-xs text-gray-500 transition-colors hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
+        className="flex w-full items-center justify-between px-4 py-3 text-xs text-gray-500 transition-colors hover:bg-gray-50 active:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:active:bg-zinc-800 md:py-1.5"
       >
         <span className="flex items-center gap-1.5">
           <svg
@@ -132,15 +132,15 @@ export default function VersionHistory({
                   return (
                     <div
                       key={entry.id}
-                      className={`group flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs transition-colors ${
+                      className={`group flex items-center justify-between rounded-md px-2.5 py-2.5 text-xs transition-colors md:py-1.5 ${
                         isActive
                           ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
-                          : "text-gray-600 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
+                          : "text-gray-600 hover:bg-gray-50 active:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:active:bg-zinc-800"
                       }`}
                     >
                       <button
                         onClick={() => handleSelect(entry)}
-                        className="flex flex-1 items-center gap-2 text-left"
+                        className="flex min-h-[44px] flex-1 items-center gap-2 text-left md:min-h-0"
                       >
                         <span className="font-semibold">v{entry.version}</span>
                         <span className="text-gray-400 dark:text-zinc-500">
@@ -158,7 +158,7 @@ export default function VersionHistory({
                             e.stopPropagation();
                             onRevert(entry);
                           }}
-                          className="rounded px-1.5 py-0.5 text-[10px] font-medium text-gray-400 opacity-0 transition-opacity hover:bg-gray-200 hover:text-gray-700 group-hover:opacity-100 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+                          className="rounded-md px-2.5 py-1.5 text-[11px] font-medium text-gray-400 opacity-100 transition-opacity hover:bg-gray-200 hover:text-gray-700 active:bg-gray-300 md:opacity-0 md:group-hover:opacity-100 dark:text-zinc-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 dark:active:bg-zinc-600"
                           title={`Revert to v${entry.version}`}
                         >
                           Revert
