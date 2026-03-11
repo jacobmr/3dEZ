@@ -269,3 +269,56 @@ async def approve_cost(
         "conversation_id": conversation_id,
         "cost_approved": True,
     }
+
+
+# ---------------------------------------------------------------------------
+# Design history endpoints
+# ---------------------------------------------------------------------------
+
+class DesignHistoryEntry(BaseModel):
+    id: str
+    version: int
+    category: str
+    parameters: dict[str, Any]
+    name: str | None = None
+    parent_design_id: str | None = None
+    is_current: bool = False
+    created_at: str
+
+
+@router.get("/{conversation_id}/design-history")
+async def get_design_history(
+    conversation_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> list[DesignHistoryEntry]:
+    """Return all design versions for a conversation, ordered by version."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, ctx, service)
+
+    result = await db.execute(
+        select(Design)
+        .where(Design.conversation_id == conversation_id)
+        .order_by(Design.version.asc())
+    )
+    designs = result.scalars().all()
+
+    if not designs:
+        return []
+
+    # The highest version is the current one
+    max_version = max(d.version for d in designs)
+
+    return [
+        DesignHistoryEntry(
+            id=d.id,
+            version=d.version,
+            category=d.category,
+            parameters=d.parameters,
+            name=d.name,
+            parent_design_id=d.parent_design_id,
+            is_current=(d.version == max_version),
+            created_at=d.created_at.isoformat(),
+        )
+        for d in designs
+    ]
