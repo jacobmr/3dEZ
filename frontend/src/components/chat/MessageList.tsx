@@ -5,6 +5,7 @@ import type { ChatMessage } from "@/hooks/useConversation";
 import StreamingMessage from "./StreamingMessage";
 import DimensionCard from "./DimensionCard";
 import CostEstimate from "./CostEstimate";
+import ParameterDiff from "./ParameterDiff";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -97,6 +98,14 @@ export default function MessageList({
               {/* Dimension inference card for assistant messages */}
               {!isUser && msg.dimensionInference && (
                 <DimensionCard data={msg.dimensionInference} />
+              )}
+
+              {/* Parameter diff for revision designs */}
+              {!isUser && msg.parameterDiff && (
+                <ParameterDiff
+                  previous={msg.parameterDiff.previous}
+                  current={msg.parameterDiff.current}
+                />
               )}
 
               {/* Cost estimate card for assistant messages */}

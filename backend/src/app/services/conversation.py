@@ -501,25 +501,37 @@ class ConversationService:
                 "message": f"Parameter validation failed: {exc.errors()}",
             }
 
-        # Determine next version
+        # Determine next version and capture previous parameters
         latest = await self._get_latest_design(conversation_id)
         next_version = (latest.version + 1) if latest else 1
+        previous_parameters = latest.parameters if latest else None
+        previous_category = latest.category if latest else None
 
         design = Design(
             conversation_id=conversation_id,
             parameters=params.model_dump(),
             category=params.category,
             version=next_version,
+            parent_design_id=latest.id if latest else None,
         )
         self._db.add(design)
         await self._db.commit()
         await self._db.refresh(design)
 
-        return {
+        event: dict[str, Any] = {
             "type": "parameters_extracted",
             "parameters": params.model_dump(),
             "design_id": design.id,
+            "version": next_version,
+            "is_revision": next_version > 1,
         }
+
+        # Include previous parameters for revisions so frontend can show diff
+        if next_version > 1 and previous_parameters is not None:
+            event["previous_parameters"] = previous_parameters
+            event["category_changed"] = previous_category != params.category
+
+        return event
 
     async def _handle_modify_stl(
         self, conversation_id: str, tool_input: dict[str, Any]

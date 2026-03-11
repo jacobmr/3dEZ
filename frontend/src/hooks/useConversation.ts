@@ -49,6 +49,11 @@ export interface StlModification {
   is_watertight: boolean;
 }
 
+export interface ParameterDiffData {
+  previous: Record<string, unknown>;
+  current: Record<string, unknown>;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
@@ -65,6 +70,8 @@ export interface ChatMessage {
   stlModification?: StlModification;
   /** Cost estimate data shown before generation */
   costEstimate?: CostEstimateData;
+  /** Parameter diff for revision designs (version > 1) */
+  parameterDiff?: ParameterDiffData;
 }
 
 export interface ConversationState {
@@ -138,6 +145,23 @@ export function useConversation() {
               // Reset cost state for new design extraction
               setCostEstimate(null);
               setCostApproved(false);
+
+              // Attach parameter diff for revisions
+              if (parsed.is_revision && parsed.previous_parameters) {
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId
+                      ? {
+                          ...m,
+                          parameterDiff: {
+                            previous: parsed.previous_parameters,
+                            current: parsed.parameters,
+                          },
+                        }
+                      : m,
+                  ),
+                );
+              }
             } catch {
               // Ignore malformed design data
             }
