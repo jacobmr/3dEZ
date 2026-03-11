@@ -16,6 +16,7 @@ interface ChatPanelProps {
   isApprovingCost?: boolean;
   costApproved?: boolean;
   onSuggestedModification?: (suggestion: string) => void;
+  onParameterNudge?: (parameterKey: string, newValue: number) => void;
 }
 
 export default function ChatPanel({
@@ -30,6 +31,7 @@ export default function ChatPanel({
   isApprovingCost,
   costApproved,
   onSuggestedModification,
+  onParameterNudge,
 }: ChatPanelProps) {
   const hasMessages = messages.length > 0;
 
@@ -60,6 +62,7 @@ export default function ChatPanel({
           isApprovingCost={isApprovingCost}
           costApproved={costApproved}
           onSuggestedModification={onSuggestedModification}
+          onParameterNudge={onParameterNudge}
         />
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">

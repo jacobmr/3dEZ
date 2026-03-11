@@ -181,6 +181,15 @@ export default function HomeClient() {
     [conversationId, setCurrentDesign],
   );
 
+  const handleParameterNudge = useCallback(
+    (parameterKey: string, newValue: number) => {
+      if (!currentDesign) return;
+      const label = parameterKey.replace(/_/g, " ");
+      reviseDesign(`Change ${label} to ${newValue}mm`);
+    },
+    [currentDesign, reviseDesign],
+  );
+
   const handleSuggestedModification = useCallback(
     (suggestion: string) => {
       if (currentDesign) {
@@ -217,6 +226,7 @@ export default function HomeClient() {
           isApprovingCost={isApprovingCost}
           costApproved={costApproved}
           onSuggestedModification={handleSuggestedModification}
+          onParameterNudge={handleParameterNudge}
         />
       }
       previewPanel={

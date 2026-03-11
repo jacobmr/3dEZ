@@ -3,6 +3,10 @@
 interface ParameterDiffProps {
   previous: Record<string, unknown>;
   current: Record<string, unknown>;
+  /** Called when user clicks +/- on a numeric parameter. */
+  onNudge?: (parameterKey: string, newValue: number) => void;
+  /** Disable nudge buttons (e.g., during streaming). */
+  disabled?: boolean;
 }
 
 interface DiffEntry {
@@ -22,6 +26,15 @@ function formatValue(value: unknown): string {
 
 function formatLabel(key: string): string {
   return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Determine the nudge step size based on parameter name. */
+function getNudgeStep(key: string): number {
+  if (key.includes("thickness") || key.includes("wall")) return 1;
+  if (key.includes("hole_diameter") || key.includes("cable_hole")) return 0.5;
+  if (key.includes("corner_radius") || key.includes("lip_height")) return 1;
+  // Default for major dimensions (width, height, depth, etc.)
+  return 5;
 }
 
 function computeDiff(
@@ -54,9 +67,51 @@ function computeDiff(
   return diffs;
 }
 
+function NudgeButtons({
+  paramKey,
+  value,
+  onNudge,
+  disabled,
+}: {
+  paramKey: string;
+  value: number;
+  onNudge: (key: string, newValue: number) => void;
+  disabled: boolean;
+}) {
+  const step = getNudgeStep(paramKey);
+  const minValue = step; // Don't allow zero or negative
+
+  return (
+    <span className="ml-1 inline-flex items-center gap-0.5">
+      <button
+        type="button"
+        onClick={() => onNudge(paramKey, Math.max(minValue, value - step))}
+        disabled={disabled || value - step < minValue}
+        className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50"
+        aria-label={`Decrease ${paramKey} by ${step}`}
+        title={`-${step}mm`}
+      >
+        &minus;
+      </button>
+      <button
+        type="button"
+        onClick={() => onNudge(paramKey, value + step)}
+        disabled={disabled}
+        className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold leading-none text-amber-600 transition-colors hover:bg-amber-200 disabled:opacity-30 disabled:cursor-not-allowed dark:text-amber-400 dark:hover:bg-amber-900/50"
+        aria-label={`Increase ${paramKey} by ${step}`}
+        title={`+${step}mm`}
+      >
+        +
+      </button>
+    </span>
+  );
+}
+
 export default function ParameterDiff({
   previous,
   current,
+  onNudge,
+  disabled = false,
 }: ParameterDiffProps) {
   const diffs = computeDiff(previous, current);
 
@@ -73,20 +128,31 @@ export default function ParameterDiff({
         </span>
       </div>
       <div className="space-y-1.5">
-        {diffs.map((diff) => (
-          <div key={diff.key} className="flex items-baseline gap-2 text-xs">
-            <span className="min-w-[80px] font-medium text-gray-600 dark:text-zinc-300">
-              {diff.label}
-            </span>
-            <span className="text-red-500 line-through dark:text-red-400">
-              {formatValue(diff.oldValue)}
-            </span>
-            <span className="text-gray-400 dark:text-zinc-500">&rarr;</span>
-            <span className="font-medium text-green-600 dark:text-green-400">
-              {formatValue(diff.newValue)}
-            </span>
-          </div>
-        ))}
+        {diffs.map((diff) => {
+          const isNumeric = typeof diff.newValue === "number";
+          return (
+            <div key={diff.key} className="flex items-center gap-2 text-xs">
+              <span className="min-w-[80px] font-medium text-gray-600 dark:text-zinc-300">
+                {diff.label}
+              </span>
+              <span className="text-red-500 line-through dark:text-red-400">
+                {formatValue(diff.oldValue)}
+              </span>
+              <span className="text-gray-400 dark:text-zinc-500">&rarr;</span>
+              <span className="font-medium text-green-600 dark:text-green-400">
+                {formatValue(diff.newValue)}
+              </span>
+              {isNumeric && onNudge && (
+                <NudgeButtons
+                  paramKey={diff.key}
+                  value={diff.newValue as number}
+                  onNudge={onNudge}
+                  disabled={disabled}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

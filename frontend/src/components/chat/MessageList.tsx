@@ -16,6 +16,7 @@ interface MessageListProps {
   isApprovingCost?: boolean;
   costApproved?: boolean;
   onSuggestedModification?: (suggestion: string) => void;
+  onParameterNudge?: (parameterKey: string, newValue: number) => void;
 }
 
 function PhotoThumbnail({ photoId }: { photoId: string }) {
@@ -61,6 +62,7 @@ export default function MessageList({
   isApprovingCost = false,
   costApproved = false,
   onSuggestedModification,
+  onParameterNudge,
 }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -108,6 +110,8 @@ export default function MessageList({
                 <ParameterDiff
                   previous={msg.parameterDiff.previous}
                   current={msg.parameterDiff.current}
+                  onNudge={onParameterNudge}
+                  disabled={isStreaming}
                 />
               )}
 
