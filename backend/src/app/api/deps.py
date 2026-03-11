@@ -52,8 +52,14 @@ async def get_request_context(
                 )
                 session_ids = [row[0] for row in sess_result.fetchall()]
 
-                # Use first session as primary, or create one if none exist
-                if session_ids:
+                # Use X-Session-ID as primary when available so conversations
+                # are always tied to the localStorage UUID. This ensures they
+                # remain accessible even after JWT expiration.
+                if x_session_id:
+                    primary_session_id = x_session_id
+                    if x_session_id not in session_ids:
+                        session_ids.append(x_session_id)
+                elif session_ids:
                     primary_session_id = session_ids[0]
                 else:
                     new_session = Session(user_id=user_id)
@@ -61,10 +67,6 @@ async def get_request_context(
                     await db.flush()
                     primary_session_id = new_session.id
                     session_ids = [primary_session_id]
-
-                # Also include the anonymous session if provided (for data access)
-                if x_session_id and x_session_id not in session_ids:
-                    session_ids.append(x_session_id)
 
                 return RequestContext(
                     session_id=primary_session_id,

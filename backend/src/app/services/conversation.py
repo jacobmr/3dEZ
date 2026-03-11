@@ -72,6 +72,12 @@ class ConversationService:
                 yield {"type": "error", "message": "Conversation not found"}
                 return
 
+            # Auto-generate title from first user message if not set
+            if not conversation.title and user_content:
+                conversation.title = user_content[:80].strip()
+                if len(user_content) > 80:
+                    conversation.title += "…"
+
             # Persist user message
             user_msg = Message(
                 conversation_id=conversation_id,
