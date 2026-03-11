@@ -47,6 +47,7 @@ async def _run_migrations() -> None:
     migrations = [
         "ALTER TABLE designs ADD COLUMN name VARCHAR(255)",
         "ALTER TABLE designs ADD COLUMN parent_design_id VARCHAR(36) REFERENCES designs(id)",
+        "ALTER TABLE messages ADD COLUMN stl_file_ids JSON",
     ]
     async with _engine.begin() as conn:
         for sql in migrations:
