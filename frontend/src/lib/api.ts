@@ -265,6 +265,27 @@ export async function getDesignHistory(
   return json<DesignHistoryEntry[]>(res);
 }
 
+export interface RevertDesignResponse {
+  design_id: string;
+  version: number;
+  category: string;
+  parameters: Record<string, unknown>;
+}
+
+export async function revertToVersion(
+  conversationId: string,
+  designId: string,
+): Promise<RevertDesignResponse> {
+  const res = await fetch(
+    `/api/conversations/${conversationId}/revert/${designId}`,
+    {
+      method: "POST",
+      headers: headers(),
+    },
+  );
+  return json<RevertDesignResponse>(res);
+}
+
 /* ------------------------------------------------------------------ */
 /*  STL generation                                                    */
 /* ------------------------------------------------------------------ */

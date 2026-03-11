@@ -322,3 +322,63 @@ async def get_design_history(
         )
         for d in designs
     ]
+
+
+class RevertDesignResponse(BaseModel):
+    design_id: str
+    version: int
+    category: str
+    parameters: dict[str, Any]
+
+
+@router.post("/{conversation_id}/revert/{design_id}")
+async def revert_to_version(
+    conversation_id: str,
+    design_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> RevertDesignResponse:
+    """Revert to a previous design version by creating a new version
+    that copies the target's parameters. History is preserved — no deletion."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, ctx, service)
+
+    # Find the target design to revert to
+    result = await db.execute(
+        select(Design).where(
+            Design.id == design_id,
+            Design.conversation_id == conversation_id,
+        )
+    )
+    target = result.scalar_one_or_none()
+    if target is None:
+        raise HTTPException(status_code=404, detail="Design version not found")
+
+    # Get the current highest version number
+    result = await db.execute(
+        select(Design.version)
+        .where(Design.conversation_id == conversation_id)
+        .order_by(Design.version.desc())
+        .limit(1)
+    )
+    latest_version = result.scalar_one_or_none() or 0
+
+    # Create a new version copying the target's parameters
+    new_design = Design(
+        conversation_id=conversation_id,
+        category=target.category,
+        parameters=target.parameters,
+        name=target.name,
+        version=latest_version + 1,
+        parent_design_id=target.id,
+    )
+    db.add(new_design)
+    await db.commit()
+    await db.refresh(new_design)
+
+    return RevertDesignResponse(
+        design_id=new_design.id,
+        version=new_design.version,
+        category=new_design.category,
+        parameters=new_design.parameters,
+    )

@@ -6,7 +6,12 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
 import { usePreview } from "@/hooks/usePreview";
-import { uploadPhoto, uploadStl, fetchStlFile } from "@/lib/api";
+import {
+  uploadPhoto,
+  uploadStl,
+  fetchStlFile,
+  revertToVersion,
+} from "@/lib/api";
 import type { DesignHistoryEntry } from "@/lib/api";
 
 export default function HomeClient() {
@@ -15,6 +20,7 @@ export default function HomeClient() {
     messages,
     isStreaming,
     currentDesign,
+    setCurrentDesign,
     latestModification,
     costApproved,
     isApprovingCost,
@@ -141,14 +147,39 @@ export default function HomeClient() {
   // Version history
   const [versionHistoryRefreshKey, setVersionHistoryRefreshKey] = useState(0);
 
-  const handleSelectVersion = useCallback((_entry: DesignHistoryEntry) => {
-    // Clicking a version just highlights it in the timeline.
-    // The actual preview load happens only on revert (Task 3).
-  }, []);
+  const handleSelectVersion = useCallback(
+    (entry: DesignHistoryEntry) => {
+      // Preview this version's parameters without changing state permanently
+      if (!currentDesign) return;
+      setCurrentDesign({
+        params: entry.parameters as import("@shared/api-types").DesignParams,
+        id: entry.id,
+        version: entry.version,
+      });
+    },
+    [currentDesign, setCurrentDesign],
+  );
 
-  const handleRevertVersion = useCallback((_entry: DesignHistoryEntry) => {
-    // Wired in Task 3 — revert endpoint not yet implemented
-  }, []);
+  const handleRevertVersion = useCallback(
+    async (entry: DesignHistoryEntry) => {
+      if (!conversationId) return;
+      try {
+        const result = await revertToVersion(conversationId, entry.id);
+        // Update current design with the new version (copy of reverted params)
+        setCurrentDesign({
+          params: result.parameters as import("@shared/api-types").DesignParams,
+          id: result.design_id,
+          version: result.version,
+        });
+        // Auto-approve cost for reverts (same parameters, no new LLM cost)
+        // Trigger version history refresh
+        setVersionHistoryRefreshKey((k) => k + 1);
+      } catch {
+        // Revert failed — keep current state
+      }
+    },
+    [conversationId, setCurrentDesign],
+  );
 
   const handleNewDesign = useCallback(() => {
     startNew();

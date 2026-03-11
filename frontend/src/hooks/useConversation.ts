@@ -429,6 +429,7 @@ export function useConversation() {
     messages,
     isStreaming,
     currentDesign,
+    setCurrentDesign,
     latestModification,
     costEstimate,
     costApproved,
