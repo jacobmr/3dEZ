@@ -15,12 +15,16 @@ export default function HomeClient() {
     isStreaming,
     currentDesign,
     latestModification,
+    costApproved,
+    isApprovingCost,
     error,
     ensureConversation,
     sendMessage,
     reviseDesign,
     loadConversation,
     startNew,
+    handleApproveCost,
+    handleDeclineCost,
   } = useConversation();
 
   const {
@@ -155,6 +159,10 @@ export default function HomeClient() {
           hasDesign={!!currentDesign}
           onSend={handleSend}
           onStartNew={startNew}
+          onApproveCost={handleApproveCost}
+          onDeclineCost={handleDeclineCost}
+          isApprovingCost={isApprovingCost}
+          costApproved={costApproved}
         />
       }
       previewPanel={

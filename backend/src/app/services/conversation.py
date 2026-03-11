@@ -26,6 +26,7 @@ from app.db.models import Conversation, Design, Message, Photo, StlFile
 from app.models.designs import DesignParamsUnion
 from app.models.tools import DESIGN_TOOLS
 from app.prompts.design_wizard import get_system_prompt
+from app.services.cost_estimation import estimate_cost
 
 _params_adapter = TypeAdapter(DesignParamsUnion)
 
@@ -115,6 +116,20 @@ class ConversationService:
                         "tool_use_id": tool_id,
                         "content": json.dumps(result_event),
                     })
+                    # Emit cost estimate after parameters are extracted
+                    if result_event.get("type") == "parameters_extracted":
+                        try:
+                            cost = await estimate_cost(self._db, conversation_id)
+                            yield {
+                                "type": "cost_estimate",
+                                **cost.to_dict(),
+                            }
+                        except Exception:
+                            logger.warning(
+                                "Cost estimation failed for %s",
+                                conversation_id,
+                                exc_info=True,
+                            )
                 elif tool_name == "analyze_photo":
                     photo_analysis_event = {
                         "type": "photo_analysis",

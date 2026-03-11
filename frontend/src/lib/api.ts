@@ -342,6 +342,50 @@ export async function fetchStlFile(stlFileId: string): Promise<ArrayBuffer> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Cost estimation endpoints                                          */
+/* ------------------------------------------------------------------ */
+
+export interface CostEstimateData {
+  conversation_id: string;
+  design_id: string | null;
+  category: string | null;
+  total_prompt_tokens: number;
+  total_completion_tokens: number;
+  total_tokens: number;
+  token_cost: number;
+  compute_cost: number;
+  cogs: number;
+  markup_multiplier: number;
+  estimated_price: number;
+}
+
+export async function getCostEstimate(
+  conversationId: string,
+): Promise<CostEstimateData> {
+  const res = await fetch(
+    `/api/conversations/${conversationId}/cost-estimate`,
+    { headers: headers() },
+  );
+  return json<CostEstimateData>(res);
+}
+
+export async function approveCost(conversationId: string): Promise<{
+  design_id: string;
+  conversation_id: string;
+  cost_approved: boolean;
+}> {
+  const res = await fetch(`/api/conversations/${conversationId}/approve-cost`, {
+    method: "POST",
+    headers: headers(),
+  });
+  return json<{
+    design_id: string;
+    conversation_id: string;
+    cost_approved: boolean;
+  }>(res);
+}
+
+/* ------------------------------------------------------------------ */
 /*  Auth endpoints                                                     */
 /* ------------------------------------------------------------------ */
 

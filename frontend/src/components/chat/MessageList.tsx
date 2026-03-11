@@ -4,10 +4,15 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { ChatMessage } from "@/hooks/useConversation";
 import StreamingMessage from "./StreamingMessage";
 import DimensionCard from "./DimensionCard";
+import CostEstimate from "./CostEstimate";
 
 interface MessageListProps {
   messages: ChatMessage[];
   isStreaming: boolean;
+  onApproveCost?: () => void;
+  onDeclineCost?: () => void;
+  isApprovingCost?: boolean;
+  costApproved?: boolean;
 }
 
 function PhotoThumbnail({ photoId }: { photoId: string }) {
@@ -48,6 +53,10 @@ function PhotoThumbnail({ photoId }: { photoId: string }) {
 export default function MessageList({
   messages,
   isStreaming,
+  onApproveCost,
+  onDeclineCost,
+  isApprovingCost = false,
+  costApproved = false,
 }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -89,6 +98,20 @@ export default function MessageList({
               {!isUser && msg.dimensionInference && (
                 <DimensionCard data={msg.dimensionInference} />
               )}
+
+              {/* Cost estimate card for assistant messages */}
+              {!isUser &&
+                msg.costEstimate &&
+                onApproveCost &&
+                onDeclineCost && (
+                  <CostEstimate
+                    data={msg.costEstimate}
+                    onApprove={onApproveCost}
+                    onDecline={onDeclineCost}
+                    isApproving={isApprovingCost}
+                    approved={costApproved}
+                  />
+                )}
 
               {/* Message text content */}
               {isLastAssistant && !msg.content ? (

@@ -11,6 +11,10 @@ interface ChatPanelProps {
   hasDesign: boolean;
   onSend: (text: string, photo?: File, stlFile?: File) => void;
   onStartNew: () => void;
+  onApproveCost?: () => void;
+  onDeclineCost?: () => void;
+  isApprovingCost?: boolean;
+  costApproved?: boolean;
 }
 
 export default function ChatPanel({
@@ -20,6 +24,10 @@ export default function ChatPanel({
   hasDesign,
   onSend,
   onStartNew,
+  onApproveCost,
+  onDeclineCost,
+  isApprovingCost,
+  costApproved,
 }: ChatPanelProps) {
   const hasMessages = messages.length > 0;
 
@@ -42,7 +50,14 @@ export default function ChatPanel({
 
       {/* Messages or welcome */}
       {hasMessages ? (
-        <MessageList messages={messages} isStreaming={isStreaming} />
+        <MessageList
+          messages={messages}
+          isStreaming={isStreaming}
+          onApproveCost={onApproveCost}
+          onDeclineCost={onDeclineCost}
+          isApprovingCost={isApprovingCost}
+          costApproved={costApproved}
+        />
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
           <div className="text-4xl">&#9653;</div>

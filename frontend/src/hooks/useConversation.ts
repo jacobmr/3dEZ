@@ -6,8 +6,11 @@ import {
   getConversation,
   streamMessage,
   streamRevision,
+  getCostEstimate,
+  approveCost,
 } from "@/lib/api";
 import type { DesignParams } from "@shared/api-types";
+import type { CostEstimateData } from "@/lib/api";
 
 export interface DimensionInference {
   reference_used: string;
@@ -60,6 +63,8 @@ export interface ChatMessage {
   stlAnalysis?: StlAnalysis;
   /** STL modification data from modify_stl tool */
   stlModification?: StlModification;
+  /** Cost estimate data shown before generation */
+  costEstimate?: CostEstimateData;
 }
 
 export interface ConversationState {
@@ -86,6 +91,11 @@ export function useConversation() {
   const [error, setError] = useState<string | null>(null);
   const [latestModification, setLatestModification] =
     useState<StlModification | null>(null);
+  const [costEstimate, setCostEstimate] = useState<CostEstimateData | null>(
+    null,
+  );
+  const [costApproved, setCostApproved] = useState(false);
+  const [isApprovingCost, setIsApprovingCost] = useState(false);
 
   // Ref to allow aborting mid-stream (future use)
   const abortRef = useRef(false);
@@ -125,8 +135,28 @@ export function useConversation() {
                 params: parsed.parameters ?? parsed,
                 id: parsed.design_id ?? "",
               });
+              // Reset cost state for new design extraction
+              setCostEstimate(null);
+              setCostApproved(false);
             } catch {
               // Ignore malformed design data
+            }
+            break;
+          }
+
+          case "cost_estimate": {
+            try {
+              const costData: CostEstimateData = JSON.parse(event.data);
+              setCostEstimate(costData);
+              setCostApproved(false);
+              // Attach cost estimate to the assistant message
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, costEstimate: costData } : m,
+                ),
+              );
+            } catch {
+              // Ignore malformed cost data
             }
             break;
           }
@@ -320,11 +350,37 @@ export function useConversation() {
     }
   }, []);
 
+  const handleApproveCost = useCallback(async () => {
+    if (!conversationId || isApprovingCost) return;
+    setIsApprovingCost(true);
+    try {
+      await approveCost(conversationId);
+      setCostApproved(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to approve cost");
+    } finally {
+      setIsApprovingCost(false);
+    }
+  }, [conversationId, isApprovingCost]);
+
+  const handleDeclineCost = useCallback(() => {
+    // Clear cost estimate so user can keep editing
+    setCostEstimate(null);
+    setCostApproved(false);
+    // Remove cost estimate from the last assistant message
+    setMessages((prev) =>
+      prev.map((m) => (m.costEstimate ? { ...m, costEstimate: undefined } : m)),
+    );
+  }, []);
+
   const startNew = useCallback(() => {
     setConversationId(null);
     setMessages([]);
     setCurrentDesign(null);
     setLatestModification(null);
+    setCostEstimate(null);
+    setCostApproved(false);
+    setIsApprovingCost(false);
     setError(null);
     setIsStreaming(false);
   }, []);
@@ -335,11 +391,16 @@ export function useConversation() {
     isStreaming,
     currentDesign,
     latestModification,
+    costEstimate,
+    costApproved,
+    isApprovingCost,
     error,
     ensureConversation,
     sendMessage,
     reviseDesign,
     loadConversation,
     startNew,
+    handleApproveCost,
+    handleDeclineCost,
   };
 }
