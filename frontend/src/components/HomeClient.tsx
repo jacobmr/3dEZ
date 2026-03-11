@@ -7,6 +7,7 @@ import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
 import { usePreview } from "@/hooks/usePreview";
 import { uploadPhoto, uploadStl, fetchStlFile } from "@/lib/api";
+import type { DesignHistoryEntry } from "@/lib/api";
 
 export default function HomeClient() {
   const {
@@ -137,6 +138,18 @@ export default function HomeClient() {
     [loadConversation],
   );
 
+  // Version history
+  const [versionHistoryRefreshKey, setVersionHistoryRefreshKey] = useState(0);
+
+  const handleSelectVersion = useCallback((_entry: DesignHistoryEntry) => {
+    // Clicking a version just highlights it in the timeline.
+    // The actual preview load happens only on revert (Task 3).
+  }, []);
+
+  const handleRevertVersion = useCallback((_entry: DesignHistoryEntry) => {
+    // Wired in Task 3 — revert endpoint not yet implemented
+  }, []);
+
   const handleNewDesign = useCallback(() => {
     startNew();
     setUploadedStlBytes(null);
@@ -180,6 +193,10 @@ export default function HomeClient() {
           onToggleBeforeAfter={() => setShowingPrevious((v) => !v)}
           modificationDescription={modificationDescription}
           version={currentDesign?.version}
+          conversationId={conversationId}
+          onSelectVersion={handleSelectVersion}
+          onRevertVersion={handleRevertVersion}
+          versionHistoryRefreshKey={versionHistoryRefreshKey}
         />
       }
     />

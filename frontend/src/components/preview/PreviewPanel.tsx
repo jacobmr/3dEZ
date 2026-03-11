@@ -3,6 +3,8 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import StlViewer from "./StlViewer";
+import VersionHistory from "./VersionHistory";
+import type { DesignHistoryEntry } from "@/lib/api";
 
 interface PreviewPanelProps {
   stlBytes: ArrayBuffer | null;
@@ -24,6 +26,14 @@ interface PreviewPanelProps {
   modificationDescription?: string | null;
   /** Design version number (1, 2, 3, ...). */
   version?: number;
+  /** Conversation ID for version history lookup. */
+  conversationId?: string | null;
+  /** Called when user selects a version from history. */
+  onSelectVersion?: (entry: DesignHistoryEntry) => void;
+  /** Called when user clicks revert on a version. */
+  onRevertVersion?: (entry: DesignHistoryEntry) => void;
+  /** Incremented to force version history refresh. */
+  versionHistoryRefreshKey?: number;
 }
 
 function downloadStl(stlBytes: ArrayBuffer, category?: string) {
@@ -111,6 +121,10 @@ export default function PreviewPanel({
   onToggleBeforeAfter,
   modificationDescription,
   version,
+  conversationId,
+  onSelectVersion,
+  onRevertVersion,
+  versionHistoryRefreshKey,
 }: PreviewPanelProps) {
   const hasBeforeAfter = !!previousStlBytes && !!onToggleBeforeAfter;
 
@@ -221,6 +235,15 @@ export default function PreviewPanel({
           )}
         </div>
       </div>
+      {onSelectVersion && onRevertVersion && (
+        <VersionHistory
+          conversationId={conversationId ?? null}
+          currentVersion={version ?? 1}
+          onSelectVersion={onSelectVersion}
+          onRevert={onRevertVersion}
+          refreshKey={versionHistoryRefreshKey}
+        />
+      )}
       <div className="flex flex-1 flex-col">{content}</div>
     </div>
   );

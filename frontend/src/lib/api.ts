@@ -241,6 +241,31 @@ export async function duplicateDesign(id: string): Promise<SavedDesign> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Design history endpoints                                          */
+/* ------------------------------------------------------------------ */
+
+export interface DesignHistoryEntry {
+  id: string;
+  version: number;
+  category: string;
+  parameters: Record<string, unknown>;
+  name: string | null;
+  parent_design_id: string | null;
+  is_current: boolean;
+  created_at: string;
+}
+
+export async function getDesignHistory(
+  conversationId: string,
+): Promise<DesignHistoryEntry[]> {
+  const res = await fetch(
+    `/api/conversations/${conversationId}/design-history`,
+    { headers: headers() },
+  );
+  return json<DesignHistoryEntry[]>(res);
+}
+
+/* ------------------------------------------------------------------ */
 /*  STL generation                                                    */
 /* ------------------------------------------------------------------ */
 
