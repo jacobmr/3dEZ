@@ -1,11 +1,50 @@
 "use client";
 
-import { Suspense, useState, useEffect, useRef, useCallback } from "react";
-import { Canvas } from "@react-three/fiber";
-import StlViewer from "./StlViewer";
+import {
+  Suspense,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  lazy,
+} from "react";
 import VersionHistory from "./VersionHistory";
 import { shareDesign } from "@/lib/api";
 import type { DesignHistoryEntry } from "@/lib/api";
+
+/** Lazy-load Three.js Canvas and StlViewer to reduce initial bundle size. */
+const LazyCanvas = lazy(() =>
+  import("@react-three/fiber").then((mod) => ({ default: mod.Canvas })),
+);
+const LazyStlViewer = lazy(() => import("./StlViewer"));
+
+/** Detect WebGL support at module scope (runs once). */
+function detectWebGL(): boolean {
+  if (typeof document === "undefined") return true; // SSR — assume true
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(canvas.getContext("webgl2") || canvas.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+function WebGLUnsupported() {
+  return (
+    <div className="flex flex-1 items-center justify-center p-6 text-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="text-2xl text-amber-400">&#9888;</div>
+        <p className="text-sm text-gray-500 dark:text-zinc-400">
+          3D preview requires WebGL support.
+        </p>
+        <p className="max-w-xs text-xs text-gray-400 dark:text-zinc-500">
+          Your browser or device does not support WebGL. You can still design
+          parts and download the STL file.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 interface PreviewPanelProps {
   stlBytes: ArrayBuffer | null;
@@ -222,6 +261,12 @@ export default function PreviewPanel({
   // Determine if this is a regeneration (loading while STL already exists)
   const isRegenerating = isLoading && !!stlBytes;
 
+  // WebGL detection (client-side only, cached via state)
+  const [webglSupported, setWebglSupported] = useState(true);
+  useEffect(() => {
+    setWebglSupported(detectWebGL());
+  }, []);
+
   let content: React.ReactNode;
 
   if (isLoading && !stlBytes) {
@@ -231,6 +276,8 @@ export default function PreviewPanel({
     content = <ErrorState message={error} onRetry={onRetry} />;
   } else if (!stlBytes) {
     content = <EmptyState />;
+  } else if (!webglSupported) {
+    content = <WebGLUnsupported />;
   } else {
     content = (
       <Suspense fallback={<CanvasFallback />}>
@@ -239,18 +286,18 @@ export default function PreviewPanel({
             key={fadeKey}
             className={`flex flex-1 animate-stl-swap transition-opacity duration-300 ${isRegenerating ? "opacity-50" : "opacity-100"}`}
           >
-            <Canvas
+            <LazyCanvas
               frameloop="demand"
               camera={{ position: [0, 0, 100], fov: 50 }}
               gl={{ antialias: true }}
               className="flex-1"
             >
-              <StlViewer
+              <LazyStlViewer
                 stlBytes={stlBytes}
                 category={category}
                 params={params}
               />
-            </Canvas>
+            </LazyCanvas>
           </div>
           {isRegenerating && <RegeneratingOverlay />}
         </div>

@@ -51,7 +51,6 @@ export default function StlViewer({
         makeDefault
         enableDamping
         dampingFactor={0.1}
-        touchAction="none"
         rotateSpeed={0.7}
         panSpeed={0.8}
         zoomSpeed={0.8}

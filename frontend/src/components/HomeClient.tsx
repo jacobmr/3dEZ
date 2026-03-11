@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import dynamic from "next/dynamic";
 import AppShell from "@/components/layout/AppShell";
 import ChatPanel from "@/components/chat/ChatPanel";
-import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
 import { usePreview } from "@/hooks/usePreview";
 import {
@@ -13,6 +13,19 @@ import {
   revertToVersion,
 } from "@/lib/api";
 import type { DesignHistoryEntry } from "@/lib/api";
+
+/** Lazy-load PreviewPanel to defer Three.js / R3F bundle until needed. */
+const PreviewPanel = dynamic(
+  () => import("@/components/preview/PreviewPanel"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center text-sm text-gray-400 dark:text-zinc-500">
+        Loading preview&hellip;
+      </div>
+    ),
+  },
+);
 
 export default function HomeClient() {
   const {
