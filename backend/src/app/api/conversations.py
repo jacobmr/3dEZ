@@ -15,7 +15,7 @@ from sqlalchemy import select
 
 from app.api.deps import RequestContext, get_request_context, get_session_id
 from app.db.engine import get_db
-from app.db.models import Photo
+from app.db.models import Photo, StlFile
 from app.services.conversation import ConversationService
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
@@ -46,6 +46,7 @@ class StartConversationResponse(BaseModel):
 class SendMessageRequest(BaseModel):
     message: str
     photo_id: str | None = None
+    stl_file_id: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +170,21 @@ async def send_message(
         if photo is None or photo.session_id not in ctx.all_session_ids:
             raise HTTPException(status_code=404, detail="Photo not found")
 
-    events = service.send_message(conversation_id, body.message, photo_id=body.photo_id)
+    # Validate STL file ownership if provided
+    if body.stl_file_id:
+        result = await db.execute(
+            select(StlFile).where(StlFile.id == body.stl_file_id)
+        )
+        stl_file = result.scalar_one_or_none()
+        if stl_file is None or stl_file.session_id not in ctx.all_session_ids:
+            raise HTTPException(status_code=404, detail="STL file not found")
+
+    events = service.send_message(
+        conversation_id,
+        body.message,
+        photo_id=body.photo_id,
+        stl_file_id=body.stl_file_id,
+    )
     return StreamingResponse(
         _sse_stream(events),
         media_type="text/event-stream",

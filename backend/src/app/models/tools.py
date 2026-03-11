@@ -277,6 +277,65 @@ DESIGN_TOOLS: list[dict] = [
         },
     },
     {
+        "name": "analyze_imported_stl",
+        "description": (
+            "Analyze an STL file that the user has uploaded. Use the provided "
+            "mesh metadata (dimensions, face count, watertight status) to "
+            "understand the geometry and suggest possible modifications or "
+            "improvements for 3D printing."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "stl_file_id": {
+                    "type": "string",
+                    "description": "The ID of the uploaded STL file",
+                },
+                "dimensions": {
+                    "type": "object",
+                    "properties": {
+                        "width_mm": {
+                            "type": "number",
+                            "description": "Width (X-axis extent) in mm",
+                        },
+                        "height_mm": {
+                            "type": "number",
+                            "description": "Height (Z-axis extent) in mm",
+                        },
+                        "depth_mm": {
+                            "type": "number",
+                            "description": "Depth (Y-axis extent) in mm",
+                        },
+                    },
+                    "required": ["width_mm", "height_mm", "depth_mm"],
+                },
+                "face_count": {
+                    "type": "integer",
+                    "description": "Number of triangular faces in the mesh",
+                },
+                "is_watertight": {
+                    "type": "boolean",
+                    "description": "Whether the mesh is watertight (manifold)",
+                },
+                "suggested_modifications": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "List of suggested modifications or improvements "
+                        "(e.g., 'add mounting holes', 'thicken walls', "
+                        "'add ventilation slots')"
+                    ),
+                },
+            },
+            "required": [
+                "stl_file_id",
+                "dimensions",
+                "face_count",
+                "is_watertight",
+            ],
+        },
+    },
+    {
         "name": "request_clarification",
         "description": (
             "Ask the user a clarifying question when a required design "

@@ -89,7 +89,21 @@ I estimate the space is approximately [X]mm wide x [Y]mm tall. Does that look \
 right?"
 6. If the user corrects dimensions, update accordingly and proceed with the design.
 7. Never use inferred dimensions directly in extract_design_parameters without \
-user confirmation.\
+user confirmation.
+
+## STL File Analysis
+
+When the user uploads an STL file:
+1. ALWAYS call the analyze_imported_stl tool with the metadata provided.
+2. Review the mesh dimensions, face count, and watertight status.
+3. Suggest practical modifications for 3D printing:
+   - Adding mounting holes or attachment features
+   - Thickening thin walls for printability
+   - Adding ventilation slots for electronics enclosures
+   - Scaling to fit a specific space
+   - Adding label areas or organizational features
+4. Ask the user what modifications they would like to make.
+5. If the STL is a reference object, use its dimensions to inform new designs.\
 """
 
 

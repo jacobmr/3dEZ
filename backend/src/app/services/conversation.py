@@ -20,7 +20,7 @@ from sqlalchemy.orm import selectinload
 
 from app.core.claude_client import get_client
 from app.core.config import get_settings
-from app.db.models import Conversation, Design, Message, Photo
+from app.db.models import Conversation, Design, Message, Photo, StlFile
 from app.models.designs import DesignParamsUnion
 from app.models.tools import DESIGN_TOOLS
 from app.prompts.design_wizard import get_system_prompt
@@ -53,6 +53,7 @@ class ConversationService:
         conversation_id: str,
         user_content: str,
         photo_id: str | None = None,
+        stl_file_id: str | None = None,
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Send a user message and yield response events.
 
@@ -74,6 +75,7 @@ class ConversationService:
                 role="user",
                 content=user_content,
                 photo_ids=[photo_id] if photo_id else None,
+                stl_file_ids=[stl_file_id] if stl_file_id else None,
             )
             self._db.add(user_msg)
             await self._db.commit()
@@ -124,6 +126,22 @@ class ConversationService:
                     tool_results.append({
                         "tool_use_id": tool_id,
                         "content": json.dumps(photo_analysis_event),
+                    })
+                elif tool_name == "analyze_imported_stl":
+                    stl_analysis_event = {
+                        "type": "stl_analysis",
+                        "stl_file_id": tool_input.get("stl_file_id", ""),
+                        "dimensions": tool_input.get("dimensions", {}),
+                        "face_count": tool_input.get("face_count", 0),
+                        "is_watertight": tool_input.get("is_watertight", False),
+                        "suggested_modifications": tool_input.get(
+                            "suggested_modifications", []
+                        ),
+                    }
+                    yield stl_analysis_event
+                    tool_results.append({
+                        "tool_use_id": tool_id,
+                        "content": json.dumps(stl_analysis_event),
                     })
                 elif tool_name == "infer_dimensions":
                     dimension_event = {
@@ -317,9 +335,27 @@ class ConversationService:
         api_msgs: list[dict[str, Any]] = []
         for msg in db_messages:
             if msg.role == "user":
+                # Build text content, appending STL metadata if present
+                text_content = msg.content
+                if msg.stl_file_ids:
+                    for stl_id in msg.stl_file_ids:
+                        stl_file = await db.get(StlFile, stl_id)
+                        if stl_file:
+                            bbox = stl_file.bounding_box or {}
+                            dims = bbox.get("dimensions", [0, 0, 0])
+                            text_content += (
+                                f"\n\n[UPLOADED STL FILE: {stl_file.filename}]\n"
+                                f"- STL File ID: {stl_file.id}\n"
+                                f"- Dimensions: {dims[0]:.1f} x {dims[1]:.1f} x {dims[2]:.1f} mm\n"
+                                f"- Faces: {stl_file.face_count:,}\n"
+                                f"- Vertices: {stl_file.vertex_count:,}\n"
+                                f"- Watertight: {stl_file.is_watertight}\n"
+                                f"Please analyze this STL using the analyze_imported_stl tool."
+                            )
+
                 if msg.photo_ids:
                     content_blocks: list[dict[str, Any]] = [
-                        {"type": "text", "text": msg.content},
+                        {"type": "text", "text": text_content},
                     ]
                     for photo_id in msg.photo_ids:
                         photo = await db.get(Photo, photo_id)
@@ -336,7 +372,7 @@ class ConversationService:
                             })
                     api_msgs.append({"role": "user", "content": content_blocks})
                 else:
-                    api_msgs.append({"role": "user", "content": msg.content})
+                    api_msgs.append({"role": "user", "content": text_content})
             elif msg.role == "assistant":
                 content_blocks: list[dict[str, Any]] = []
                 if msg.content:
