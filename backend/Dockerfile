@@ -9,7 +9,7 @@ COPY pyproject.toml .
 COPY src/ src/
 
 RUN pip install --no-cache-dir hatchling
-RUN pip install --no-cache-dir cadquery build123d trimesh
+RUN pip install --no-cache-dir cadquery build123d trimesh manifold3d
 RUN pip install --no-cache-dir .
 
 ###############################################################################
