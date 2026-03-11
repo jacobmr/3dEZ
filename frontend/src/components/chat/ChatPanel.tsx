@@ -4,6 +4,24 @@ import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 import type { ChatMessage } from "@/hooks/useConversation";
 
+const CATEGORY_SUGGESTIONS = [
+  {
+    label: "Mounting Bracket",
+    prompt: "I need a mounting bracket",
+    icon: "\u{1F529}",
+  },
+  {
+    label: "Enclosure / Box",
+    prompt: "I need an enclosure for electronics",
+    icon: "\u{1F4E6}",
+  },
+  {
+    label: "Organizer",
+    prompt: "I need a desk organizer",
+    icon: "\u{1F5C2}",
+  },
+];
+
 interface ChatPanelProps {
   messages: ChatMessage[];
   isStreaming: boolean;
@@ -74,8 +92,23 @@ export default function ChatPanel({
             What would you like to create?
           </h2>
           <p className="max-w-xs text-sm text-gray-500 dark:text-zinc-400">
-            Describe a 3D-printable part &mdash; a mounting bracket, enclosure,
-            or organizer &mdash; and I&apos;ll help design it.
+            Describe a 3D-printable part and I&apos;ll help you design it step
+            by step.
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            {CATEGORY_SUGGESTIONS.map((s) => (
+              <button
+                key={s.label}
+                onClick={() => onSend(s.prompt)}
+                className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-indigo-600 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-300"
+              >
+                <span>{s.icon}</span>
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-[11px] text-gray-400 dark:text-zinc-500">
+            Or describe something custom below
           </p>
         </div>
       )}

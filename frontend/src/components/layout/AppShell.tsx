@@ -33,7 +33,7 @@ export default function AppShell({
 
   return (
     <div className="flex h-screen flex-col">
-      <Header onMenuClick={handleMenuClick} />
+      <Header onMenuClick={handleMenuClick} onNewDesign={onNewDesign} />
       {/* Mobile: stacked single column. Desktop (>=1024px): sidebar + two-column side-by-side */}
       <div className="flex min-h-0 flex-1">
         <Sidebar
