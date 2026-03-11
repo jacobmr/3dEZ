@@ -15,8 +15,9 @@ from sqlalchemy import select
 
 from app.api.deps import RequestContext, get_request_context, get_session_id
 from app.db.engine import get_db
-from app.db.models import Photo, StlFile
+from app.db.models import Design, Photo, StlFile
 from app.services.conversation import ConversationService
+from app.services.cost_estimation import estimate_cost
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
 
@@ -215,3 +216,56 @@ async def revise_design(
             "Connection": "keep-alive",
         },
     )
+
+
+# ---------------------------------------------------------------------------
+# Cost estimation endpoints
+# ---------------------------------------------------------------------------
+
+@router.get("/{conversation_id}/cost-estimate")
+async def get_cost_estimate(
+    conversation_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Return cost breakdown for a conversation before STL generation."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, ctx, service)
+
+    cost = await estimate_cost(db, conversation_id)
+    return cost.to_dict()
+
+
+@router.post("/{conversation_id}/approve-cost", status_code=200)
+async def approve_cost(
+    conversation_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, Any]:
+    """Approve cost estimate so STL generation can proceed."""
+    service = ConversationService(db)
+    await _verify_conversation_ownership(conversation_id, ctx, service)
+
+    # Find the latest design for this conversation
+    result = await db.execute(
+        select(Design)
+        .where(Design.conversation_id == conversation_id)
+        .order_by(Design.version.desc())
+        .limit(1)
+    )
+    design = result.scalar_one_or_none()
+    if design is None:
+        raise HTTPException(
+            status_code=404,
+            detail="No design found for this conversation",
+        )
+
+    design.cost_approved = True
+    await db.commit()
+    await db.refresh(design)
+
+    return {
+        "design_id": design.id,
+        "conversation_id": conversation_id,
+        "cost_approved": True,
+    }
