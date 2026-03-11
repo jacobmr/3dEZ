@@ -161,11 +161,16 @@ export async function* streamMessage(
   conversationId: string,
   message: string,
   photoId?: string,
+  stlFileId?: string,
 ): AsyncGenerator<SSEEvent, void, unknown> {
   const res = await fetch(`/api/conversations/${conversationId}/message`, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({ message, ...(photoId && { photo_id: photoId }) }),
+    body: JSON.stringify({
+      message,
+      ...(photoId && { photo_id: photoId }),
+      ...(stlFileId && { stl_file_id: stlFileId }),
+    }),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
@@ -290,6 +295,50 @@ export async function uploadPhoto(
     body: formData,
   });
   return json<{ id: string; filename: string }>(res);
+}
+
+/* ------------------------------------------------------------------ */
+/*  STL file endpoints                                                 */
+/* ------------------------------------------------------------------ */
+
+export interface StlFileMetadata {
+  id: string;
+  filename: string;
+  file_size: number;
+  vertex_count: number;
+  face_count: number;
+  is_watertight: boolean;
+  bounding_box: {
+    min: [number, number, number];
+    max: [number, number, number];
+    dimensions: [number, number, number];
+  } | null;
+  created_at: string;
+}
+
+export async function uploadStl(
+  conversationId: string,
+  file: File,
+): Promise<StlFileMetadata> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`/api/conversations/${conversationId}/stl-files`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  return json<StlFileMetadata>(res);
+}
+
+export async function fetchStlFile(stlFileId: string): Promise<ArrayBuffer> {
+  const res = await fetch(`/api/stl-files/${stlFileId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Failed to fetch STL file: ${body}`);
+  }
+  return res.arrayBuffer();
 }
 
 /* ------------------------------------------------------------------ */

@@ -6,7 +6,7 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import PreviewPanel from "@/components/preview/PreviewPanel";
 import { useConversation } from "@/hooks/useConversation";
 import { usePreview } from "@/hooks/usePreview";
-import { uploadPhoto } from "@/lib/api";
+import { uploadPhoto, uploadStl, fetchStlFile } from "@/lib/api";
 
 export default function HomeClient() {
   const {
@@ -33,16 +33,21 @@ export default function HomeClient() {
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
 
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [uploadedStlBytes, setUploadedStlBytes] = useState<ArrayBuffer | null>(
+    null,
+  );
 
   const handleSend = useCallback(
-    async (text: string, photo?: File) => {
+    async (text: string, photo?: File, stlFile?: File) => {
       setPhotoError(null);
       let photoId: string | undefined;
+      let stlFileId: string | undefined;
+
+      const messageText = text || (stlFile ? "Uploaded an STL file" : "");
 
       if (photo) {
         try {
-          // Ensure conversation exists before uploading photo
-          const convId = await ensureConversation(text);
+          const convId = await ensureConversation(messageText);
           const result = await uploadPhoto(convId, photo);
           photoId = result.id;
         } catch (err) {
@@ -52,10 +57,30 @@ export default function HomeClient() {
         }
       }
 
+      if (stlFile) {
+        try {
+          const convId = await ensureConversation(messageText);
+          const result = await uploadStl(convId, stlFile);
+          stlFileId = result.id;
+
+          // Load STL into preview panel
+          try {
+            const stlBytes = await fetchStlFile(result.id);
+            setUploadedStlBytes(stlBytes);
+          } catch {
+            // Preview will be unavailable but upload succeeded
+          }
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : "STL upload failed";
+          setPhotoError(msg);
+          return;
+        }
+      }
+
       if (currentDesign) {
         reviseDesign(text);
       } else {
-        sendMessage(text, photoId);
+        sendMessage(text, photoId, stlFileId);
       }
       // Refresh sidebar after a short delay to pick up new conversations
       setTimeout(() => setSidebarRefreshKey((k) => k + 1), 1500);
@@ -72,6 +97,7 @@ export default function HomeClient() {
 
   const handleNewDesign = useCallback(() => {
     startNew();
+    setUploadedStlBytes(null);
   }, [startNew]);
 
   return (
@@ -92,7 +118,7 @@ export default function HomeClient() {
       }
       previewPanel={
         <PreviewPanel
-          stlBytes={stlBytes}
+          stlBytes={uploadedStlBytes ?? stlBytes}
           isLoading={previewLoading}
           error={previewError}
           category={currentDesign?.params.category}

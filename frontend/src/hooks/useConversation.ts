@@ -20,14 +20,30 @@ export interface DimensionInference {
   notes: string;
 }
 
+export interface StlAnalysis {
+  stl_file_id: string;
+  dimensions: {
+    width_mm: number;
+    height_mm: number;
+    depth_mm: number;
+  };
+  face_count: number;
+  is_watertight: boolean;
+  suggested_modifications: string[];
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   /** Photo ID attached to user message */
   photoId?: string;
+  /** STL file ID attached to user message */
+  stlFileId?: string;
   /** Dimension inference data from infer_dimensions tool */
   dimensionInference?: DimensionInference;
+  /** STL analysis data from analyze_imported_stl tool */
+  stlAnalysis?: StlAnalysis;
 }
 
 export interface ConversationState {
@@ -113,6 +129,20 @@ export function useConversation() {
             break;
           }
 
+          case "stl_analysis": {
+            try {
+              const stlData = JSON.parse(event.data);
+              setMessages((prev) =>
+                prev.map((m) =>
+                  m.id === assistantId ? { ...m, stlAnalysis: stlData } : m,
+                ),
+              );
+            } catch {
+              // Ignore malformed STL analysis data
+            }
+            break;
+          }
+
           case "clarification": {
             let clarText = event.data;
             try {
@@ -164,15 +194,15 @@ export function useConversation() {
   );
 
   const sendMessage = useCallback(
-    async (text: string, photoId?: string) => {
-      if (isStreaming || !text.trim()) return;
+    async (text: string, photoId?: string, stlFileId?: string) => {
+      if (isStreaming || (!text.trim() && !stlFileId)) return;
 
       setError(null);
       setIsStreaming(true);
       abortRef.current = false;
 
       try {
-        const convId = await ensureConversation(text);
+        const convId = await ensureConversation(text || "Uploaded an STL file");
 
         // Add user message
         setMessages((prev) => [
@@ -180,13 +210,19 @@ export function useConversation() {
           {
             id: nextId(),
             role: "user",
-            content: text,
+            content: text || "Uploaded an STL file for analysis",
             ...(photoId && { photoId }),
+            ...(stlFileId && { stlFileId }),
           },
         ]);
 
         // Stream assistant response
-        const stream = streamMessage(convId, text, photoId);
+        const stream = streamMessage(
+          convId,
+          text || "Please analyze the uploaded STL file.",
+          photoId,
+          stlFileId,
+        );
         await processStream(stream);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to send message");

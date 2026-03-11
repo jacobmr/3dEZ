@@ -9,7 +9,7 @@ interface ChatPanelProps {
   isStreaming: boolean;
   error: string | null;
   hasDesign: boolean;
-  onSend: (text: string, photo?: File) => void;
+  onSend: (text: string, photo?: File, stlFile?: File) => void;
   onStartNew: () => void;
 }
 
@@ -65,8 +65,8 @@ export default function ChatPanel({
 
       {/* Input */}
       <MessageInput
-        onSend={(text, photo) => {
-          onSend(text, photo);
+        onSend={(text, photo, stlFile) => {
+          onSend(text, photo, stlFile);
         }}
         disabled={isStreaming}
         placeholder={
