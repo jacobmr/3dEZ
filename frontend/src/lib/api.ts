@@ -347,6 +347,31 @@ export async function fetchStlFile(stlFileId: string): Promise<ArrayBuffer> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Usage tracking endpoints                                           */
+/* ------------------------------------------------------------------ */
+
+export interface UsageStats {
+  total: {
+    designs: number;
+    conversations: number;
+    tokens: number;
+    estimated_cost: number;
+  };
+  this_month: {
+    designs: number;
+    conversations: number;
+    tokens: number;
+    estimated_cost: number;
+  };
+  is_authenticated: boolean;
+}
+
+export async function getUsageStats(): Promise<UsageStats> {
+  const res = await fetch("/api/users/me/usage", { headers: headers() });
+  return json<UsageStats>(res);
+}
+
+/* ------------------------------------------------------------------ */
 /*  Cost estimation endpoints                                          */
 /* ------------------------------------------------------------------ */
 
