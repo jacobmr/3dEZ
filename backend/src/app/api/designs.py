@@ -1,8 +1,9 @@
-"""Design listing, detail, duplicate, and management endpoints."""
+"""Design listing, detail, duplicate, sharing, and management endpoints."""
 
 from __future__ import annotations
 
 import copy
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -246,3 +247,35 @@ async def track_download(
     await db.refresh(design)
 
     return _design_dict(design)
+
+
+@router.get("/{design_id}/share")
+async def share_design(
+    design_id: str,
+    ctx: RequestContext = Depends(get_request_context),
+    db: AsyncSession = Depends(get_db),
+) -> dict[str, str]:
+    """Generate or retrieve a share link for a design.
+
+    Creates a unique share_token if one doesn't exist yet, then returns
+    the shareable URL path.
+    """
+    result = await db.execute(
+        select(Design)
+        .join(Conversation, Design.conversation_id == Conversation.id)
+        .where(Design.id == design_id, Conversation.session_id.in_(ctx.all_session_ids))
+        .options(selectinload(Design.conversation))
+    )
+    design = result.scalar_one_or_none()
+    if design is None:
+        raise HTTPException(status_code=404, detail="Design not found")
+
+    if not design.share_token:
+        design.share_token = str(uuid.uuid4())
+        await db.commit()
+        await db.refresh(design)
+
+    return {
+        "share_token": design.share_token,
+        "share_url": f"/shared/{design.share_token}",
+    }

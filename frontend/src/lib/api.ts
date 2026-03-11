@@ -241,6 +241,37 @@ export async function duplicateDesign(id: string): Promise<SavedDesign> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Design sharing                                                     */
+/* ------------------------------------------------------------------ */
+
+export interface ShareDesignResponse {
+  share_token: string;
+  share_url: string;
+}
+
+export async function shareDesign(id: string): Promise<ShareDesignResponse> {
+  const res = await fetch(`/api/designs/${id}/share`, { headers: headers() });
+  return json<ShareDesignResponse>(res);
+}
+
+export interface SharedDesignData {
+  id: string;
+  name: string | null;
+  category: string;
+  parameters: Record<string, unknown>;
+  version: number;
+  download_count: number;
+  created_at: string;
+}
+
+export async function getSharedDesign(
+  shareToken: string,
+): Promise<SharedDesignData> {
+  const res = await fetch(`/api/shared/${shareToken}`);
+  return json<SharedDesignData>(res);
+}
+
+/* ------------------------------------------------------------------ */
 /*  Design history endpoints                                          */
 /* ------------------------------------------------------------------ */
 

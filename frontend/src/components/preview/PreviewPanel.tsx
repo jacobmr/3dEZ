@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import StlViewer from "./StlViewer";
 import VersionHistory from "./VersionHistory";
+import { shareDesign } from "@/lib/api";
 import type { DesignHistoryEntry } from "@/lib/api";
 
 interface PreviewPanelProps {
@@ -179,6 +180,25 @@ export default function PreviewPanel({
 }: PreviewPanelProps) {
   const hasBeforeAfter = !!previousStlBytes && !!onToggleBeforeAfter;
 
+  // Share state
+  const [shareStatus, setShareStatus] = useState<"idle" | "loading" | "copied">(
+    "idle",
+  );
+
+  const handleShare = useCallback(async () => {
+    if (!designId || shareStatus === "loading") return;
+    setShareStatus("loading");
+    try {
+      const result = await shareDesign(designId);
+      const url = `${window.location.origin}${result.share_url}`;
+      await navigator.clipboard.writeText(url);
+      setShareStatus("copied");
+      setTimeout(() => setShareStatus("idle"), 2000);
+    } catch {
+      setShareStatus("idle");
+    }
+  }, [designId, shareStatus]);
+
   // Track STL changes for fade transition
   const [fadeKey, setFadeKey] = useState(0);
   const prevStlRef = useRef<ArrayBuffer | null>(null);
@@ -276,6 +296,24 @@ export default function PreviewPanel({
           )}
         </div>
         <div className="flex items-center gap-2">
+          {stlBytes && designId && (
+            <button
+              onClick={handleShare}
+              disabled={shareStatus === "loading"}
+              className="flex items-center gap-1.5 rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
+                <path d="M12 2a2 2 0 1 1-1.4 3.42L7.2 7.72a2 2 0 0 1 0 .56l3.4 2.3A2 2 0 1 1 10 12a2 2 0 0 1 .02-.28L6.6 9.42a2 2 0 1 1 0-2.84l3.42-2.3A2 2 0 0 1 12 2Z" />
+              </svg>
+              {shareStatus === "copied" ? "Copied!" : "Share"}
+            </button>
+          )}
           {stlBytes && (
             <button
               onClick={() => downloadStl(stlBytes, category, version, designId)}
