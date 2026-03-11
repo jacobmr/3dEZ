@@ -24,7 +24,7 @@ None
 - [x] **Phase 6: Multi-tenant Auth & Design Library** — User accounts, auth, per-user design library with duplicate/variant support
 - [x] **Phase 7: STL Upload & Modification** — Upload existing STL files, modify designs through conversation
 - [x] **Phase 8: Cost Estimation & Pricing** — Complexity-based pricing, pre-approval flow, internal cost tracking
-- [ ] **Phase 9: Conversational Iteration** — Natural language design modification and re-render loop
+- [x] **Phase 9: Conversational Iteration** — Natural language design modification and re-render loop
 - [ ] **Phase 10: Integration & Polish** — End-to-end flow, mobile UX, error handling, performance
 
 ## Phase Details
@@ -159,9 +159,9 @@ Plans:
 
 Plans:
 
-- [ ] 09-01: Change detection — Parse natural language modifications, map to parameter changes
-- [ ] 09-02: Parameter updates — Apply changes to parameter dictionary, regenerate geometry, re-render
-- [ ] 09-03: Iteration UX — Version history within session, undo/redo, comparison view
+- [x] 09-01: Change detection — Parse natural language modifications, map to parameter changes
+- [x] 09-02: Parameter updates — Apply changes to parameter dictionary, regenerate geometry, re-render
+- [x] 09-03: Iteration UX — Version history within session, undo/redo, comparison view
 
 ### Phase 10: Integration & Polish
 
@@ -192,5 +192,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 4.1 → 5 → 6 → 7 �
 | 6. Multi-tenant Auth & Library | 3/3            | Complete    | 2026-03-10 |
 | 7. STL Upload & Modification   | 2/2            | Complete    | 2026-03-10 |
 | 8. Cost Estimation & Pricing   | 2/2            | Complete    | 2026-03-10 |
-| 9. Conversational Iteration    | 0/3            | Not started | -          |
+| 9. Conversational Iteration    | 3/3            | Complete    | 2026-03-10 |
 | 10. Integration & Polish       | 0/3            | Not started | -          |
