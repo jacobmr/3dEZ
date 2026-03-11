@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import StlViewer from "./StlViewer";
 
@@ -22,6 +22,8 @@ interface PreviewPanelProps {
   onToggleBeforeAfter?: () => void;
   /** Description of the modification that was applied. */
   modificationDescription?: string | null;
+  /** Design version number (1, 2, 3, ...). */
+  version?: number;
 }
 
 function downloadStl(stlBytes: ArrayBuffer, category?: string) {
@@ -108,8 +110,30 @@ export default function PreviewPanel({
   showingPrevious,
   onToggleBeforeAfter,
   modificationDescription,
+  version,
 }: PreviewPanelProps) {
   const hasBeforeAfter = !!previousStlBytes && !!onToggleBeforeAfter;
+
+  // Track STL changes for fade transition
+  const [fadeKey, setFadeKey] = useState(0);
+  const prevStlRef = useRef<ArrayBuffer | null>(null);
+
+  // "Updated" indicator — briefly shown when STL swaps on a revision
+  const [showUpdated, setShowUpdated] = useState(false);
+
+  useEffect(() => {
+    if (stlBytes && prevStlRef.current && stlBytes !== prevStlRef.current) {
+      // STL changed — trigger fade and show "Updated" badge
+      setFadeKey((k) => k + 1);
+      if (version && version > 1) {
+        setShowUpdated(true);
+        const timer = setTimeout(() => setShowUpdated(false), 3000);
+        return () => clearTimeout(timer);
+      }
+    }
+    prevStlRef.current = stlBytes;
+  }, [stlBytes, version]);
+
   let content: React.ReactNode;
 
   if (isLoading) {
@@ -121,7 +145,7 @@ export default function PreviewPanel({
   } else {
     content = (
       <Suspense fallback={<CanvasFallback />}>
-        <div className="flex flex-1 animate-fade-in">
+        <div key={fadeKey} className="flex flex-1 animate-stl-swap">
           <Canvas
             frameloop="demand"
             camera={{ position: [0, 0, 100], fov: 50 }}
@@ -146,6 +170,18 @@ export default function PreviewPanel({
           <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">
             Preview
           </span>
+          {/* Version badge */}
+          {version && version > 1 && (
+            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+              v{version}
+            </span>
+          )}
+          {/* "Updated" indicator — fades out after 3s */}
+          {showUpdated && (
+            <span className="animate-fade-in rounded-md bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700 transition-opacity dark:bg-green-900/30 dark:text-green-400">
+              Updated
+            </span>
+          )}
           {hasBeforeAfter && (
             <button
               onClick={onToggleBeforeAfter}

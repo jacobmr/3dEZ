@@ -179,6 +179,7 @@ export default function HomeClient() {
           showingPrevious={showingPrevious}
           onToggleBeforeAfter={() => setShowingPrevious((v) => !v)}
           modificationDescription={modificationDescription}
+          version={currentDesign?.version}
         />
       }
     />

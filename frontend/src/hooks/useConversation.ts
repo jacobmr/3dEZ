@@ -78,7 +78,7 @@ export interface ConversationState {
   conversationId: string | null;
   messages: ChatMessage[];
   isStreaming: boolean;
-  currentDesign: { params: DesignParams; id: string } | null;
+  currentDesign: { params: DesignParams; id: string; version: number } | null;
   error: string | null;
 }
 
@@ -94,6 +94,7 @@ export function useConversation() {
   const [currentDesign, setCurrentDesign] = useState<{
     params: DesignParams;
     id: string;
+    version: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [latestModification, setLatestModification] =
@@ -142,6 +143,7 @@ export function useConversation() {
               setCurrentDesign({
                 params: parsed.parameters ?? parsed,
                 id: parsed.design_id ?? "",
+                version: parsed.version ?? 1,
               });
               // For revisions with same category, auto-approve cost
               // (no new conversation tokens needed -- just re-generate)
@@ -375,6 +377,7 @@ export function useConversation() {
         setCurrentDesign({
           params: detail.latest_design.parameters,
           id: detail.latest_design.id,
+          version: detail.latest_design.version ?? 1,
         });
       } else {
         setCurrentDesign(null);
