@@ -7,8 +7,10 @@ parameter extraction and clarification requests.
 from __future__ import annotations
 
 import base64
+import io
 import json
 import logging
+import uuid
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any
@@ -142,6 +144,15 @@ class ConversationService:
                     tool_results.append({
                         "tool_use_id": tool_id,
                         "content": json.dumps(stl_analysis_event),
+                    })
+                elif tool_name == "modify_stl":
+                    result_event = await self._handle_modify_stl(
+                        conversation_id, tool_input
+                    )
+                    yield result_event
+                    tool_results.append({
+                        "tool_use_id": tool_id,
+                        "content": json.dumps(result_event),
                     })
                 elif tool_name == "infer_dimensions":
                     dimension_event = {
@@ -486,6 +497,132 @@ class ConversationService:
             "type": "parameters_extracted",
             "parameters": params.model_dump(),
             "design_id": design.id,
+        }
+
+    async def _handle_modify_stl(
+        self, conversation_id: str, tool_input: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Execute a boolean modification on an uploaded STL file."""
+        from app.modeler.mesh_ops import boolean_stl, generate_primitive_stl
+
+        stl_file_id = tool_input.get("stl_file_id", "")
+        modification_type = tool_input.get("modification_type", "")
+        primitive = tool_input.get("primitive", {})
+        description = tool_input.get("description", "")
+
+        # Map modification_type to boolean operation
+        op_map = {
+            "add_feature": "union",
+            "cut_hole": "difference",
+            "trim": "intersection",
+        }
+        operation = op_map.get(modification_type)
+        if not operation:
+            return {
+                "type": "error",
+                "message": f"Unknown modification type: {modification_type}",
+            }
+
+        # Load the base STL file from DB
+        stl_file = await self._db.get(StlFile, stl_file_id)
+        if stl_file is None:
+            return {
+                "type": "error",
+                "message": f"STL file not found: {stl_file_id}",
+            }
+
+        # Read the base STL from disk
+        data_dir = Path("data")
+        base_path = data_dir / stl_file.file_path
+        if not base_path.exists():
+            return {
+                "type": "error",
+                "message": "STL file not found on disk",
+            }
+
+        base_stl = base_path.read_bytes()
+
+        # Generate the primitive tool STL
+        shape = primitive.get("shape", "box")
+        dimensions = primitive.get("dimensions", {})
+        position = primitive.get("position")
+
+        try:
+            tool_stl = generate_primitive_stl(shape, dimensions, position)
+        except Exception as exc:
+            logger.exception("Failed to generate primitive")
+            return {
+                "type": "error",
+                "message": f"Failed to generate primitive: {exc}",
+            }
+
+        # Run the boolean operation
+        try:
+            result_stl = boolean_stl(base_stl, tool_stl, operation)
+        except Exception as exc:
+            logger.exception("Boolean operation failed")
+            return {
+                "type": "error",
+                "message": f"Boolean operation failed: {exc}",
+            }
+
+        # Analyze the result mesh
+        import trimesh
+
+        result_mesh = trimesh.load(io.BytesIO(result_stl), file_type="stl")
+        vertex_count = len(result_mesh.vertices)
+        face_count = len(result_mesh.faces)
+        is_watertight = bool(result_mesh.is_watertight)
+        bounds = result_mesh.bounds
+        bounding_box = {
+            "min": bounds[0].tolist(),
+            "max": bounds[1].tolist(),
+            "dimensions": (bounds[1] - bounds[0]).tolist(),
+        }
+
+        # Save the result to disk
+        new_stl_id = str(uuid.uuid4())
+        session_id = stl_file.session_id
+        stl_dir = data_dir / "stl" / session_id
+        stl_dir.mkdir(parents=True, exist_ok=True)
+
+        disk_filename = f"{new_stl_id}.stl"
+        relative_path = f"stl/{session_id}/{disk_filename}"
+        disk_path = data_dir / relative_path
+        disk_path.write_bytes(result_stl)
+
+        # Create new StlFile record
+        new_stl_file = StlFile(
+            id=new_stl_id,
+            session_id=session_id,
+            conversation_id=conversation_id,
+            filename=f"modified_{stl_file.filename}",
+            content_type="application/octet-stream",
+            file_path=relative_path,
+            file_size=len(result_stl),
+            vertex_count=vertex_count,
+            face_count=face_count,
+            is_watertight=is_watertight,
+            bounding_box=bounding_box,
+        )
+        self._db.add(new_stl_file)
+        await self._db.commit()
+        await self._db.refresh(new_stl_file)
+
+        dims = bounding_box.get("dimensions", [0, 0, 0])
+        return {
+            "type": "stl_modified",
+            "stl_file_id": new_stl_id,
+            "original_stl_file_id": stl_file_id,
+            "modification_type": modification_type,
+            "description": description,
+            "dimensions": {
+                "width_mm": round(dims[0], 1),
+                "height_mm": round(dims[1], 1),
+                "depth_mm": round(dims[2], 1),
+            },
+            "face_count": face_count,
+            "is_watertight": is_watertight,
         }
 
     async def _handle_tool_followup(

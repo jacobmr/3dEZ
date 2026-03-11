@@ -103,7 +103,26 @@ When the user uploads an STL file:
    - Scaling to fit a specific space
    - Adding label areas or organizational features
 4. Ask the user what modifications they would like to make.
-5. If the STL is a reference object, use its dimensions to inform new designs.\
+5. If the STL is a reference object, use its dimensions to inform new designs.
+
+## STL Modification
+
+When the user asks to modify an uploaded STL file:
+1. Use the **modify_stl** tool to apply boolean operations with parametric \
+primitives.
+2. Modification types:
+   - **add_feature** (union): Add material — mounting tabs, bosses, rails, etc.
+   - **cut_hole** (difference): Remove material — holes, slots, pockets, etc.
+   - **trim** (intersection): Keep only the overlapping region.
+3. Available primitive shapes: box, cylinder, sphere.
+4. Position the primitive relative to the model's center using x/y/z offsets \
+in mm.
+5. Always describe the modification clearly so the user understands what \
+changed.
+6. After modification, confirm the result dimensions and ask if further \
+changes are needed.
+7. Multiple modifications can be chained — each one produces a new STL that \
+can be modified again.\
 """
 
 

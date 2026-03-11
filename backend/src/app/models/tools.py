@@ -336,6 +336,76 @@ DESIGN_TOOLS: list[dict] = [
         },
     },
     {
+        "name": "modify_stl",
+        "description": (
+            "Modify an uploaded STL file using boolean operations with parametric "
+            "primitives. Use this to add features (union), cut holes (difference), "
+            "or trim shapes (intersection) on uploaded STL files."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "stl_file_id": {
+                    "type": "string",
+                    "description": "The ID of the uploaded STL file to modify",
+                },
+                "modification_type": {
+                    "type": "string",
+                    "enum": ["add_feature", "cut_hole", "trim"],
+                    "description": (
+                        "Type of modification: add_feature (union), "
+                        "cut_hole (difference), trim (intersection)"
+                    ),
+                },
+                "primitive": {
+                    "type": "object",
+                    "properties": {
+                        "shape": {
+                            "type": "string",
+                            "enum": ["box", "cylinder", "sphere"],
+                            "description": "Primitive shape to use as tool",
+                        },
+                        "dimensions": {
+                            "type": "object",
+                            "description": (
+                                "Dimensions in mm. Box: width/height/depth. "
+                                "Cylinder: radius/height. Sphere: radius."
+                            ),
+                            "properties": {
+                                "width": {"type": "number"},
+                                "height": {"type": "number"},
+                                "depth": {"type": "number"},
+                                "radius": {"type": "number"},
+                            },
+                        },
+                        "position": {
+                            "type": "object",
+                            "description": "Position offset from center in mm",
+                            "properties": {
+                                "x": {"type": "number", "default": 0},
+                                "y": {"type": "number", "default": 0},
+                                "z": {"type": "number", "default": 0},
+                            },
+                        },
+                    },
+                    "required": ["shape", "dimensions"],
+                },
+                "description": {
+                    "type": "string",
+                    "description": (
+                        "Human-readable description of the modification"
+                    ),
+                },
+            },
+            "required": [
+                "stl_file_id",
+                "modification_type",
+                "primitive",
+                "description",
+            ],
+        },
+    },
+    {
         "name": "request_clarification",
         "description": (
             "Ask the user a clarifying question when a required design "
