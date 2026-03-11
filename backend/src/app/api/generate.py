@@ -17,8 +17,12 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_session_id
+from app.core.rate_limit import check_rate_limit
 from app.db.engine import get_db
 from app.db.models import Design
+
+#: Rate limit: STL generations per hour per session.
+GENERATIONS_PER_HOUR = 5
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +65,10 @@ async def generate_stl(
     Response
         Binary STL bytes with ``application/octet-stream`` content type.
     """
+    check_rate_limit(
+        session_id, "generations", limit=GENERATIONS_PER_HOUR, window_seconds=3600,
+    )
+
     if not _MODELER_AVAILABLE:
         raise HTTPException(
             status_code=503,

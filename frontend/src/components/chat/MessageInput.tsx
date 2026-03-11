@@ -4,6 +4,9 @@ import { useState, useCallback, type KeyboardEvent } from "react";
 import PhotoUpload from "./PhotoUpload";
 import StlUpload from "./StlUpload";
 
+/** Maximum message length — must match backend MAX_MESSAGE_LENGTH. */
+const MAX_MESSAGE_LENGTH = 5_000;
+
 interface MessageInputProps {
   onSend: (text: string, photo?: File, stlFile?: File) => void;
   disabled: boolean;
@@ -25,9 +28,12 @@ export default function MessageInput({
     sizeMB: string;
   } | null>(null);
 
+  const isOverLimit = text.length > MAX_MESSAGE_LENGTH;
+
   const handleSend = useCallback(() => {
     const trimmed = text.trim();
-    if ((!trimmed && !pendingPhoto && !pendingStl) || disabled) return;
+    if ((!trimmed && !pendingPhoto && !pendingStl) || disabled || isOverLimit)
+      return;
     onSend(trimmed, pendingPhoto?.file, pendingStl?.file);
     setText("");
     if (pendingPhoto) {
@@ -37,7 +43,7 @@ export default function MessageInput({
     if (pendingStl) {
       setPendingStl(null);
     }
-  }, [text, disabled, onSend, pendingPhoto, pendingStl]);
+  }, [text, disabled, isOverLimit, onSend, pendingPhoto, pendingStl]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -122,6 +128,14 @@ export default function MessageInput({
         </div>
       )}
 
+      {/* Character limit warning */}
+      {isOverLimit && (
+        <div className="mb-1 text-xs text-red-400">
+          Message too long ({text.length.toLocaleString()}/
+          {MAX_MESSAGE_LENGTH.toLocaleString()} characters)
+        </div>
+      )}
+
       <div className="flex items-end gap-2">
         <PhotoUpload
           onPhotoSelected={(file, preview) =>
@@ -153,7 +167,11 @@ export default function MessageInput({
         />
         <button
           onClick={handleSend}
-          disabled={disabled || (!text.trim() && !pendingPhoto && !pendingStl)}
+          disabled={
+            disabled ||
+            isOverLimit ||
+            (!text.trim() && !pendingPhoto && !pendingStl)
+          }
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white transition-colors hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-40 disabled:hover:bg-indigo-600"
           aria-label="Send message"
         >

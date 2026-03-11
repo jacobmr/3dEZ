@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -71,6 +72,30 @@ async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONR
             "error": code,
             "message": str(exc.detail) if exc.detail else "An error occurred",
             "details": None,
+        },
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    _request: Request, exc: RequestValidationError,
+) -> JSONResponse:
+    """Return Pydantic / FastAPI validation errors in the standard format."""
+    # Build a user-friendly summary of the first error
+    errors = exc.errors()
+    if errors:
+        first = errors[0]
+        loc = " -> ".join(str(part) for part in first.get("loc", []))
+        msg = first.get("msg", "Invalid value")
+        detail = f"{loc}: {msg}" if loc else msg
+    else:
+        detail = "Invalid request data"
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "validation_error",
+            "message": detail,
+            "details": {"errors": errors},
         },
     )
 

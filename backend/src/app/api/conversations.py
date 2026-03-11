@@ -8,16 +8,28 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from sqlalchemy import select
 
 from app.api.deps import RequestContext, get_request_context, get_session_id
+from app.core.rate_limit import check_rate_limit
 from app.db.engine import get_db
 from app.db.models import Design, Photo, StlFile
 from app.services.conversation import ConversationService
 from app.services.cost_estimation import estimate_cost
+
+# ---------------------------------------------------------------------------
+# Limits
+# ---------------------------------------------------------------------------
+
+#: Maximum characters in a single message.
+MAX_MESSAGE_LENGTH = 5_000
+#: Rate limit: messages per minute per session.
+MESSAGES_PER_MINUTE = 10
+#: Rate limit: STL generations per hour per session.
+GENERATIONS_PER_HOUR = 5
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
 
@@ -27,7 +39,7 @@ router = APIRouter(prefix="/api/conversations", tags=["conversations"])
 # ---------------------------------------------------------------------------
 
 class StartConversationRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
 
 
 class ConversationSummary(BaseModel):
@@ -45,7 +57,7 @@ class StartConversationResponse(BaseModel):
 
 
 class SendMessageRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
     photo_id: str | None = None
     stl_file_id: str | None = None
 
@@ -161,6 +173,9 @@ async def send_message(
     db: AsyncSession = Depends(get_db),
 ) -> StreamingResponse:
     """Send a message and stream the assistant response as SSE."""
+    check_rate_limit(
+        ctx.session_id, "messages", limit=MESSAGES_PER_MINUTE, window_seconds=60,
+    )
     service = ConversationService(db)
     await _verify_conversation_ownership(conversation_id, ctx, service)
 
@@ -204,6 +219,9 @@ async def revise_design(
     db: AsyncSession = Depends(get_db),
 ) -> StreamingResponse:
     """Revise an existing design and stream the response as SSE."""
+    check_rate_limit(
+        ctx.session_id, "messages", limit=MESSAGES_PER_MINUTE, window_seconds=60,
+    )
     service = ConversationService(db)
     await _verify_conversation_ownership(conversation_id, ctx, service)
 
