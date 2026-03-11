@@ -46,12 +46,41 @@ function downloadStl(stlBytes: ArrayBuffer, category?: string) {
   URL.revokeObjectURL(url);
 }
 
-function LoadingSpinner() {
+function LoadingSkeleton() {
   return (
     <div className="flex flex-1 items-center justify-center p-6">
-      <div className="flex flex-col items-center gap-3 text-gray-400 dark:text-zinc-400">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 dark:border-zinc-600 dark:border-t-zinc-300" />
-        <p className="text-sm">Generating 3D model&hellip;</p>
+      <div className="flex flex-col items-center gap-4">
+        {/* Skeleton 3D box shape */}
+        <div className="relative h-24 w-24">
+          <div className="absolute inset-0 animate-pulse rounded-lg bg-gray-200 dark:bg-zinc-700" />
+          <div
+            className="absolute inset-2 animate-pulse rounded-md bg-gray-300 dark:bg-zinc-600"
+            style={{ animationDelay: "150ms" }}
+          />
+          <div
+            className="absolute inset-4 animate-pulse rounded bg-gray-200 dark:bg-zinc-700"
+            style={{ animationDelay: "300ms" }}
+          />
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 dark:border-zinc-600 dark:border-t-zinc-300" />
+          <p className="text-sm text-gray-400 dark:text-zinc-400">
+            Generating 3D model&hellip;
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RegeneratingOverlay() {
+  return (
+    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 backdrop-blur-[1px] animate-fade-in">
+      <div className="flex flex-col items-center gap-2 rounded-lg bg-white/90 px-4 py-3 shadow-lg dark:bg-zinc-800/90">
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-300 border-t-indigo-600 dark:border-indigo-700 dark:border-t-indigo-400" />
+        <p className="text-xs font-medium text-gray-700 dark:text-zinc-300">
+          Regenerating&hellip;
+        </p>
       </div>
     </div>
   );
@@ -148,10 +177,14 @@ export default function PreviewPanel({
     prevStlRef.current = stlBytes;
   }, [stlBytes, version]);
 
+  // Determine if this is a regeneration (loading while STL already exists)
+  const isRegenerating = isLoading && !!stlBytes;
+
   let content: React.ReactNode;
 
-  if (isLoading) {
-    content = <LoadingSpinner />;
+  if (isLoading && !stlBytes) {
+    // First-time generation — show skeleton
+    content = <LoadingSkeleton />;
   } else if (error) {
     content = <ErrorState message={error} onRetry={onRetry} />;
   } else if (!stlBytes) {
@@ -159,19 +192,25 @@ export default function PreviewPanel({
   } else {
     content = (
       <Suspense fallback={<CanvasFallback />}>
-        <div key={fadeKey} className="flex flex-1 animate-stl-swap">
-          <Canvas
-            frameloop="demand"
-            camera={{ position: [0, 0, 100], fov: 50 }}
-            gl={{ antialias: true }}
-            className="flex-1"
+        <div className="relative flex flex-1">
+          <div
+            key={fadeKey}
+            className={`flex flex-1 animate-stl-swap transition-opacity duration-300 ${isRegenerating ? "opacity-50" : "opacity-100"}`}
           >
-            <StlViewer
-              stlBytes={stlBytes}
-              category={category}
-              params={params}
-            />
-          </Canvas>
+            <Canvas
+              frameloop="demand"
+              camera={{ position: [0, 0, 100], fov: 50 }}
+              gl={{ antialias: true }}
+              className="flex-1"
+            >
+              <StlViewer
+                stlBytes={stlBytes}
+                category={category}
+                params={params}
+              />
+            </Canvas>
+          </div>
+          {isRegenerating && <RegeneratingOverlay />}
         </div>
       </Suspense>
     );

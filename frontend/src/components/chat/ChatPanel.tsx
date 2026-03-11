@@ -17,6 +17,8 @@ interface ChatPanelProps {
   costApproved?: boolean;
   onSuggestedModification?: (suggestion: string) => void;
   onParameterNudge?: (parameterKey: string, newValue: number) => void;
+  /** True while STL is being generated/regenerated. */
+  isGenerating?: boolean;
 }
 
 export default function ChatPanel({
@@ -32,6 +34,7 @@ export default function ChatPanel({
   costApproved,
   onSuggestedModification,
   onParameterNudge,
+  isGenerating = false,
 }: ChatPanelProps) {
   const hasMessages = messages.length > 0;
 
@@ -89,7 +92,7 @@ export default function ChatPanel({
         onSend={(text, photo, stlFile) => {
           onSend(text, photo, stlFile);
         }}
-        disabled={isStreaming}
+        disabled={isStreaming || isGenerating}
         placeholder={
           hasDesign
             ? "Describe changes to your design..."

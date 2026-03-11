@@ -227,6 +227,7 @@ export default function HomeClient() {
           costApproved={costApproved}
           onSuggestedModification={handleSuggestedModification}
           onParameterNudge={handleParameterNudge}
+          isGenerating={previewLoading}
         />
       }
       previewPanel={
