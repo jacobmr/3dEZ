@@ -444,6 +444,11 @@ class ConversationService:
             "prior_parameters": latest.parameters,
         }
 
+    #: Maximum retries for transient Claude API errors (rate-limit / overload).
+    _MAX_RETRIES = 3
+    #: Base delay in seconds for exponential backoff.
+    _BASE_DELAY = 1.0
+
     async def _call_claude(
         self,
         messages: list[dict[str, Any]],
@@ -451,9 +456,13 @@ class ConversationService:
     ) -> tuple[str, list[dict[str, Any]], str, dict[str, int]]:
         """Call Claude API and return (text, tool_use_blocks, stop_reason, usage).
 
-        Uses the streaming API with ``get_final_message()`` to get both
-        streamed text and complete tool_use blocks.
+        Retries with exponential backoff on rate-limit (429) and overloaded
+        (529) responses up to ``_MAX_RETRIES`` times.
         """
+        import asyncio
+
+        import anthropic as _anthropic
+
         settings = get_settings()
         client = get_client()
 
@@ -465,7 +474,47 @@ class ConversationService:
             "tools": DESIGN_TOOLS,
         }
 
-        response = await client.messages.create(**kwargs)
+        last_exc: Exception | None = None
+        for attempt in range(self._MAX_RETRIES + 1):
+            try:
+                response = await client.messages.create(**kwargs)
+                break
+            except _anthropic.RateLimitError as exc:
+                last_exc = exc
+                if attempt < self._MAX_RETRIES:
+                    delay = self._BASE_DELAY * (2 ** attempt)
+                    logger.warning(
+                        "Claude rate-limited (attempt %d/%d), retrying in %.1fs",
+                        attempt + 1, self._MAX_RETRIES, delay,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+            except _anthropic.InternalServerError as exc:
+                last_exc = exc
+                if attempt < self._MAX_RETRIES:
+                    delay = self._BASE_DELAY * (2 ** attempt)
+                    logger.warning(
+                        "Claude server error (attempt %d/%d), retrying in %.1fs",
+                        attempt + 1, self._MAX_RETRIES, delay,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+            except (_anthropic.APIConnectionError, _anthropic.APITimeoutError) as exc:
+                last_exc = exc
+                if attempt < self._MAX_RETRIES:
+                    delay = self._BASE_DELAY * (2 ** attempt)
+                    logger.warning(
+                        "Claude connection error (attempt %d/%d), retrying in %.1fs",
+                        attempt + 1, self._MAX_RETRIES, delay,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+        else:
+            # All retries exhausted
+            raise last_exc  # type: ignore[misc]
 
         text_parts: list[str] = []
         tool_use_blocks: list[dict[str, Any]] = []

@@ -1,11 +1,20 @@
 "use client";
 
-import { useState, useCallback, type KeyboardEvent } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  type KeyboardEvent,
+} from "react";
 import PhotoUpload from "./PhotoUpload";
 import StlUpload from "./StlUpload";
 
 /** Maximum message length — must match backend MAX_MESSAGE_LENGTH. */
 const MAX_MESSAGE_LENGTH = 5_000;
+
+/** localStorage key for draft message auto-save. */
+const DRAFT_KEY = "3dez-draft-message";
 
 interface MessageInputProps {
   onSend: (text: string, photo?: File, stlFile?: File) => void;
@@ -18,7 +27,32 @@ export default function MessageInput({
   disabled,
   placeholder = "Describe what you want to create...",
 }: MessageInputProps) {
-  const [text, setText] = useState("");
+  // Restore draft from localStorage on mount
+  const [text, setText] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem(DRAFT_KEY) ?? "";
+  });
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounced auto-save draft to localStorage (500ms after last keystroke)
+  useEffect(() => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(() => {
+      try {
+        if (text.trim()) {
+          localStorage.setItem(DRAFT_KEY, text);
+        } else {
+          localStorage.removeItem(DRAFT_KEY);
+        }
+      } catch {
+        // localStorage unavailable — ignore
+      }
+    }, 500);
+    return () => {
+      if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
+    };
+  }, [text]);
+
   const [pendingPhoto, setPendingPhoto] = useState<{
     file: File;
     preview: string;
@@ -36,6 +70,11 @@ export default function MessageInput({
       return;
     onSend(trimmed, pendingPhoto?.file, pendingStl?.file);
     setText("");
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      // localStorage unavailable — ignore
+    }
     if (pendingPhoto) {
       URL.revokeObjectURL(pendingPhoto.preview);
       setPendingPhoto(null);

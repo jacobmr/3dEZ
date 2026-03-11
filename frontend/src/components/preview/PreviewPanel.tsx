@@ -29,7 +29,17 @@ function detectWebGL(): boolean {
   }
 }
 
-function WebGLUnsupported() {
+function WebGLUnsupported({
+  stlBytes,
+  category,
+  version,
+  designId,
+}: {
+  stlBytes?: ArrayBuffer | null;
+  category?: string;
+  version?: number;
+  designId?: string | null;
+}) {
   return (
     <div className="flex flex-1 items-center justify-center p-6 text-center">
       <div className="flex flex-col items-center gap-3">
@@ -41,6 +51,24 @@ function WebGLUnsupported() {
           Your browser or device does not support WebGL. You can still design
           parts and download the STL file.
         </p>
+        {stlBytes && (
+          <button
+            onClick={() => downloadStl(stlBytes, category, version, designId)}
+            className="mt-2 flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 active:bg-indigo-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M8 10.5a.75.75 0 0 1-.53-.22l-3-3a.75.75 0 1 1 1.06-1.06L7.25 7.94V2.75a.75.75 0 0 1 1.5 0v5.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3A.75.75 0 0 1 8 10.5Z" />
+              <path d="M2.75 13a.75.75 0 0 1 0-1.5h10.5a.75.75 0 0 1 0 1.5H2.75Z" />
+            </svg>
+            Download STL
+          </button>
+        )}
       </div>
     </div>
   );
@@ -277,7 +305,14 @@ export default function PreviewPanel({
   } else if (!stlBytes) {
     content = <EmptyState />;
   } else if (!webglSupported) {
-    content = <WebGLUnsupported />;
+    content = (
+      <WebGLUnsupported
+        stlBytes={stlBytes}
+        category={category}
+        version={version}
+        designId={designId}
+      />
+    );
   } else {
     content = (
       <Suspense fallback={<CanvasFallback />}>

@@ -127,6 +127,10 @@ export function useConversation() {
   // Ref to allow aborting mid-stream (future use)
   const abortRef = useRef(false);
 
+  // Track current design version for concurrent modification detection
+  const currentDesignRef = useRef(currentDesign);
+  currentDesignRef.current = currentDesign;
+
   // Track the last failed action for retry support
   const lastActionRef = useRef<{
     type: "send" | "revise";
@@ -165,6 +169,26 @@ export function useConversation() {
           case "parameters_extracted": {
             try {
               const parsed = JSON.parse(event.data);
+
+              // Concurrent modification detection: if this is a revision
+              // and the returned version jumped by more than 1, another tab
+              // may have modified the design in the meantime.
+              if (parsed.is_revision && parsed.version) {
+                const expectedVersion =
+                  (currentDesignRef.current?.version ?? 0) + 1;
+                if (parsed.version > expectedVersion) {
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: nextId(),
+                      role: "assistant",
+                      content:
+                        "This design was modified in another session. Your revision was applied on top of the latest version.",
+                    },
+                  ]);
+                }
+              }
+
               setCurrentDesign({
                 params: parsed.parameters ?? parsed,
                 id: parsed.design_id ?? "",
