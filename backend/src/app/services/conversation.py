@@ -233,9 +233,13 @@ class ConversationService:
             "latest_design": (
                 {
                     "id": latest_design.id,
+                    "conversation_id": latest_design.conversation_id,
+                    "conversation_title": conversation.title,
+                    "name": latest_design.name or conversation.title,
                     "category": latest_design.category,
                     "parameters": latest_design.parameters,
                     "version": latest_design.version,
+                    "parent_design_id": latest_design.parent_design_id,
                     "created_at": latest_design.created_at.isoformat(),
                 }
                 if latest_design

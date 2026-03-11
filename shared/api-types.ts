@@ -40,9 +40,12 @@ export interface ConversationSummary {
 export interface SavedDesign {
   id: string;
   conversation_id: string;
+  conversation_title: string | null;
+  name: string | null;
   parameters: import("./design-params").DesignParams;
   category: import("./design-params").DesignCategory;
   version: number;
+  parent_design_id: string | null;
   created_at: string;
 }
 

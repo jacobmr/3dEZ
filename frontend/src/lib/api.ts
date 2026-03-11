@@ -194,13 +194,44 @@ export async function* streamRevision(
 /*  Design endpoints                                                  */
 /* ------------------------------------------------------------------ */
 
-export async function listDesigns(): Promise<SavedDesign[]> {
-  const res = await fetch("/api/designs/", { headers: headers() });
+export async function listDesigns(opts?: {
+  category?: string;
+  search?: string;
+  sort?: "newest" | "oldest";
+}): Promise<SavedDesign[]> {
+  const params = new URLSearchParams();
+  if (opts?.category) params.set("category", opts.category);
+  if (opts?.search) params.set("search", opts.search);
+  if (opts?.sort) params.set("sort", opts.sort);
+  const qs = params.toString();
+  const res = await fetch(`/api/designs/${qs ? `?${qs}` : ""}`, {
+    headers: headers(),
+  });
   return json<SavedDesign[]>(res);
 }
 
 export async function getDesign(id: string): Promise<SavedDesign> {
   const res = await fetch(`/api/designs/${id}`, { headers: headers() });
+  return json<SavedDesign>(res);
+}
+
+export async function renameDesign(
+  id: string,
+  name: string,
+): Promise<SavedDesign> {
+  const res = await fetch(`/api/designs/${id}`, {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify({ name }),
+  });
+  return json<SavedDesign>(res);
+}
+
+export async function duplicateDesign(id: string): Promise<SavedDesign> {
+  const res = await fetch(`/api/designs/${id}/duplicate`, {
+    method: "POST",
+    headers: headers(),
+  });
   return json<SavedDesign>(res);
 }
 
