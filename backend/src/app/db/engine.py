@@ -54,6 +54,7 @@ async def _run_migrations() -> None:
         "ALTER TABLE designs ADD COLUMN share_token VARCHAR(36)",
         "ALTER TABLE sessions ADD COLUMN user_id VARCHAR(36) REFERENCES users(id)",
         "ALTER TABLE designs ADD COLUMN version INTEGER DEFAULT 1",
+        "ALTER TABLE designs ADD COLUMN stl_path VARCHAR(500)",
     ]
     async with _engine.begin() as conn:
         for sql in migrations:

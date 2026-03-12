@@ -152,6 +152,7 @@ class Design(Base):
     share_token: Mapped[str | None] = mapped_column(
         String(36), unique=True, nullable=True, index=True
     )
+    stl_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

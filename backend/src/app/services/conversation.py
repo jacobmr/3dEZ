@@ -40,6 +40,36 @@ class ConversationService:
         self._db = db
 
     # ------------------------------------------------------------------
+    # Private helpers
+    # ------------------------------------------------------------------
+
+    def _generate_design_name(self, params: Any) -> str:
+        """Generate human-readable design name from parameters."""
+        if params.category == "mounting_bracket":
+            return (
+                f"Mounting Bracket "
+                f"({params.width:.0f}×{params.height:.0f}×{params.depth:.0f}mm)"
+            )
+        elif params.category == "enclosure":
+            return (
+                f"Enclosure "
+                f"({params.inner_width:.0f}×{params.inner_height:.0f}×{params.inner_depth:.0f}mm)"
+            )
+        elif params.category == "organizer":
+            return (
+                f"Organizer {params.compartments_x}×{params.compartments_y} "
+                f"({params.width:.0f}×{params.height:.0f}×{params.depth:.0f}mm)"
+            )
+        elif params.category == "csg_primitive":
+            tree_name = params.tree.name.strip()
+            if tree_name:
+                return f"CSG: {tree_name}"
+            part_count = len(params.tree.parts)
+            return f"CSG Design ({part_count} parts)"
+        else:
+            return f"{params.category} design"
+
+    # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
@@ -585,12 +615,16 @@ class ConversationService:
         previous_parameters = latest.parameters if latest else None
         previous_category = latest.category if latest else None
 
+        # Auto-generate design name from parameters
+        design_name = self._generate_design_name(params)
+
         design = Design(
             conversation_id=conversation_id,
             parameters=params.model_dump(),
             category=params.category,
             version=next_version,
             parent_design_id=latest.id if latest else None,
+            name=design_name,
         )
         self._db.add(design)
         await self._db.commit()
@@ -634,12 +668,16 @@ class ConversationService:
         latest = await self._get_latest_design(conversation_id)
         next_version = (latest.version + 1) if latest else 1
 
+        # Auto-generate design name from parameters
+        design_name = self._generate_design_name(params)
+
         design = Design(
             conversation_id=conversation_id,
             parameters=params.model_dump(),
             category="csg_primitive",
             version=next_version,
             parent_design_id=latest.id if latest else None,
+            name=design_name,
         )
         self._db.add(design)
         await self._db.commit()

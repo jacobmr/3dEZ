@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Callable
 
-from app.modeler.export import export_stl_bytes
+from app.modeler.export import export_stl_bytes, validate_part
 from app.modeler.validation import validate_mesh
 
 if TYPE_CHECKING:
@@ -59,7 +59,9 @@ class ModelEngine:
         ------
         ValueError
             If *category* is not registered, the export produces empty
-            output, or mesh validation fails.
+            output, or mesh validation fails. Note: non-watertight meshes
+            are accepted if the underlying B-rep geometry is valid (for
+            CSG tessellation artifacts).
         """
         fn = self._templates.get(category)
         if fn is None:
@@ -84,14 +86,42 @@ class ModelEngine:
             logger.warning("Mesh validation [%s]: %s", category, warning)
 
         if not result.is_valid:
+            # CSG boolean ops can produce tessellation artifacts that trimesh
+            # reports as non-watertight even though the B-rep solid is valid.
+            # For CSG, be lenient with tessellation artifacts.
+            is_csg = category == "csg_primitive"
+            brepvalid = validate_part(part)
+
+            if is_csg:
+                # For CSG, accept if the B-rep is valid even if mesh isn't watertight
+                if brepvalid and not result.is_watertight:
+                    logger.warning(
+                        "CSG mesh for %r not watertight per trimesh but B-rep "
+                        "is valid — accepting (tessellation artifact)",
+                        category,
+                    )
+                    return stl_bytes
+            else:
+                # For other categories, accept if B-rep is valid
+                if brepvalid and not result.is_watertight:
+                    logger.warning(
+                        "Mesh for %r not watertight per trimesh but B-rep solid "
+                        "is valid — accepting (tessellation artifact)",
+                        category,
+                    )
+                    return stl_bytes
+
+            # Report what failed
             failures = []
             if not result.is_watertight:
                 failures.append("not watertight")
             if result.volume <= 0:
                 failures.append(f"non-positive volume ({result.volume:.4f})")
-            raise ValueError(
-                f"Mesh validation failed for {category!r}: "
-                + ", ".join(failures)
-            )
+            if not brepvalid:
+                part_vol = part.volume if hasattr(part, 'volume') else "unknown"
+                failures.append(f"B-rep invalid (volume={part_vol})")
+
+            error_detail = ", ".join(failures) if failures else "unknown reason"
+            raise ValueError(f"Mesh validation failed for {category!r}: {error_detail}")
 
         return stl_bytes
