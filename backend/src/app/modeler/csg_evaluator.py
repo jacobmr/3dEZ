@@ -42,4 +42,9 @@ def evaluate_csg_tree(tree: CsgTree):
         else:
             result = result - solid
 
+    # Ensure result is a Part, not a ShapeList
+    # Boolean operations can return ShapeList, so wrap if needed
+    if result is not None and not isinstance(result, bd.Part):
+        result = bd.Part(result)
+
     return result
