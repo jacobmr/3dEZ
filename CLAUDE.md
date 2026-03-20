@@ -114,6 +114,7 @@ make clean            # down -v, remove caches + .next
 - **Secrets:** SOPS-encrypted `secrets.production.env.enc`, decrypted on server via age key
 
 **IMPORTANT — Deploy process (GitHub Actions ONLY):**
+
 - **Deployment is fully automated** via `.github/workflows/deploy.yml`
 - Pushing to `main` triggers the deploy workflow automatically
 - The workflow: rsyncs files → decrypts secrets via SOPS → `docker compose up -d --build` → health check
@@ -172,9 +173,9 @@ make clean            # down -v, remove caches + .next
 
 ### CSG Primitives (use `generate_csg`)
 
-| Category           | Description                                                                                                |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `csg_primitive`    | Composable flat list of boxes/cylinders/spheres with union/difference ops. Handles ~80% of custom requests |
+| Category        | Description                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `csg_primitive` | Composable flat list of boxes/cylinders/spheres with union/difference ops. Handles ~80% of custom requests |
 
 - **Flat ordered list** — not a tree. Parts processed left-to-right: union = add, difference = subtract
 - **Global coordinates** — all positions/rotations are absolute from origin (0,0,0)

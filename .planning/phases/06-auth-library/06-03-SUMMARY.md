@@ -5,17 +5,20 @@
 ## What Was Done
 
 ### Task 1: Design model enhancements (`50000de`)
+
 - Added `name` (nullable VARCHAR(255)) and `parent_design_id` (nullable FK to self) to Design model
 - Added inline SQLite migrations via `_run_migrations()` in engine.py for ALTER TABLE ADD COLUMN
 - Updated `_design_dict()` helper to include all new fields in API responses
 
 ### Task 2: Design API enhancements (`50000de`)
+
 - Rewrote `GET /api/designs/` with query params: `category` filter, `search` text, `sort` (newest/oldest)
 - Added `PATCH /api/designs/{id}` for renaming designs
 - Added `POST /api/designs/{id}/duplicate` — creates new Conversation + Design with copied parameters and `parent_design_id` lineage
 - Added `GET /api/designs/{id}/variants` to list child designs
 
 ### Task 3: Design library frontend (`55ff7a1`)
+
 - Replaced conversation-based sidebar with design-based library using `listDesigns()` API
 - Added category filter tabs (All, Brackets, Enclosures, Organizers)
 - Added debounced search input (300ms delay)
