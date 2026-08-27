@@ -191,3 +191,23 @@ make clean            # down -v, remove caches + .next
 - **Planning artifacts** in `.planning/` — don't modify during normal development
 - **Stage files individually** in git (never `git add .` or `git add -A`)
 - **Docker-only dependencies** (build123d, cadquery, trimesh) are NOT in pyproject.toml — they're installed in Dockerfiles
+
+<!-- inventory-secrets-pointer v1 -->
+## Secrets
+
+This repo's credentials are SOPS-encrypted and registered centrally in
+`/data/dev/inventory`. Never commit plaintext, and do not invent a second
+scheme — a copy that inventory does not know about will be missed by the next
+rotation.
+
+Run `/secrets-management` for how it works and the traps that have bitten.
+
+Answers that need no decryption (`placements.yaml` is deliberately plaintext):
+
+```bash
+grep -n "<name>" /data/dev/inventory/secrets/placements.yaml   # which files hold it
+npm run secrets:check                # is it healthy
+```
+
+To read or rotate a value, use the dashboard: http://dash.zt/ -> Secrets.
+Rotating there writes every copy at once, and reports the ones it cannot reach.
